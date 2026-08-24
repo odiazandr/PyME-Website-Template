@@ -231,7 +231,7 @@ answers: ["What does this example own?", "How is it validated?"]
         self.assertFalse(any("duplicate ownership question" in item for item in failures))
 
 
-class DiscoveryAndIndexTests(unittest.TestCase):
+class MemoryStructureTests(unittest.TestCase):
     def document(self, owner: str, question: str, authority: str = "canonical") -> str:
         return f'---\nowner: {owner}\nauthority: {authority}\nstatus: active\nanswers: ["{question}"]\n---\n# Test\n'
 
@@ -271,6 +271,118 @@ class DiscoveryAndIndexTests(unittest.TestCase):
             self.assertFalse(any("nested/example.md" in item for item in MEMORY_HEALTH.run(root)))
         finally:
             temporary.cleanup()
+    def config(self, mode: str = "template", allow: list[str] | None = None) -> dict[str, object]:
+        return {"mode": mode, "placeholders": {"allow": allow or []}}
+
+    def validate(self, files: dict[str, str | bytes], mode: str = "template", allow: list[str] | None = None) -> set[str]:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            documents: list[Path] = []
+            for relative, content in files.items():
+                path = root / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                if isinstance(content, bytes):
+                    path.write_bytes(content)
+                else:
+                    path.write_text(content, encoding="utf-8")
+                if relative.startswith(("docs/spec/", "docs/runbooks/", "docs/explain/", "docs/decisions/")):
+                    documents.append(path)
+            for required in ("PROJECT.md", "README.md"):
+                path = root / required
+                if not path.exists():
+                    path.write_text(f"# {required}\n", encoding="utf-8")
+            errors = MEMORY_HEALTH.validate_placeholders(root, self.config(mode, allow), documents)
+            return {str(item["code"]) for item in errors}
+
+    def test_template_marker_requires_exact_allowlist_entry(self) -> None:
+        marker = "@@PYME_UNRESOLVED:BUSINESS_NAME@@"
+        self.assertIn("PLACEHOLDER_NOT_ALLOWLISTED", self.validate({"src/data.json": marker}))
+        self.assertEqual(self.validate({"src/data.json": marker}, allow=["src/data.json::BUSINESS_NAME"]), set())
+
+    def test_allowlist_is_exact_and_not_stale(self) -> None:
+        marker = "@@PYME_UNRESOLVED:BUSINESS_NAME@@"
+        duplicate_codes = self.validate({"src/data.json": f"{marker} {marker}"}, allow=["src/data.json::BUSINESS_NAME"])
+        self.assertIn("PLACEHOLDER_CARDINALITY", duplicate_codes)
+        self.assertIn("PLACEHOLDER_ALLOWLIST_STALE", self.validate({}, allow=["src/data.json::BUSINESS_NAME"]))
+
+    def test_project_mode_rejects_tokens_and_nonempty_allowlist(self) -> None:
+        marker = "@@PYME_UNRESOLVED:BUSINESS_NAME@@"
+        codes = self.validate({"public/info.txt": marker}, mode="project", allow=["public/info.txt::BUSINESS_NAME"])
+        self.assertIn("PLACEHOLDER_UNRESOLVED_PROJECT", codes)
+        self.assertIn("PLACEHOLDER_PROJECT_ALLOWLIST_NOT_EMPTY", codes)
+
+    def test_malformed_and_legacy_markers_fail_in_both_modes(self) -> None:
+        for mode in ("template", "project"):
+            with self.subTest(mode=mode):
+                codes = self.validate({"README.md": "@@PYME_UNRESOLVED:bad-key@@\n@@PYME_UNRESOLVED_BAD@@\n@@PYME_UNRESOLVED\nTEMPLATE_PLACEHOLDER[OLD]"}, mode=mode)
+                self.assertIn("PLACEHOLDER_MALFORMED_MARKER", codes)
+                self.assertIn("PLACEHOLDER_LEGACY_MARKER", codes)
+
+    def test_scan_scope_includes_root_active_src_and_public_but_excludes_audits_and_tests(self) -> None:
+        marker = "@@PYME_UNRESOLVED:VALUE@@"
+        files = {
+            "PROJECT.md": marker,
+            "README.md": marker,
+            "docs/spec/active.md": marker,
+            "src/nested/file.ts": marker,
+            "public/check.txt": marker,
+            "docs/audits/old.md": marker,
+            "docs/archive/old.md": marker,
+            "tests/fixture.md": marker,
+            "src/node_modules/package/file.ts": marker,
+            "src/.cache/file.json": marker,
+            "src/dist/file.html": marker,
+            "src/generated/file.ts": marker,
+            "src/__tests__/file.ts": marker,
+            "src/fixtures/file.json": marker,
+            "public/build/file.html": marker,
+            "public/coverage/file.txt": marker,
+            "public/__fixtures__/file.json": marker,
+        }
+        allow = [
+            "PROJECT.md::VALUE",
+            "README.md::VALUE",
+            "docs/spec/active.md::VALUE",
+            "src/nested/file.ts::VALUE",
+            "public/check.txt::VALUE",
+        ]
+        self.assertEqual(self.validate(files, allow=allow), set())
+
+    def test_text_encoding_and_binary_extensions_follow_scope(self) -> None:
+        self.assertIn("PLACEHOLDER_SCAN_INVALID_UTF8", self.validate({"src/bad.json": b"\xff\xfe"}))
+        self.assertEqual(self.validate({"public/image.png": b"\xff\xfe@@PYME_UNRESOLVED:VALUE@@"}), set())
+
+    def test_symlinked_roots_files_and_directories_are_rejected_without_following(self) -> None:
+        temporary = self.repository()
+        external = tempfile.TemporaryDirectory()
+        try:
+            root = Path(temporary.name)
+            outside = Path(external.name)
+            (outside / "README.md").write_text("@@PYME_UNRESOLVED:OUTSIDE@@", encoding="utf-8")
+            (outside / "knowledge").mkdir()
+            (outside / "knowledge" / "outside.md").write_text("outside", encoding="utf-8")
+            (outside / "assets").mkdir()
+            (outside / "assets" / "outside.txt").write_text("@@PYME_UNRESOLVED:OUTSIDE@@", encoding="utf-8")
+            (outside / "INDEX.md").write_text("| T9 | `docs/spec/external.md` | external |", encoding="utf-8")
+            (root / "README.md").unlink(missing_ok=True)
+            (root / "docs" / "INDEX.md").unlink()
+            try:
+                (root / "README.md").symlink_to(outside / "README.md")
+                (root / "docs" / "INDEX.md").symlink_to(outside / "INDEX.md")
+                (root / "docs" / "spec" / "linked").symlink_to(outside / "knowledge", target_is_directory=True)
+                (root / "src" / "linked").symlink_to(outside / "assets", target_is_directory=True)
+            except OSError as exc:
+                self.skipTest(f"symbolic links are unavailable in this environment: {exc}")
+            failures = MEMORY_HEALTH.run(root)
+            self.assertTrue(any("PLACEHOLDER_SCAN_SYMLINK" in item and "README.md" in item for item in failures))
+            self.assertTrue(any("INDEX_SYMLINK" in item for item in failures))
+            self.assertTrue(any("DOCUMENT_SYMLINK" in item and "docs/spec/linked" in item for item in failures))
+            self.assertTrue(any("PLACEHOLDER_SCAN_SYMLINK" in item and "src/linked" in item for item in failures))
+            self.assertFalse(any("PLACEHOLDER_NOT_ALLOWLISTED" in item and "outside" in item for item in failures))
+            self.assertFalse(any("INDEX_MALFORMED_ROW" in item or "external.md" in item for item in failures))
+        finally:
+            temporary.cleanup()
+            external.cleanup()
 
     def test_duplicate_stale_prose_only_and_wrong_tier_entries_fail(self) -> None:
         temporary = self.repository()

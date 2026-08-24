@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 import tomllib
@@ -27,6 +28,11 @@ PLACEHOLDER_KEY = re.compile(r"^[A-Z][A-Z0-9_]*$")
 SHELL_EXECUTABLES = frozenset({"sh", "bash", "zsh", "fish", "cmd", "cmd.exe", "powershell", "powershell.exe", "pwsh", "pwsh.exe"})
 SHELL_METATOKENS = frozenset({"|", "||", "&&", ";", "<", ">", ">>", "1>", "1>>", "2>", "2>>", "&>"})
 INDEX_ROW = re.compile(r"^\|\s*(T[0-4])\s*\|\s*`([^`]+\.md)`\s*\|[^|]*\|\s*$")
+UNRESOLVED_MARKER = re.compile(r"@@PYME_UNRESOLVED:([A-Z][A-Z0-9_]*)@@")
+UNRESOLVED_STEM = "@@PYME_UNRESOLVED"
+LEGACY_MARKER = "TEMPLATE_PLACEHOLDER["
+PLACEHOLDER_TEXT_SUFFIXES = frozenset({"", ".md", ".txt", ".html", ".htm", ".astro", ".ts", ".tsx", ".js", ".mjs", ".cjs", ".json", ".toml", ".yaml", ".yml", ".css", ".scss", ".svg", ".xml", ".csv", ".env"})
+PLACEHOLDER_EXCLUDED_DIRECTORIES = frozenset({".astro", ".cache", "__fixtures__", "__tests__", "build", "cache", "coverage", "dist", "fixtures", "generated", "node_modules", "tests"})
 
 
 def error(code: str, path: str | None, message: str) -> dict[str, str | None]:
@@ -290,26 +296,42 @@ def normalize_question(value: str) -> str:
 
 def active_documents(root: Path = ROOT) -> tuple[list[Path], list[dict[str, str | None]]]:
     docs = root / "docs"
-    paths = [docs / "INDEX.md", docs / "GLOSSARY.md"]
+    paths: list[Path] = []
     errors: list[dict[str, str | None]] = []
+    for path in (docs / "INDEX.md", docs / "GLOSSARY.md"):
+        relative = path.relative_to(root).as_posix()
+        if path.is_symlink():
+            errors.append(error("DOCUMENT_SYMLINK", relative, "active knowledge documents may not be symbolic links"))
+        else:
+            paths.append(path)
     for directory in KNOWLEDGE_DIRS:
         active_root = docs / directory
+        if active_root.is_symlink():
+            errors.append(error("DOCUMENT_SYMLINK", active_root.relative_to(root).as_posix(), "active knowledge roots may not be symbolic links"))
+            continue
         if not active_root.is_dir():
             errors.append(error("ACTIVE_ROOT_MISSING", active_root.relative_to(root).as_posix(), "required active knowledge root is missing"))
             continue
-        for path in sorted(active_root.rglob("*")):
-            if not path.is_file():
-                continue
-            if path.suffix.casefold() != ".md":
-                continue
-            relative = path.relative_to(root).as_posix()
-            if path.suffix != ".md":
-                errors.append(error("DOCUMENT_NONCANONICAL_EXTENSION", relative, "knowledge documents must use the lowercase .md extension"))
-                continue
-            if path.is_symlink():
-                errors.append(error("DOCUMENT_SYMLINK", relative, "active knowledge documents may not be symbolic links"))
-                continue
-            paths.append(path)
+        for current, directory_names, file_names in os.walk(active_root, followlinks=False):
+            retained_directories = []
+            for name in sorted(directory_names):
+                path = Path(current) / name
+                if path.is_symlink():
+                    errors.append(error("DOCUMENT_SYMLINK", path.relative_to(root).as_posix(), "active knowledge directories may not be symbolic links"))
+                else:
+                    retained_directories.append(name)
+            directory_names[:] = retained_directories
+            for name in sorted(file_names):
+                path = Path(current) / name
+                if path.suffix.casefold() != ".md":
+                    continue
+                relative = path.relative_to(root).as_posix()
+                if path.is_symlink():
+                    errors.append(error("DOCUMENT_SYMLINK", relative, "active knowledge documents may not be symbolic links"))
+                elif path.suffix != ".md":
+                    errors.append(error("DOCUMENT_NONCANONICAL_EXTENSION", relative, "knowledge documents must use the lowercase .md extension"))
+                else:
+                    paths.append(path)
     return paths, errors
 
 
@@ -326,6 +348,8 @@ def expected_tier(path: str) -> str:
 def validate_index(root: Path, active_paths: list[str]) -> list[dict[str, str | None]]:
     path = root / "docs" / "INDEX.md"
     relative = "docs/INDEX.md"
+    if path.is_symlink():
+        return [error("INDEX_SYMLINK", relative, "documentation index may not be a symbolic link")]
     try:
         text = path.read_text(encoding="utf-8")
     except FileNotFoundError:
@@ -361,6 +385,90 @@ def validate_index(root: Path, active_paths: list[str]) -> list[dict[str, str | 
     return sorted(errors, key=lambda item: (item["path"] or "", item["code"] or "", item["message"] or ""))
 
 
+def placeholder_scan_files(root: Path, documents: list[Path]) -> tuple[list[Path], list[dict[str, str | None]]]:
+    candidates: list[Path] = []
+    errors: list[dict[str, str | None]] = []
+    for path in (root / "PROJECT.md", root / "README.md", *documents):
+        if path.is_symlink():
+            errors.append(error("PLACEHOLDER_SCAN_SYMLINK", path.relative_to(root).as_posix(), "placeholder scan does not follow symbolic links"))
+        else:
+            candidates.append(path)
+    for directory_name in ("src", "public"):
+        directory = root / directory_name
+        if directory.is_symlink():
+            errors.append(error("PLACEHOLDER_SCAN_SYMLINK", directory.relative_to(root).as_posix(), "placeholder scan roots may not be symbolic links"))
+            continue
+        if not directory.is_dir():
+            continue
+        for current, directory_names, file_names in os.walk(directory, followlinks=False):
+            retained_directories = []
+            for name in sorted(directory_names):
+                path = Path(current) / name
+                if name.casefold() in PLACEHOLDER_EXCLUDED_DIRECTORIES:
+                    continue
+                if path.is_symlink():
+                    errors.append(error("PLACEHOLDER_SCAN_SYMLINK", path.relative_to(root).as_posix(), "placeholder scan does not follow symbolic links"))
+                else:
+                    retained_directories.append(name)
+            directory_names[:] = retained_directories
+            for file_name in sorted(file_names):
+                path = Path(current) / file_name
+                if path.suffix.casefold() not in PLACEHOLDER_TEXT_SUFFIXES:
+                    continue
+                if path.is_symlink():
+                    errors.append(error("PLACEHOLDER_SCAN_SYMLINK", path.relative_to(root).as_posix(), "placeholder scan does not follow symbolic links"))
+                    continue
+                candidates.append(path)
+    unique = sorted(set(candidates), key=lambda path: path.relative_to(root).as_posix())
+    return unique, errors
+
+
+def validate_placeholders(root: Path, config: dict[str, Any], documents: list[Path]) -> list[dict[str, str | None]]:
+    files, errors = placeholder_scan_files(root, documents)
+    occurrences: Counter[str] = Counter()
+    for path in files:
+        relative = path.relative_to(root).as_posix()
+        try:
+            text = path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            errors.append(error("PLACEHOLDER_SCAN_FILE_MISSING", relative, "placeholder scan target is missing"))
+            continue
+        except UnicodeError:
+            errors.append(error("PLACEHOLDER_SCAN_INVALID_UTF8", relative, "scanned text file must be valid UTF-8"))
+            continue
+        except OSError as exc:
+            errors.append(error("PLACEHOLDER_SCAN_UNREADABLE", relative, f"scanned text file could not be read: {exc.strerror or exc}"))
+            continue
+
+        if LEGACY_MARKER in text:
+            errors.append(error("PLACEHOLDER_LEGACY_MARKER", relative, "legacy placeholder marker is forbidden"))
+        matches = list(UNRESOLVED_MARKER.finditer(text))
+        remainder = UNRESOLVED_MARKER.sub("", text)
+        if UNRESOLVED_STEM in remainder:
+            errors.append(error("PLACEHOLDER_MALFORMED_MARKER", relative, "malformed unresolved marker uses the reserved stem"))
+        for match in matches:
+            entry = f"{relative}::{match.group(1)}"
+            occurrences[entry] += 1
+
+    allow = config["placeholders"]["allow"]
+    allowed = set(allow)
+    mode = config["mode"]
+    if mode == "project":
+        if allow:
+            errors.append(error("PLACEHOLDER_PROJECT_ALLOWLIST_NOT_EMPTY", "memory.toml", "project mode requires an empty placeholder allowlist"))
+        for entry, count in sorted(occurrences.items()):
+            errors.append(error("PLACEHOLDER_UNRESOLVED_PROJECT", entry.split("::", 1)[0], f"project mode rejects {entry} ({count} occurrence(s))"))
+    else:
+        for entry, count in sorted(occurrences.items()):
+            if entry not in allowed:
+                errors.append(error("PLACEHOLDER_NOT_ALLOWLISTED", entry.split("::", 1)[0], f"template marker is not allowlisted: {entry}"))
+            elif count != 1:
+                errors.append(error("PLACEHOLDER_CARDINALITY", entry.split("::", 1)[0], f"allowlisted marker must occur exactly once: {entry} occurs {count} times"))
+        for entry in sorted(allowed - set(occurrences)):
+            errors.append(error("PLACEHOLDER_ALLOWLIST_STALE", "memory.toml", f"allowlisted marker was not found: {entry}"))
+    return sorted(errors, key=lambda item: (item["path"] or "", item["code"] or "", item["message"] or ""))
+
+
 def run(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
     docs = root / "docs"
@@ -390,10 +498,9 @@ def run(root: Path = ROOT) -> list[str]:
 
     config, config_errors = validate_config(root)
     errors.extend(f"{item['path']}: {item['code']}: {item['message']}" for item in config_errors)
-    if config and not config_errors and config.get("mode") == "project":
-        for path in [root / "PROJECT.md", *documents]:
-            if "TEMPLATE_PLACEHOLDER[" in path.read_text(encoding="utf-8"):
-                errors.append(f"{path.relative_to(root).as_posix()}: unresolved template placeholder")
+    if config and not config_errors:
+        placeholder_errors = validate_placeholders(root, config, documents)
+        errors.extend(f"{item['path']}: {item['code']}: {item['message']}" for item in placeholder_errors)
     return sorted(errors)
 
 

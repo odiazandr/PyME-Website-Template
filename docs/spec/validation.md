@@ -18,7 +18,7 @@ The `checks` table has exactly the supported keys `build`, `test`, `lint`, and `
 
 Configured commands execute without a shell, from the repository root, with the validator process environment inherited. The runner does not print environment values. Output capture is limited to 65,536 characters per stream and execution to 300 seconds per check. Exit code zero is `PASSED`; a nonzero exit or timeout is `FAILED`; an executable that cannot be started is `UNVERIFIED`; an empty array is `NOT_CONFIGURED`. Every supported check appears in output and cannot silently disappear. Memory-contract validation remains distinct from configured project-check execution so callers can choose the appropriate scope without misleading output.
 
-The `placeholders` table contains exactly `allow`, an array of strings. Each entry has the exact form `<repository-relative POSIX path>::<KEY>` and authorizes that key only at that exact file in template mode; wildcards, traversal, absolute paths, backslashes, duplicate entries, and malformed keys fail. Project mode ignores the allowlist and rejects every active marker. The initial allowlist is empty.
+The `placeholders` table contains exactly `allow`, an array of strings. Each entry has the exact form `<repository-relative POSIX path>::<KEY>` and authorizes that key only at that exact file in template mode; wildcards, traversal, absolute paths, backslashes, duplicate entries, and malformed keys fail. Project mode requires this allowlist to be empty and rejects every active marker. The initial allowlist is empty.
 
 The `working_set` table contains exactly `enabled` (boolean), `directory` (safe repository-relative POSIX path), `maximum_pointers` (positive integer), and `maximum_reason_length` (positive integer). Unknown or mistyped fields fail.
 
@@ -38,11 +38,13 @@ Derived and scratch documents do not participate in deterministic canonical-owne
 
 ## Unresolved client-work markers
 
-The active unresolved-token syntax is `@@PYME_UNRESOLVED:<KEY>@@`, where `<KEY>` uses uppercase ASCII letters, digits, and underscores and begins with a letter. A token means verified client-specific work remains incomplete.
+The active unresolved-token syntax is described as `@@PYME_` + `UNRESOLVED…KEY…@@` to avoid embedding the live reserved stem in active documentation. In an actual token, remove the displayed spaces and plus sign, replace the ellipses around `KEY` with a colon before the key and no separator before the final `@@`. `KEY` uses uppercase ASCII letters, digits, and underscores and begins with a letter. A token means verified client-specific work remains incomplete. Any use of the reserved stem that does not form a valid token fails as malformed. The legacy spelling beginning with `TEMPLATE_PLACEHOLDER` followed immediately by an opening square bracket also fails.
 
-Template mode permits a valid unresolved token only when `<actual file path>::<KEY>` appears exactly once in `memory.toml`'s `placeholders.allow`. Project mode rejects every valid unresolved token in scanned production-relevant paths. Literal examples belong in excluded fixtures or use an escaped/non-active representation documented by tests.
+Template mode permits a valid unresolved token only when `<actual file path>::<KEY>` appears exactly once in `memory.toml`'s `placeholders.allow`, and the authorized token itself occurs exactly once. Missing allowlist targets, duplicate occurrences, and unlisted tokens fail. Project mode requires an empty allowlist and rejects every valid unresolved token in scanned production-relevant paths. Literal live examples belong only in excluded fixtures.
 
-The initial repository-memory scan includes `PROJECT.md`, `README.md`, active knowledge documents, `src/`, and `public/`. It excludes `.git/`, `docs/archive/`, `docs/audits/`, `docs/migrations/`, test fixtures, caches, generated dependency directories, and binary files. Runtime production validation later extends the same contract to active client configuration, content, legal documents, and `dist/`.
+The initial repository-memory scan includes `PROJECT.md`, `README.md`, active knowledge documents, and recursive text files under `src/` and `public/`. Text files are extensionless files or files ending in `.md`, `.txt`, `.html`, `.htm`, `.astro`, `.ts`, `.tsx`, `.js`, `.mjs`, `.cjs`, `.json`, `.toml`, `.yaml`, `.yml`, `.css`, `.scss`, `.svg`, `.xml`, `.csv`, or `.env`. Invalid UTF-8 in those surfaces fails; symbolic links fail and are not followed.
+
+The scan excludes `.git/`, `docs/archive/`, `docs/audits/`, `docs/migrations/`, binary/media extensions, and directories named `.astro`, `.cache`, `__fixtures__`, `__tests__`, `build`, `cache`, `coverage`, `dist`, `fixtures`, `generated`, `node_modules`, or `tests` below `src/` and `public/`. Runtime production validation later extends the same contract to active client configuration, content, legal documents, and the final `dist/` artifact.
 
 ## Result contract
 
