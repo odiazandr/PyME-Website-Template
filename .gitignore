@@ -1,15 +1,29 @@
-node_modules/
 __pycache__/
 *.py[cod]
-dist/
-.astro/
 .netlify/
-playwright-report/
-test-results/
-.env
-.env.*
-!.env.example
 .memory/current
 .memory/working-sets/*
 !.memory/working-sets/.gitignore
 !.memory/working-sets/README.md
+
+# Astro and Node
+node_modules/
+dist/
+.astro/
+
+# Test output
+coverage/
+playwright-report/
+test-results/
+
+# Local environment and logs
+.env
+.env.*
+!.env.example
+*.log
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

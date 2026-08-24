@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import io
 import json
 import os
 import sys
@@ -59,6 +60,11 @@ class ConfiguredCheckTests(unittest.TestCase):
         self.assertEqual(results[1]["code"], "NONZERO_EXIT")
         self.assertEqual(results[2]["code"], "EXECUTABLE_NOT_FOUND")
         self.assertIsNone(results[3]["code"])
+
+    def test_path_executable_shims_are_resolved_without_a_shell(self) -> None:
+        results = MEMORY_HEALTH.execute_checks(ROOT, self.commands(build=["npm", "--version"]))
+        self.assertEqual(results[0]["status"], "PASSED")
+        self.assertRegex(results[0]["stdout"].strip(), r"^\d+\.\d+\.\d+$")
 
     def test_timeout_is_failed_without_an_exit_code(self) -> None:
         started = time.monotonic()
@@ -140,6 +146,22 @@ class ConfiguredCheckTests(unittest.TestCase):
             result = MEMORY_HEALTH.validation_result(ROOT)
         self.assertEqual(result["overall_status"], "UNVERIFIED")
         self.assertEqual(result["checks"][0]["code"], "RECURSION_GUARD")
+
+    def test_json_cli_is_safe_on_a_legacy_console_encoding(self) -> None:
+        result = {
+            "schema_version": 1,
+            "scope": "contracts",
+            "overall_status": "PASSED",
+            "errors": [],
+            "checks": [MEMORY_HEALTH.check_result("build", "PASSED", exit_code=0, stdout="✓")],
+        }
+        buffer = io.BytesIO()
+        stream = io.TextIOWrapper(buffer, encoding="cp1252")
+        with mock.patch.object(MEMORY_HEALTH, "validation_result", return_value=result), mock.patch.object(sys, "stdout", stream):
+            self.assertEqual(MEMORY_HEALTH.main(["--scope", "contracts", "--json"]), 0)
+            stream.flush()
+            payload = json.loads(buffer.getvalue().decode("cp1252"))
+        self.assertEqual(payload["checks"][0]["stdout"], "✓")
 
 
 class MemoryConfigTests(unittest.TestCase):

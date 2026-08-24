@@ -47,7 +47,7 @@ Pointers only; summaries belong to their canonical owners.
 | T2 | `docs/runbooks/memory-health.md` | Memory audit procedure |
 | T2 | `docs/runbooks/active-working-set.md` | Working Set operating procedure |
 | T2 | `docs/runbooks/create-client-site.md` | Client-repository initialization |
-| T2 | `docs/runbooks/local-development.md` | Reserved local workflow |
+| T2 | `docs/runbooks/local-development.md` | Implemented local runtime workflow |
 | T2 | `docs/runbooks/customize-brand.md` | Brand customization sequence |
 | T2 | `docs/runbooks/populate-business-data.md` | Verified fact population |
 | T2 | `docs/runbooks/add-page.md` | Page addition procedure |
@@ -99,6 +99,6 @@ Pointers only; summaries belong to their canonical owners.
 | `ops/` | Deterministic memory-health tooling |
 | `schemas/` | Public JSON contracts; reserved until implemented |
 | `scripts/` | Website validators and initialization; reserved until implemented |
-| `tests/` | Memory, browser, and accessibility verification; reserved until implemented |
-| `src/` | Astro website source; reserved until runtime phase |
+| `tests/` | Implemented memory verification; browser and accessibility suites are planned |
+| `src/` | Implemented Astro runtime source; later website layers remain planned |
 | `docs/archive/` | Cold superseded material; inventory by path only |

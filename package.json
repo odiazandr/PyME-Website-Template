@@ -1,0 +1,33 @@
+{
+  "name": "pyme-website-template",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "format": "prettier --write src package.json astro.config.ts tsconfig.json prettier.config.mjs",
+    "format:check": "prettier --check src package.json astro.config.ts tsconfig.json prettier.config.mjs",
+    "quality:static": "npm run format:check && npm run check",
+    "quality": "npm run quality:static && npm run build",
+    "test": "python -m unittest discover -s tests/memory"
+  },
+  "dependencies": {
+    "astro": "7.2.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "prettier": "3.9.6",
+    "prettier-plugin-astro": "0.14.1",
+    "typescript": "6.0.3"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": false
+  }
+}

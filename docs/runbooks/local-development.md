@@ -2,8 +2,10 @@
 owner: docs/runbooks/local-development.md
 authority: canonical
 status: active
-answers: ["How will local development work?"]
+answers: ["How does local development work?"]
 ---
 # Local development
 
-Reserved for the runtime phase. The intended flow is Node 24, `npm ci`, documented npm scripts, a local Astro server, and checks from `memory.toml`. Do not treat these commands as available until `package.json` and the runtime exist.
+Use Node 24 from `.nvmrc`. Run `npm ci` to reproduce `package-lock.json`, then `npm run dev` for the local Astro server. Use `npm run format:check`, `npm run check`, and `npm run build` for focused runtime verification, or `python ops/memory_health.py` for the full repository contract and configured-check result.
+
+The available npm commands are `dev`, `build`, `preview`, `check`, `format`, `format:check`, `quality:static`, `quality`, and `test`. Formatting is intentionally scoped to runtime-owned source and configuration; repository-memory Markdown is governed by its structural validator rather than bulk formatting. The generated `.astro/`, `dist/`, and `node_modules/` directories are local artifacts and must not be committed.

@@ -9,6 +9,7 @@ import math
 import os
 import re
 import signal
+import shutil
 import subprocess
 import sys
 import threading
@@ -738,7 +739,9 @@ def execute_command(root: Path, command: list[str], timeout_seconds: float) -> t
         popen_options["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
     else:
         popen_options["start_new_session"] = True
-    process = subprocess.Popen(command, **popen_options)
+    executable = shutil.which(command[0]) if not Path(command[0]).is_absolute() else command[0]
+    resolved_command = [executable or command[0], *command[1:]]
+    process = subprocess.Popen(resolved_command, **popen_options)
     windows_job = create_windows_job(process)
     assert process.stdout is not None and process.stderr is not None
     stdout = bytearray()
@@ -839,8 +842,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--json", action="store_true", dest="as_json")
     arguments = parser.parse_args(argv)
     result = validation_result(ROOT, arguments.scope)
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(errors="backslashreplace")
     if arguments.as_json:
-        print(json.dumps(result, ensure_ascii=False, indent=2))
+        print(json.dumps(result, ensure_ascii=True, indent=2))
     else:
         print_human(result)
     return {"PASSED": 0, "FAILED": 1, "UNVERIFIED": 2}[result["overall_status"]]

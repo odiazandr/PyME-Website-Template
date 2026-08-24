@@ -11,6 +11,10 @@ Implemented repository-level ownership:
 | Fact | Canonical owner |
 |---|---|
 | Current implementation phase and capability evidence level | `project-state.json` |
+| Direct runtime dependencies and npm commands | `package.json` |
+| Complete resolved npm dependency graph | `package-lock.json` |
+| Astro build mode and integration configuration | `astro.config.ts` |
+| TypeScript compiler policy | `tsconfig.json` |
 
 Planned ownership after runtime implementation:
 

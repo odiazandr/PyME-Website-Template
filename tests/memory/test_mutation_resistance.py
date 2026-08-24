@@ -42,7 +42,7 @@ class MutationResistanceTests(unittest.TestCase):
                 shutil.copytree(
                     ROOT,
                     fixture,
-                    ignore=shutil.ignore_patterns(".git", "__pycache__", "audits"),
+                    ignore=shutil.ignore_patterns(".git", ".astro", "__pycache__", "audits", "dist", "node_modules"),
                 )
                 validator = fixture / "ops" / "memory_health.py"
                 source = validator.read_text(encoding="utf-8")

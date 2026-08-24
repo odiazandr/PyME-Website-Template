@@ -1,3 +1,3 @@
 # Tests
 
-Reserved for memory, smoke, and accessibility verification. No test command is claimed in `memory.toml` during this documentation-only phase.
+The implemented memory suite is configured in `memory.toml` and runs through `npm test` or the full memory-health command. Browser smoke and accessibility suites remain planned for their later implementation phase.

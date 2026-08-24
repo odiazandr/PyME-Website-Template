@@ -1,0 +1,33 @@
+---
+const title = "PyME Website Foundation";
+const description =
+  "Base técnica estática para sitios web profesionales de pequeñas y medianas empresas.";
+---
+
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header>
+      <nav aria-label="Navegación principal">
+        <a href="/">{title}</a>
+      </nav>
+    </header>
+    <main>
+      <h1>{title}</h1>
+      <p>{description}</p>
+      <p>
+        La base de ejecución está instalada. El diseño y los datos del negocio
+        se incorporan en fases posteriores.
+      </p>
+    </main>
+    <footer>
+      <p>Plantilla en desarrollo.</p>
+    </footer>
+  </body>
+</html>
