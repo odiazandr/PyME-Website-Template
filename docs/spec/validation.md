@@ -32,7 +32,9 @@ Every discovered active document must satisfy `docs/spec/frontmatter.md` and app
 
 ## Ownership questions
 
-Canonical ownership questions are normalized with Unicode-aware behavior suitable for Spanish. Empty normalized keys fail. Exact normalized duplicates among canonical owners fail. Derived and scratch documents may answer a routed question only when they point to its canonical owner; semantic overlap still requires human review.
+Canonical ownership questions are case-folded and Unicode-normalized. Latin accent marks are ignored for collision detection except the tilde forming Spanish `ñ`, which remains distinct from `n`; combining marks in non-Latin scripts are preserved. Punctuation and whitespace collapse to separators. Empty normalized keys fail. Exact normalized duplicates among canonical owners fail.
+
+Derived and scratch documents do not participate in deterministic canonical-owner collision checks. Their required relationship to canonical truth is reviewed semantically; the validator does not claim to prove a prose pointer is correct. Semantic overlap among differently worded canonical questions also requires human review.
 
 ## Unresolved client-work markers
 

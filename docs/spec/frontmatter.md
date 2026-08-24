@@ -10,7 +10,7 @@ Active knowledge documents use a deliberately small, strict YAML-compatible fron
 
 Required keys occur exactly once:
 
-- `owner`: repository-relative POSIX path equal to the document's actual path; absolute paths, traversal segments, backslashes, and duplicate keys fail.
+- `owner`: repository-relative POSIX path equal to the document's actual path; absolute paths, traversal segments, backslashes, wildcards, Markdown-table delimiters, backticks, and duplicate keys fail.
 - `authority`: exactly `canonical`, `derived`, or `scratch`.
 - `status`: exactly `active`, `superseded`, or `archived`.
 - `answers`: a non-empty list of non-empty quoted question strings.

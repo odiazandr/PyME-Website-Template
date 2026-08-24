@@ -124,7 +124,7 @@ maximum_reason_length = 160
         self.assertIn("CONFIG_INVALID_WORKING_SET_LIMIT", codes)
 
     def test_safe_relative_posix_rejects_nonportable_spellings(self) -> None:
-        for value in ("C:foo", "C:/outside", "foo:bar", "foo//bar", "foo/./bar", "foo/../bar", "/foo", "foo/", "foo. /bar", "src/*.md", "src/file?.md", "src/[ab].md"):
+        for value in ("C:foo", "C:/outside", "foo:bar", "foo//bar", "foo/./bar", "foo/../bar", "/foo", "foo/", "foo. /bar", "src/*.md", "src/file?.md", "src/[ab].md", "docs/spec/a`b.md", "docs/spec/a|b.md"):
             with self.subTest(value=value):
                 self.assertFalse(MEMORY_HEALTH.safe_relative_posix(value))
         self.assertTrue(MEMORY_HEALTH.safe_relative_posix(".memory/working-sets"))
@@ -229,6 +229,105 @@ answers: ["What does this example own?", "How is it validated?"]
             failures = MEMORY_HEALTH.run(root)
         self.assertTrue(any("FRONTMATTER_INVALID_ANSWER" in item for item in failures))
         self.assertFalse(any("duplicate ownership question" in item for item in failures))
+
+
+class DiscoveryAndIndexTests(unittest.TestCase):
+    def document(self, owner: str, question: str, authority: str = "canonical") -> str:
+        return f'---\nowner: {owner}\nauthority: {authority}\nstatus: active\nanswers: ["{question}"]\n---\n# Test\n'
+
+    def repository(self) -> tempfile.TemporaryDirectory[str]:
+        temporary = tempfile.TemporaryDirectory()
+        root = Path(temporary.name)
+        for directory in ("spec", "runbooks", "explain", "decisions"):
+            (root / "docs" / directory).mkdir(parents=True)
+        (root / "docs" / "GLOSSARY.md").write_text(self.document("docs/GLOSSARY.md", "What vocabulary is tested?"), encoding="utf-8")
+        rows = [
+            "| Tier | File | Owns |",
+            "|---|---|---|",
+            "| T0 | `PROJECT.md` | Constitution |",
+            "| T1 | `docs/INDEX.md` | Index |",
+            "| T1 | `docs/GLOSSARY.md` | Vocabulary |",
+        ]
+        index = self.document("docs/INDEX.md", "Where is test knowledge indexed?") + "\n" + "\n".join(rows) + "\n"
+        (root / "docs" / "INDEX.md").write_text(index, encoding="utf-8")
+        (root / "PROJECT.md").write_text("# Project\n", encoding="utf-8")
+        (root / "memory.toml").write_text(MemoryConfigTests().valid_config(), encoding="utf-8")
+        return temporary
+
+    def add_index_row(self, root: Path, row: str) -> None:
+        path = root / "docs" / "INDEX.md"
+        path.write_text(path.read_text(encoding="utf-8") + row + "\n", encoding="utf-8")
+
+    def test_nested_active_document_is_discovered(self) -> None:
+        temporary = self.repository()
+        try:
+            root = Path(temporary.name)
+            path = root / "docs" / "spec" / "nested" / "example.md"
+            path.parent.mkdir()
+            path.write_text(self.document("docs/spec/nested/example.md", "What nested fact is tested?"), encoding="utf-8")
+            failures = MEMORY_HEALTH.run(root)
+            self.assertTrue(any("INDEX_ENTRY_MISSING" in item and "nested/example.md" in item for item in failures))
+            self.add_index_row(root, "| T2 | `docs/spec/nested/example.md` | Nested |")
+            self.assertFalse(any("nested/example.md" in item for item in MEMORY_HEALTH.run(root)))
+        finally:
+            temporary.cleanup()
+
+    def test_duplicate_stale_prose_only_and_wrong_tier_entries_fail(self) -> None:
+        temporary = self.repository()
+        try:
+            root = Path(temporary.name)
+            path = root / "docs" / "spec" / "example.md"
+            path.write_text(self.document("docs/spec/example.md", "What indexed fact is tested?"), encoding="utf-8")
+            index = root / "docs" / "INDEX.md"
+            index.write_text(index.read_text(encoding="utf-8") + "\nMention `docs/spec/example.md` only.\n", encoding="utf-8")
+            self.assertTrue(any("INDEX_ENTRY_MISSING" in item and "example.md" in item for item in MEMORY_HEALTH.run(root)))
+            self.add_index_row(root, "| T1 | `docs/spec/example.md` | Wrong tier |")
+            self.add_index_row(root, "| T1 | `docs/spec/example.md` | Duplicate |")
+            self.add_index_row(root, "| T2 | `docs/spec/missing.md` | Stale |")
+            failures = MEMORY_HEALTH.run(root)
+            self.assertTrue(any("INDEX_ENTRY_DUPLICATE" in item for item in failures))
+            self.assertTrue(any("INDEX_ENTRY_STALE" in item for item in failures))
+            self.assertTrue(any("INDEX_TIER_MISMATCH" in item for item in failures))
+            self.add_index_row(root, "| T9 | `docs/spec/ghost.md` | Invalid tier |")
+            self.assertTrue(any("INDEX_MALFORMED_ROW" in item for item in MEMORY_HEALTH.run(root)))
+        finally:
+            temporary.cleanup()
+
+    def test_unicode_question_normalization_is_stable(self) -> None:
+        self.assertEqual(MEMORY_HEALTH.normalize_question("¿Qué información hay?"), "que informacion hay")
+        self.assertEqual(MEMORY_HEALTH.normalize_question("Que informacion hay?"), "que informacion hay")
+        self.assertEqual(MEMORY_HEALTH.normalize_question("AÑO"), "año")
+        self.assertNotEqual(MEMORY_HEALTH.normalize_question("AÑO"), MEMORY_HEALTH.normalize_question("ano"))
+        self.assertEqual(MEMORY_HEALTH.normalize_question("你好？"), "你好")
+        self.assertNotEqual(MEMORY_HEALTH.normalize_question("क"), MEMORY_HEALTH.normalize_question("कि"))
+        self.assertNotEqual(MEMORY_HEALTH.normalize_question("ب"), MEMORY_HEALTH.normalize_question("بَ"))
+        self.assertEqual(MEMORY_HEALTH.normalize_question("???"), "")
+
+    def test_derived_question_does_not_claim_canonical_ownership(self) -> None:
+        temporary = self.repository()
+        try:
+            root = Path(temporary.name)
+            canonical = root / "docs" / "spec" / "canonical.md"
+            derived = root / "docs" / "explain" / "derived.md"
+            canonical.write_text(self.document("docs/spec/canonical.md", "What shared fact exists?"), encoding="utf-8")
+            derived.write_text(self.document("docs/explain/derived.md", "What shared fact exists?", authority="derived"), encoding="utf-8")
+            self.add_index_row(root, "| T2 | `docs/spec/canonical.md` | Canonical |")
+            self.add_index_row(root, "| T2 | `docs/explain/derived.md` | Derived |")
+            self.assertFalse(any("OWNERSHIP_QUESTION_DUPLICATE" in item for item in MEMORY_HEALTH.run(root)))
+        finally:
+            temporary.cleanup()
+
+    def test_run_errors_are_globally_deterministic(self) -> None:
+        temporary = self.repository()
+        try:
+            root = Path(temporary.name)
+            (root / "docs" / "spec" / "zeta.md").write_text("# Invalid\n", encoding="utf-8")
+            (root / "docs" / "spec" / "alpha.md").write_text("# Invalid\n", encoding="utf-8")
+            failures = MEMORY_HEALTH.run(root)
+            self.assertEqual(failures, sorted(failures))
+            self.assertEqual(failures, MEMORY_HEALTH.run(root))
+        finally:
+            temporary.cleanup()
 
 
 if __name__ == "__main__":

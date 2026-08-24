@@ -7,6 +7,8 @@ import json
 import re
 import sys
 import tomllib
+import unicodedata
+from collections import Counter
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -24,6 +26,7 @@ WORKING_SET_KEYS = frozenset({"enabled", "directory", "maximum_pointers", "maxim
 PLACEHOLDER_KEY = re.compile(r"^[A-Z][A-Z0-9_]*$")
 SHELL_EXECUTABLES = frozenset({"sh", "bash", "zsh", "fish", "cmd", "cmd.exe", "powershell", "powershell.exe", "pwsh", "pwsh.exe"})
 SHELL_METATOKENS = frozenset({"|", "||", "&&", ";", "<", ">", ">>", "1>", "1>>", "2>", "2>>", "&>"})
+INDEX_ROW = re.compile(r"^\|\s*(T[0-4])\s*\|\s*`([^`]+\.md)`\s*\|[^|]*\|\s*$")
 
 
 def error(code: str, path: str | None, message: str) -> dict[str, str | None]:
@@ -36,7 +39,7 @@ def safe_relative_posix(value: object) -> bool:
         or not value
         or "\\" in value
         or ":" in value
-        or any(character in value for character in "*?[]")
+        or any(character in value for character in "*?[]`|")
         or value.startswith("/")
         or value.endswith("/")
         or any(ord(character) < 32 for character in value)
@@ -262,36 +265,126 @@ def parse_frontmatter(path: Path, root: Path = ROOT) -> tuple[dict[str, object] 
 
 
 def normalize_question(value: str) -> str:
-    return re.sub(r"[^a-z0-9]+", " ", value.casefold()).strip()
+    normalized = unicodedata.normalize("NFKD", value.casefold())
+    characters: list[str] = []
+    last_base_is_latin = False
+    for character in normalized:
+        category = unicodedata.category(character)
+        if category.startswith("M"):
+            if last_base_is_latin:
+                if characters and characters[-1] == "n" and unicodedata.name(character, "") == "COMBINING TILDE":
+                    characters[-1] = "ñ"
+                continue
+            if characters and characters[-1] != " ":
+                characters.append(character)
+            continue
+        if character.isalnum():
+            characters.append(character)
+            last_base_is_latin = "LATIN" in unicodedata.name(character, "")
+        else:
+            if characters and characters[-1] != " ":
+                characters.append(" ")
+            last_base_is_latin = False
+    return unicodedata.normalize("NFC", "".join(characters)).strip()
 
 
-def active_documents() -> list[Path]:
-    paths = [INDEX, DOCS / "GLOSSARY.md"]
+def active_documents(root: Path = ROOT) -> tuple[list[Path], list[dict[str, str | None]]]:
+    docs = root / "docs"
+    paths = [docs / "INDEX.md", docs / "GLOSSARY.md"]
+    errors: list[dict[str, str | None]] = []
     for directory in KNOWLEDGE_DIRS:
-        paths.extend(sorted((DOCS / directory).glob("*.md")))
-    return paths
+        active_root = docs / directory
+        if not active_root.is_dir():
+            errors.append(error("ACTIVE_ROOT_MISSING", active_root.relative_to(root).as_posix(), "required active knowledge root is missing"))
+            continue
+        for path in sorted(active_root.rglob("*")):
+            if not path.is_file():
+                continue
+            if path.suffix.casefold() != ".md":
+                continue
+            relative = path.relative_to(root).as_posix()
+            if path.suffix != ".md":
+                errors.append(error("DOCUMENT_NONCANONICAL_EXTENSION", relative, "knowledge documents must use the lowercase .md extension"))
+                continue
+            if path.is_symlink():
+                errors.append(error("DOCUMENT_SYMLINK", relative, "active knowledge documents may not be symbolic links"))
+                continue
+            paths.append(path)
+    return paths, errors
+
+
+def expected_tier(path: str) -> str:
+    if path == "PROJECT.md":
+        return "T0"
+    if path in {"docs/INDEX.md", "docs/GLOSSARY.md"}:
+        return "T1"
+    if path.startswith("docs/decisions/"):
+        return "T3"
+    return "T2"
+
+
+def validate_index(root: Path, active_paths: list[str]) -> list[dict[str, str | None]]:
+    path = root / "docs" / "INDEX.md"
+    relative = "docs/INDEX.md"
+    try:
+        text = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return [error("INDEX_MISSING", relative, "documentation index is missing")]
+    except UnicodeError:
+        return [error("INDEX_INVALID_UTF8", relative, "documentation index must be valid UTF-8")]
+    except OSError as exc:
+        return [error("INDEX_UNREADABLE", relative, f"documentation index could not be read: {exc.strerror or exc}")]
+
+    entries: list[tuple[str, str, int]] = []
+    errors: list[dict[str, str | None]] = []
+    for line_number, line in enumerate(text.splitlines(), start=1):
+        match = INDEX_ROW.fullmatch(line)
+        if match:
+            tier, target = match.groups()
+            entries.append((target, tier, line_number))
+        elif re.match(r"^\|\s*T\d+\s*\|", line):
+            errors.append(error("INDEX_MALFORMED_ROW", relative, f"line {line_number}: malformed active-document index row"))
+
+    expected = {"PROJECT.md", *active_paths}
+    counts = Counter(target for target, _, _ in entries)
+    for target in sorted(expected):
+        count = counts[target]
+        if count == 0:
+            errors.append(error("INDEX_ENTRY_MISSING", relative, f"active document is not indexed: {target}"))
+        elif count > 1:
+            errors.append(error("INDEX_ENTRY_DUPLICATE", relative, f"active document is indexed {count} times: {target}"))
+    for target in sorted(set(counts) - expected):
+        errors.append(error("INDEX_ENTRY_STALE", relative, f"indexed active document is not discovered: {target}"))
+    for target, tier, line_number in entries:
+        if target in expected and tier != expected_tier(target):
+            errors.append(error("INDEX_TIER_MISMATCH", relative, f"line {line_number}: {target} must use tier {expected_tier(target)}"))
+    return sorted(errors, key=lambda item: (item["path"] or "", item["code"] or "", item["message"] or ""))
 
 
 def run(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
     docs = root / "docs"
     index = docs / "INDEX.md"
-    index_text = index.read_text(encoding="utf-8") if index.exists() else ""
     questions: dict[str, str] = {}
 
-    documents = active_documents() if root == ROOT else [index, docs / "GLOSSARY.md", *[path for directory in KNOWLEDGE_DIRS for path in sorted((docs / directory).glob("*.md"))]]
+    documents, discovery_errors = active_documents(root)
+    errors.extend(f"{item['path']}: {item['code']}: {item['message']}" for item in discovery_errors)
+    relative_documents = [path.relative_to(root).as_posix() for path in documents]
+    index_errors = validate_index(root, relative_documents)
+    errors.extend(f"{item['path']}: {item['code']}: {item['message']}" for item in index_errors)
     for path in documents:
         relative = path.relative_to(root).as_posix()
         metadata, metadata_errors = parse_frontmatter(path, root)
         errors.extend(f"{item['path']}: {item['code']}: {item['message']}" for item in metadata_errors)
-        if path != index and f"`{relative}`" not in index_text:
-            errors.append(f"{relative}: missing from docs/INDEX.md")
-        answers = metadata.get("answers", []) if metadata and not metadata_errors else []
+        answers = metadata.get("answers", []) if metadata and not metadata_errors and metadata.get("authority") == "canonical" else []
         if isinstance(answers, list):
             for answer in answers:
                 key = normalize_question(str(answer))
+                if not key:
+                    errors.append(f"{relative}: OWNERSHIP_QUESTION_EMPTY: ownership question has no normalized letters or numbers")
+                    continue
                 if key in questions:
-                    errors.append(f"duplicate ownership question: {relative} and {questions[key]}")
+                    errors.append(f"{relative}: OWNERSHIP_QUESTION_DUPLICATE: duplicates canonical question owned by {questions[key]}")
                 else:
                     questions[key] = relative
 
@@ -301,7 +394,7 @@ def run(root: Path = ROOT) -> list[str]:
         for path in [root / "PROJECT.md", *documents]:
             if "TEMPLATE_PLACEHOLDER[" in path.read_text(encoding="utf-8"):
                 errors.append(f"{path.relative_to(root).as_posix()}: unresolved template placeholder")
-    return errors
+    return sorted(errors)
 
 
 if __name__ == "__main__":
