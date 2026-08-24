@@ -4,9 +4,15 @@
 from __future__ import annotations
 
 import json
+import argparse
+import math
 import os
 import re
+import signal
+import subprocess
 import sys
+import threading
+import time
 import tomllib
 import unicodedata
 from collections import Counter
@@ -33,6 +39,11 @@ UNRESOLVED_STEM = "@@PYME_UNRESOLVED"
 LEGACY_MARKER = "TEMPLATE_PLACEHOLDER["
 PLACEHOLDER_TEXT_SUFFIXES = frozenset({"", ".md", ".txt", ".html", ".htm", ".astro", ".ts", ".tsx", ".js", ".mjs", ".cjs", ".json", ".toml", ".yaml", ".yml", ".css", ".scss", ".svg", ".xml", ".csv", ".env"})
 PLACEHOLDER_EXCLUDED_DIRECTORIES = frozenset({".astro", ".cache", "__fixtures__", "__tests__", "build", "cache", "coverage", "dist", "fixtures", "generated", "node_modules", "tests"})
+RESULT_SCHEMA_VERSION = 1
+OUTPUT_LIMIT = 65_536
+TRUNCATION_MARKER = "...[TRUNCATED]"
+DEFAULT_CHECK_TIMEOUT_SECONDS = 300
+CHECK_GUARD_ENV = "PYME_MEMORY_CHECK_ACTIVE"
 
 
 def error(code: str, path: str | None, message: str) -> dict[str, str | None]:
@@ -469,46 +480,290 @@ def validate_placeholders(root: Path, config: dict[str, Any], documents: list[Pa
     return sorted(errors, key=lambda item: (item["path"] or "", item["code"] or "", item["message"] or ""))
 
 
-def run(root: Path = ROOT) -> list[str]:
-    errors: list[str] = []
+def validate_contracts(root: Path = ROOT) -> tuple[dict[str, Any] | None, list[dict[str, str | None]]]:
+    errors: list[dict[str, str | None]] = []
     docs = root / "docs"
-    index = docs / "INDEX.md"
     questions: dict[str, str] = {}
 
     documents, discovery_errors = active_documents(root)
-    errors.extend(f"{item['path']}: {item['code']}: {item['message']}" for item in discovery_errors)
+    errors.extend(discovery_errors)
     relative_documents = [path.relative_to(root).as_posix() for path in documents]
-    index_errors = validate_index(root, relative_documents)
-    errors.extend(f"{item['path']}: {item['code']}: {item['message']}" for item in index_errors)
+    errors.extend(validate_index(root, relative_documents))
     for path in documents:
         relative = path.relative_to(root).as_posix()
         metadata, metadata_errors = parse_frontmatter(path, root)
-        errors.extend(f"{item['path']}: {item['code']}: {item['message']}" for item in metadata_errors)
+        errors.extend(metadata_errors)
         answers = metadata.get("answers", []) if metadata and not metadata_errors and metadata.get("authority") == "canonical" else []
         if isinstance(answers, list):
             for answer in answers:
                 key = normalize_question(str(answer))
                 if not key:
-                    errors.append(f"{relative}: OWNERSHIP_QUESTION_EMPTY: ownership question has no normalized letters or numbers")
+                    errors.append(error("OWNERSHIP_QUESTION_EMPTY", relative, "ownership question has no normalized letters or numbers"))
                     continue
                 if key in questions:
-                    errors.append(f"{relative}: OWNERSHIP_QUESTION_DUPLICATE: duplicates canonical question owned by {questions[key]}")
+                    errors.append(error("OWNERSHIP_QUESTION_DUPLICATE", relative, f"duplicates canonical question owned by {questions[key]}"))
                 else:
                     questions[key] = relative
 
     config, config_errors = validate_config(root)
-    errors.extend(f"{item['path']}: {item['code']}: {item['message']}" for item in config_errors)
+    errors.extend(config_errors)
     if config and not config_errors:
-        placeholder_errors = validate_placeholders(root, config, documents)
-        errors.extend(f"{item['path']}: {item['code']}: {item['message']}" for item in placeholder_errors)
-    return sorted(errors)
+        errors.extend(validate_placeholders(root, config, documents))
+    return config, sorted(errors, key=lambda item: (item["path"] or "", item["code"] or "", item["message"] or ""))
+
+
+def run(root: Path = ROOT) -> list[str]:
+    _, errors = validate_contracts(root)
+    return [f"{item['path']}: {item['code']}: {item['message']}" for item in errors]
+
+
+def truncate_output(value: bytes | str | None) -> tuple[str, bool]:
+    if value is None:
+        text = ""
+    elif isinstance(value, bytes):
+        text = value.decode("utf-8", errors="replace")
+    else:
+        text = value
+    if len(text) <= OUTPUT_LIMIT:
+        return text, False
+    return text[: OUTPUT_LIMIT - len(TRUNCATION_MARKER)] + TRUNCATION_MARKER, True
+
+
+def check_result(
+    name: str,
+    status: str,
+    *,
+    exit_code: int | None = None,
+    code: str | None = None,
+    diagnostic: str = "",
+    stdout: bytes | str | None = None,
+    stderr: bytes | str | None = None,
+) -> dict[str, Any]:
+    stdout_text, stdout_truncated = truncate_output(stdout)
+    stderr_text, stderr_truncated = truncate_output(stderr)
+    return {
+        "name": name,
+        "status": status,
+        "exit_code": exit_code,
+        "code": code,
+        "diagnostic": diagnostic,
+        "stdout": stdout_text,
+        "stderr": stderr_text,
+        "stdout_truncated": stdout_truncated,
+        "stderr_truncated": stderr_truncated,
+    }
+
+
+def read_bounded(stream: Any, destination: bytearray) -> None:
+    try:
+        try:
+            while chunk := stream.read(8192):
+                remaining = OUTPUT_LIMIT + 1 - len(destination)
+                if remaining > 0:
+                    destination.extend(chunk[:remaining])
+        except OSError:
+            pass
+    finally:
+        stream.close()
+
+
+def create_windows_job(process: subprocess.Popen[bytes]) -> int | None:
+    if os.name != "nt":
+        return None
+    import ctypes
+    from ctypes import wintypes
+
+    class IoCounters(ctypes.Structure):
+        _fields_ = [(name, ctypes.c_ulonglong) for name in ("ReadOperationCount", "WriteOperationCount", "OtherOperationCount", "ReadTransferCount", "WriteTransferCount", "OtherTransferCount")]
+
+    class BasicLimitInformation(ctypes.Structure):
+        _fields_ = [
+            ("PerProcessUserTimeLimit", ctypes.c_longlong),
+            ("PerJobUserTimeLimit", ctypes.c_longlong),
+            ("LimitFlags", wintypes.DWORD),
+            ("MinimumWorkingSetSize", ctypes.c_size_t),
+            ("MaximumWorkingSetSize", ctypes.c_size_t),
+            ("ActiveProcessLimit", wintypes.DWORD),
+            ("Affinity", ctypes.c_size_t),
+            ("PriorityClass", wintypes.DWORD),
+            ("SchedulingClass", wintypes.DWORD),
+        ]
+
+    class ExtendedLimitInformation(ctypes.Structure):
+        _fields_ = [
+            ("BasicLimitInformation", BasicLimitInformation),
+            ("IoInfo", IoCounters),
+            ("ProcessMemoryLimit", ctypes.c_size_t),
+            ("JobMemoryLimit", ctypes.c_size_t),
+            ("PeakProcessMemoryUsed", ctypes.c_size_t),
+            ("PeakJobMemoryUsed", ctypes.c_size_t),
+        ]
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32.CreateJobObjectW.restype = wintypes.HANDLE
+    kernel32.SetInformationJobObject.argtypes = [wintypes.HANDLE, ctypes.c_int, ctypes.c_void_p, wintypes.DWORD]
+    kernel32.AssignProcessToJobObject.argtypes = [wintypes.HANDLE, wintypes.HANDLE]
+    handle = kernel32.CreateJobObjectW(None, None)
+    if not handle:
+        return None
+    information = ExtendedLimitInformation()
+    information.BasicLimitInformation.LimitFlags = 0x00002000
+    if not kernel32.SetInformationJobObject(handle, 9, ctypes.byref(information), ctypes.sizeof(information)) or not kernel32.AssignProcessToJobObject(handle, wintypes.HANDLE(process._handle)):
+        kernel32.CloseHandle(handle)
+        return None
+    return int(handle)
+
+
+def close_windows_job(handle: int | None) -> None:
+    if handle is None:
+        return
+    import ctypes
+    from ctypes import wintypes
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32.CloseHandle(wintypes.HANDLE(handle))
+
+
+def terminate_process_tree(process: subprocess.Popen[bytes], windows_job: int | None = None) -> None:
+    if os.name == "nt":
+        if windows_job is not None:
+            close_windows_job(windows_job)
+            return
+        try:
+            completed = subprocess.run(["taskkill", "/PID", str(process.pid), "/T", "/F"], capture_output=True, check=False, timeout=10)
+            if completed.returncode != 0 and process.poll() is None:
+                process.kill()
+        except (OSError, subprocess.SubprocessError):
+            if process.poll() is None:
+                process.kill()
+    else:
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            process.kill()
+
+
+def execute_command(root: Path, command: list[str], timeout_seconds: float) -> tuple[int | None, bytes, bytes, bool]:
+    environment = os.environ.copy()
+    environment[CHECK_GUARD_ENV] = "1"
+    popen_options: dict[str, Any] = {
+        "cwd": root,
+        "shell": False,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.PIPE,
+        "env": environment,
+    }
+    if os.name == "nt":
+        popen_options["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
+    else:
+        popen_options["start_new_session"] = True
+    process = subprocess.Popen(command, **popen_options)
+    windows_job = create_windows_job(process)
+    assert process.stdout is not None and process.stderr is not None
+    stdout = bytearray()
+    stderr = bytearray()
+    readers = [
+        threading.Thread(target=read_bounded, args=(process.stdout, stdout), daemon=True),
+        threading.Thread(target=read_bounded, args=(process.stderr, stderr), daemon=True),
+    ]
+    for reader in readers:
+        reader.start()
+    timed_out = False
+    deadline = time.monotonic() + timeout_seconds
+    try:
+        process.wait(timeout=timeout_seconds)
+    except subprocess.TimeoutExpired:
+        timed_out = True
+        terminate_process_tree(process, windows_job)
+        windows_job = None
+        process.wait()
+    if windows_job is not None:
+        close_windows_job(windows_job)
+        windows_job = None
+    for reader in readers:
+        reader.join(timeout=max(0, deadline - time.monotonic()))
+    if any(reader.is_alive() for reader in readers):
+        timed_out = True
+        terminate_process_tree(process, windows_job)
+        for reader in readers:
+            reader.join(timeout=1)
+    return (None if timed_out else process.returncode), bytes(stdout), bytes(stderr), timed_out
+
+
+def execute_checks(root: Path, checks: dict[str, list[str]], timeout_seconds: float = DEFAULT_CHECK_TIMEOUT_SECONDS) -> list[dict[str, Any]]:
+    if not isinstance(timeout_seconds, (int, float)) or isinstance(timeout_seconds, bool) or not math.isfinite(timeout_seconds) or timeout_seconds <= 0:
+        raise ValueError("check timeout must be a finite positive number")
+    results: list[dict[str, Any]] = []
+    for name in CHECK_NAMES:
+        command = checks[name]
+        if not command:
+            results.append(check_result(name, "NOT_CONFIGURED", diagnostic="check is not configured"))
+            continue
+        try:
+            exit_code, stdout, stderr, timed_out = execute_command(root, command, timeout_seconds)
+        except FileNotFoundError:
+            results.append(check_result(name, "UNVERIFIED", code="EXECUTABLE_NOT_FOUND", diagnostic="configured executable was not found"))
+        except OSError:
+            results.append(check_result(name, "UNVERIFIED", code="START_ERROR", diagnostic="configured check could not be started"))
+        else:
+            if timed_out:
+                results.append(check_result(name, "FAILED", code="TIMEOUT", diagnostic=f"check exceeded {timeout_seconds:g} seconds", stdout=stdout, stderr=stderr))
+            elif exit_code == 0:
+                results.append(check_result(name, "PASSED", exit_code=0, diagnostic="check completed successfully", stdout=stdout, stderr=stderr))
+            else:
+                results.append(check_result(name, "FAILED", exit_code=exit_code, code="NONZERO_EXIT", diagnostic="check exited with a nonzero status", stdout=stdout, stderr=stderr))
+    return results
+
+
+def validation_result(root: Path = ROOT, scope: str = "all", timeout_seconds: float = DEFAULT_CHECK_TIMEOUT_SECONDS) -> dict[str, Any]:
+    if scope not in {"contracts", "all"}:
+        raise ValueError(f"unsupported validation scope: {scope}")
+    config, errors = validate_contracts(root)
+    checks: list[dict[str, Any]] = []
+    if scope == "all":
+        configured = config.get("checks") if config and isinstance(config.get("checks"), dict) else None
+        recursion_guarded = os.environ.get(CHECK_GUARD_ENV) == "1"
+        if errors or recursion_guarded:
+            for name in CHECK_NAMES:
+                command = configured.get(name) if configured else None
+                if command == []:
+                    checks.append(check_result(name, "NOT_CONFIGURED", diagnostic="check is not configured"))
+                else:
+                    code = "CONTRACTS_FAILED" if errors else "RECURSION_GUARD"
+                    diagnostic = "check was not run because memory contracts failed" if errors else "nested configured-check execution is forbidden"
+                    checks.append(check_result(name, "UNVERIFIED", code=code, diagnostic=diagnostic))
+        else:
+            checks = execute_checks(root, configured, timeout_seconds)
+    if errors or any(item["status"] == "FAILED" for item in checks):
+        overall_status = "FAILED"
+    elif any(item["status"] == "UNVERIFIED" for item in checks):
+        overall_status = "UNVERIFIED"
+    else:
+        overall_status = "PASSED"
+    return {"schema_version": RESULT_SCHEMA_VERSION, "scope": scope, "overall_status": overall_status, "errors": errors, "checks": checks}
+
+
+def print_human(result: dict[str, Any]) -> None:
+    print(f"MEMORY HEALTH: {result['overall_status']}")
+    for item in result["errors"]:
+        print(f"- {item['path']}: {item['code']}: {item['message']}")
+    for item in result["checks"]:
+        suffix = f" ({item['code']})" if item["code"] else ""
+        print(f"- {item['name']}: {item['status']}{suffix}")
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--scope", choices=("contracts", "all"), default="all")
+    parser.add_argument("--json", action="store_true", dest="as_json")
+    arguments = parser.parse_args(argv)
+    result = validation_result(ROOT, arguments.scope)
+    if arguments.as_json:
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    else:
+        print_human(result)
+    return {"PASSED": 0, "FAILED": 1, "UNVERIFIED": 2}[result["overall_status"]]
 
 
 if __name__ == "__main__":
-    failures = run()
-    if failures:
-        print("MEMORY HEALTH: FAILED")
-        for failure in failures:
-            print(f"- {failure}")
-        sys.exit(1)
-    print("MEMORY HEALTH: PASSED")
+    sys.exit(main())

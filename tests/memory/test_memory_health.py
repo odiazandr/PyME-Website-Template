@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 import importlib.util
+import os
+import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -22,6 +26,102 @@ class MemoryHealthTests(unittest.TestCase):
             MEMORY_HEALTH.normalize_question("How is DNS changed?"),
             MEMORY_HEALTH.normalize_question("HOW is DNS changed!"),
         )
+
+
+class ConfiguredCheckTests(unittest.TestCase):
+    def commands(self, **overrides: list[str]) -> dict[str, list[str]]:
+        commands = {name: [] for name in MEMORY_HEALTH.CHECK_NAMES}
+        commands.update(overrides)
+        return commands
+
+    def test_check_results_have_fixed_order_and_honest_statuses(self) -> None:
+        results = MEMORY_HEALTH.execute_checks(
+            ROOT,
+            self.commands(
+                build=[sys.executable, "-c", "print('built')"],
+                test=[sys.executable, "-c", "import sys; print('bad', file=sys.stderr); sys.exit(7)"],
+                lint=["pyme-executable-that-does-not-exist"],
+            ),
+        )
+        self.assertEqual([item["name"] for item in results], list(MEMORY_HEALTH.CHECK_NAMES))
+        self.assertEqual([item["status"] for item in results], ["PASSED", "FAILED", "UNVERIFIED", "NOT_CONFIGURED"])
+        self.assertEqual(results[0]["exit_code"], 0)
+        self.assertEqual(results[1]["exit_code"], 7)
+        self.assertEqual(results[1]["code"], "NONZERO_EXIT")
+        self.assertEqual(results[2]["code"], "EXECUTABLE_NOT_FOUND")
+        self.assertIsNone(results[3]["code"])
+
+    def test_timeout_is_failed_without_an_exit_code(self) -> None:
+        started = time.monotonic()
+        results = MEMORY_HEALTH.execute_checks(
+            ROOT,
+            self.commands(build=[sys.executable, "-c", "import subprocess, sys, time; subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(5)']); time.sleep(5)"]),
+            timeout_seconds=0.05,
+        )
+        self.assertLess(time.monotonic() - started, 3)
+        self.assertEqual(results[0]["status"], "FAILED")
+        self.assertEqual(results[0]["code"], "TIMEOUT")
+        self.assertIsNone(results[0]["exit_code"])
+
+    def test_child_retaining_pipes_cannot_outlive_check_deadline(self) -> None:
+        started = time.monotonic()
+        results = MEMORY_HEALTH.execute_checks(
+            ROOT,
+            self.commands(build=[sys.executable, "-c", "import subprocess, sys; subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(5)'])"]),
+            timeout_seconds=0.2,
+        )
+        self.assertLess(time.monotonic() - started, 3)
+        self.assertIn(results[0]["status"], {"PASSED", "FAILED"})
+        if results[0]["status"] == "FAILED":
+            self.assertEqual(results[0]["code"], "TIMEOUT")
+            self.assertIsNone(results[0]["exit_code"])
+        else:
+            self.assertEqual(results[0]["exit_code"], 0)
+
+    def test_output_is_utf8_safe_and_bounded(self) -> None:
+        text, truncated = MEMORY_HEALTH.truncate_output(b"\xff" + b"x" * MEMORY_HEALTH.OUTPUT_LIMIT)
+        self.assertTrue(truncated)
+        self.assertEqual(len(text), MEMORY_HEALTH.OUTPUT_LIMIT)
+        self.assertTrue(text.endswith(MEMORY_HEALTH.TRUNCATION_MARKER))
+        self.assertIn("\ufffd", text)
+
+    def test_live_output_capture_is_bounded(self) -> None:
+        results = MEMORY_HEALTH.execute_checks(
+            ROOT,
+            self.commands(build=[sys.executable, "-c", "import sys; sys.stdout.write('x' * 200000); sys.stderr.write('y' * 200000)"]),
+        )
+        self.assertEqual(len(results[0]["stdout"]), MEMORY_HEALTH.OUTPUT_LIMIT)
+        self.assertEqual(len(results[0]["stderr"]), MEMORY_HEALTH.OUTPUT_LIMIT)
+        self.assertTrue(results[0]["stdout_truncated"])
+        self.assertTrue(results[0]["stderr_truncated"])
+
+    def test_timeout_override_must_be_finite_and_positive(self) -> None:
+        for value in (0, -1, float("nan"), float("inf"), True):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                MEMORY_HEALTH.execute_checks(ROOT, self.commands(), timeout_seconds=value)
+
+    def test_contract_scope_runs_no_checks(self) -> None:
+        result = MEMORY_HEALTH.validation_result(ROOT, scope="contracts")
+        self.assertEqual(result["scope"], "contracts")
+        self.assertEqual(result["checks"], [])
+        self.assertEqual(result["overall_status"], "PASSED")
+
+    def test_contract_failure_blocks_configured_checks(self) -> None:
+        config = {"checks": self.commands(build=[sys.executable, "-c", "raise SystemExit(0)"])}
+        contract_error = MEMORY_HEALTH.error("TEST_CONTRACT", "memory.toml", "forced failure")
+        with mock.patch.object(MEMORY_HEALTH, "validate_contracts", return_value=(config, [contract_error])):
+            result = MEMORY_HEALTH.validation_result(ROOT)
+        self.assertEqual(result["overall_status"], "FAILED")
+        self.assertEqual(result["checks"][0]["status"], "UNVERIFIED")
+        self.assertEqual(result["checks"][0]["code"], "CONTRACTS_FAILED")
+        self.assertTrue(all(item["status"] == "NOT_CONFIGURED" for item in result["checks"][1:]))
+
+    def test_recursion_guard_blocks_nested_configured_wave(self) -> None:
+        config = {"checks": self.commands(build=[sys.executable, "-c", "raise SystemExit(0)"])}
+        with mock.patch.object(MEMORY_HEALTH, "validate_contracts", return_value=(config, [])), mock.patch.dict(os.environ, {MEMORY_HEALTH.CHECK_GUARD_ENV: "1"}):
+            result = MEMORY_HEALTH.validation_result(ROOT)
+        self.assertEqual(result["overall_status"], "UNVERIFIED")
+        self.assertEqual(result["checks"][0]["code"], "RECURSION_GUARD")
 
 
 class MemoryConfigTests(unittest.TestCase):
