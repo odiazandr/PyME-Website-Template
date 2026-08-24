@@ -4,7 +4,7 @@ A repository-native foundation for creating independent, client-owned websites f
 
 Canonical repository: `https://github.com/odiazandr/PyME-Website-Template.git`
 
-The repository contains its constitution and memory architecture plus a verified static Astro reference website, canonical business data, neutral design system, SEO output, privacy integration, progressive contact form, Astro-managed CSP, repository-controlled Netlify headers, a public site manifest, strict source-and-artifact production validation, and desktop/mobile/narrow Chromium browser and accessibility automation. Cross-browser verification and real deployment remain incomplete.
+The repository contains its constitution and memory architecture plus a verified static Astro reference website, canonical business data, neutral design system, SEO output, privacy integration, progressive contact form, Astro-managed CSP, repository-controlled Netlify headers, a public site manifest, strict source-and-artifact production validation, and verified Chromium/WebKit browser automation. Manual accessibility review and real Netlify deployment remain incomplete.
 
 ## Start here
 
