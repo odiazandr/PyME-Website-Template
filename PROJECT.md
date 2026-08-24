@@ -16,12 +16,15 @@ Purpose: Provide a versioned, production-grade foundation for independent, clien
 8. Accessibility, mobile usability, security, privacy, SEO, and production validation are part of the definition of done.
 9. Third-party services require security, privacy, performance, failure-mode, and CSP review.
 10. `main` represents production-ready code once runtime implementation begins.
-11. Project-mode production may not contain unresolved `TEMPLATE_PLACEHOLDER[...]` markers.
+11. Project-mode production may not contain unresolved client-work markers. The marker contract and scan scope are owned by `docs/spec/validation.md`.
 12. The client owns its business domain unless a written exception exists.
 13. The future operations dashboard is a separate project. A client website must never require it to function.
 14. Decisions are append-only in `docs/decisions/`; supersede rather than rewriting history.
 15. Archives are cold. Do not read archived files unless the task explicitly requires history.
 16. The sole canonical Git remote is `https://github.com/odiazandr/PyME-Website-Template.git`. Do not fetch from, push to, synchronize with, or restore a remote relationship to the Universal Memory Template repository.
+17. Capability claims must distinguish planned, partial, implemented, verified, and production-verified states. Documentation and automation may not imply evidence that does not exist.
+18. Runtime implementation begins only after memory validation is trustworthy within its declared scope.
+19. Runtime data schemas have one canonical implementation owner. Any external schema representation is derived rather than independently maintained.
 
 ## Retrieval route
 

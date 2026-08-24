@@ -73,6 +73,7 @@ Pointers only; summaries belong to their canonical owners.
 | T3 | `docs/decisions/0002-hard-memory-contracts.md` | Why memory rules are validated |
 | T3 | `docs/decisions/0003-active-working-set.md` | Why relevance pointers are cached |
 | T3 | `docs/decisions/0004-deterministic-ownership-key.md` | Why ownership uses normalized questions |
+| T3 | `docs/decisions/0005-memory-validator-hardening.md` | Why memory validation uses explicit strict contracts |
 | T3 | `docs/decisions/0100-static-first-architecture.md` | Static-first selection |
 | T3 | `docs/decisions/0101-astro-as-site-framework.md` | Astro selection |
 | T3 | `docs/decisions/0102-plain-css-and-design-tokens.md` | Styling selection |

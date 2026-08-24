@@ -21,7 +21,7 @@ answers:
 
 **Managed service** — An external provider used before creating equivalent custom infrastructure.
 
-**Project mode** — Adopted client-repository mode in which unresolved distribution placeholders are invalid.
+**Project mode** — Adopted client-repository mode in which every active unresolved client-work marker defined by `docs/spec/validation.md` is invalid within the declared scan scope.
 
 **Project 1** — This PyME Website Foundation and the client websites produced from it.
 
@@ -29,7 +29,7 @@ answers:
 
 **Site ID** — A stable, non-secret UUID generated once for a client site.
 
-**Template mode** — Canonical distribution mode in which defined template placeholders are permitted.
+**Template mode** — Canonical distribution mode in which only allowlisted unresolved client-work markers are permitted within the declared scan scope; the marker contract is owned by `docs/spec/validation.md`.
 
 **Template version** — The SemVer release of the foundation adopted by a client site.
 

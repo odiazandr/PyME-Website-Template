@@ -15,6 +15,6 @@ This initial phase contains the project constitution, canonical documentation ar
 
 ## Current phase
 
-Phase 1: memory, constitution, and repository knowledge structure.
+Phase 1.1: memory-validator hardening. The constitutional foundation exists; the validator is under remediation and its current success output must not yet be treated as proof of the full documented contract.
 
 The planned runtime is documented in `docs/spec/architecture.md`; documentation of a future file does not imply that the file is implemented.
