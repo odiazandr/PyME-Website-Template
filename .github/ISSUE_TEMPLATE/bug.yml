@@ -1,0 +1,31 @@
+name: Bug report
+description: Report reproducible incorrect behavior in the template or a client site.
+title: "bug: "
+labels: [bug]
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Observed behavior
+      description: What happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include exact commands, route, viewport, inputs, and environment where relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Add redacted logs or screenshots. Never include credentials or private client data.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed secrets and private client information.
+          required: true

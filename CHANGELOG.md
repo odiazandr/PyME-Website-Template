@@ -4,6 +4,7 @@ All notable template changes will be recorded here.
 
 ## Unreleased
 
+- Implemented read-only GitHub quality and cross-browser workflows, structured contribution forms, review ownership, and monthly dependency maintenance configuration.
 - Established the Project 1 constitution and repository-native memory architecture.
 - Added canonical specifications, decisions, runbooks, and reserved paths.
 - Accepted the Phase 1.1 memory-validator hardening contract and the transition from planned architecture to verified implementation.
@@ -16,4 +17,4 @@ All notable template changes will be recorded here.
 - Added verified metadata, sitemap and robots output, safe structured data, a canonical privacy-content surface, and a no-JavaScript Netlify contact form for Phase 6.
 - Enabled Astro-generated CSP hashes, repository-owned Netlify security headers, immutable asset caching, and deterministic security configuration tests for Phase 7.
 - Added the strict source-and-artifact production validation pipeline and public site manifest contract for Phase 8.
-- Added Playwright critical-journey and Axe-assisted accessibility coverage for desktop/mobile Chromium, configured WebKit coverage, and corrected skip-link focus transfer.
+- Added Playwright critical-journey and Axe-assisted accessibility coverage for desktop, mobile, and narrow Chromium, configured WebKit coverage, and corrected skip-link focus transfer.

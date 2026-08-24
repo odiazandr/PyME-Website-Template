@@ -43,5 +43,8 @@ Implemented repository-level ownership:
 | Individual source and artifact validation behavior | `scripts/*.ts` |
 | Browser matrix, server lifecycle, retries, and evidence capture | `playwright.config.ts` |
 | Critical browser journeys and automated accessibility checks | `tests/browser/*.spec.ts` |
+| CI execution contract | `.github/workflows/*.yml` |
+| Dependency update cadence | `.github/dependabot.yml` |
+| Repository file review ownership | `.github/CODEOWNERS` |
 
 If an external JSON Schema is later needed, it will be generated from the Zod manifest contract and remain a derived artifact rather than a second manually maintained authority.

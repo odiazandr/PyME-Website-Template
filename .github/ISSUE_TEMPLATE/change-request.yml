@@ -1,0 +1,29 @@
+name: Change request
+description: Propose a scoped capability, content, design, maintenance, or migration change.
+title: "change: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Business or user need
+      description: Describe the problem without prescribing unnecessary architecture.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Intended scope
+      description: State what is included and explicitly excluded.
+    validations:
+      required: true
+  - type: dropdown
+    id: boundary
+    attributes:
+      label: Architecture boundary
+      options:
+        - Static website capability
+        - Managed third-party integration
+        - Requires architecture review
+    validations:
+      required: true

@@ -1,0 +1,12 @@
+# Replace or extend ownership deliberately when a client repository is initialized.
+* @odiazandr
+
+/PROJECT.md @odiazandr
+/docs/spec/ @odiazandr
+/docs/decisions/ @odiazandr
+/.github/ @odiazandr
+/astro.config.ts @odiazandr
+/netlify.toml @odiazandr
+/package.json @odiazandr
+/ops/ @odiazandr
+/scripts/ @odiazandr

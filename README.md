@@ -15,7 +15,7 @@ The repository contains its constitution and memory architecture plus a verified
 
 ## Current phase
 
-Phases 1.1 through 8 are complete within their declared local scopes. Phase 9 browser QA is partially verified in desktop, mobile, and narrow Chromium; WebKit is configured but blocked on this Windows host and remains unverified until CI or another supported environment runs it. Accessibility and Netlify deployment therefore remain partial.
+Phases 1.1 through 8 are complete within their declared local scopes. Phase 9 browser QA is partially verified in desktop, mobile, and narrow Chromium; WebKit is configured but blocked on this Windows host. Phase 10 CI configuration is implemented but awaits its first successful GitHub run. Accessibility, CI, and Netlify deployment therefore remain short of verified production evidence.
 
 Implemented runtime boundaries and the remaining planned layers are documented in `docs/spec/architecture.md`. `project-state.json` is the concise evidence-level source of truth.
 

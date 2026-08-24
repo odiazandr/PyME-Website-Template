@@ -1,3 +1,3 @@
 # Issue templates
 
-Reserved for bug and change-request forms added during the repository workflow phase.
+Use the structured bug and change-request forms. Security reports containing sensitive information belong in a private security advisory, never a public issue.
