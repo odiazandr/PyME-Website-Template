@@ -8,7 +8,7 @@ answers: ["What are template and project modes?", "How are check results reporte
 
 ## Implementation state
 
-This document is the accepted Phase 1.1 contract. The current validator is partial and is not compliant with the full contract until the negative suite and final adversarial gate pass. During that transition, a successful legacy CLI result proves only the checks implemented by that revision.
+Phase 1.1 is implemented and verified within the deterministic scope declared here. A successful full CLI result proves the repository contracts passed and reports every configured check without omission. Semantic correctness outside this declared scope still requires review.
 
 ## Configuration contract
 

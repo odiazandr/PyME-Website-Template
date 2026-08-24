@@ -6,6 +6,6 @@ answers: ["How is memory health checked?"]
 ---
 # Review memory health
 
-Run `python ops/memory_health.py`. During Phase 1.1 the implementation is partial; consult `docs/spec/validation.md` and the current tests before treating its success output as evidence. The completed command will validate memory contracts and report every configured project check individually. Investigate every failure instead of weakening the contract.
+Run `python ops/memory_health.py` for the full human-readable result or `python ops/memory_health.py --json` for machine-readable evidence. Use `python ops/memory_health.py --scope contracts` only when intentionally checking repository-memory contracts without project commands. The full command validates memory contracts and reports every configured project check individually. Investigate every failure or unverified result instead of weakening the contract.
 
-Semantic overlap, dead prose links, lifecycle correctness, and archive intent still require review; deterministic checks do not replace judgment. Use JSON output once implemented when CI or another tool needs machine-readable evidence.
+Exit code `0` means passed, `1` means failed, and `2` means unverified. Semantic overlap, dead prose links, lifecycle correctness, archive intent, and hostile concurrent filesystem replacement still require review; deterministic checks do not replace judgment.

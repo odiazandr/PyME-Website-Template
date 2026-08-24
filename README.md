@@ -15,6 +15,6 @@ This initial phase contains the project constitution, canonical documentation ar
 
 ## Current phase
 
-Phase 1.1: memory-validator hardening. The constitutional foundation exists; the validator is under remediation and its current success output must not yet be treated as proof of the full documented contract.
+Phase 1.1 is complete: the memory validator is implemented and adversarially verified within the deterministic scope declared in `docs/spec/validation.md`. The constitutional foundation exists, but the Astro runtime and installable website dependencies are not yet implemented.
 
 The planned runtime is documented in `docs/spec/architecture.md`; documentation of a future file does not imply that the file is implemented.

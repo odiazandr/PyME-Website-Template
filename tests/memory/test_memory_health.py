@@ -116,6 +116,15 @@ class ConfiguredCheckTests(unittest.TestCase):
         self.assertEqual(result["checks"][0]["code"], "CONTRACTS_FAILED")
         self.assertTrue(all(item["status"] == "NOT_CONFIGURED" for item in result["checks"][1:]))
 
+    def test_all_scope_dispatches_configured_checks_and_propagates_failure(self) -> None:
+        config = {"checks": self.commands(build=[sys.executable, "-c", "raise SystemExit(9)"])}
+        with mock.patch.object(MEMORY_HEALTH, "validate_contracts", return_value=(config, [])), mock.patch.dict(os.environ, {MEMORY_HEALTH.CHECK_GUARD_ENV: "0"}):
+            result = MEMORY_HEALTH.validation_result(ROOT)
+        self.assertEqual(result["overall_status"], "FAILED")
+        self.assertEqual(result["checks"][0]["status"], "FAILED")
+        self.assertEqual(result["checks"][0]["exit_code"], 9)
+        self.assertEqual(result["checks"][0]["code"], "NONZERO_EXIT")
+
     def test_recursion_guard_blocks_nested_configured_wave(self) -> None:
         config = {"checks": self.commands(build=[sys.executable, "-c", "raise SystemExit(0)"])}
         with mock.patch.object(MEMORY_HEALTH, "validate_contracts", return_value=(config, [])), mock.patch.dict(os.environ, {MEMORY_HEALTH.CHECK_GUARD_ENV: "1"}):
