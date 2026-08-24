@@ -5,6 +5,7 @@ All notable template changes will be recorded here.
 ## Unreleased
 
 - Implemented read-only GitHub quality and cross-browser workflows, structured contribution forms, review ownership, and monthly dependency maintenance configuration.
+- Verified deterministic CI and the complete Chromium/WebKit browser matrix on GitHub-hosted Ubuntu.
 - Established the Project 1 constitution and repository-native memory architecture.
 - Added canonical specifications, decisions, runbooks, and reserved paths.
 - Accepted the Phase 1.1 memory-validator hardening contract and the transition from planned architecture to verified implementation.

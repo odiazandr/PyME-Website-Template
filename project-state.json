@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "phase": "ci",
+  "phase": "deployment",
   "capabilities": {
     "memorySystem": "verified",
     "memoryValidation": "verified",
@@ -15,8 +15,8 @@
     "forms": "verified",
     "securityConfiguration": "verified",
     "productionValidation": "verified",
-    "browserTests": "partial",
-    "ci": "implemented",
+    "browserTests": "verified",
+    "ci": "verified",
     "netlifyDeployment": "partial",
     "clientInitialization": "planned",
     "lifecycleTest": "planned",
