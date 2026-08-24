@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 import tomllib
@@ -14,6 +15,9 @@ DOCS = ROOT / "docs"
 INDEX = DOCS / "INDEX.md"
 KNOWLEDGE_DIRS = ("spec", "runbooks", "explain", "decisions")
 REQUIRED = ("owner", "authority", "status", "answers")
+FRONTMATTER_KEYS = frozenset(REQUIRED)
+AUTHORITIES = frozenset({"canonical", "derived", "scratch"})
+STATUSES = frozenset({"active", "superseded", "archived"})
 CONFIG_KEYS = frozenset({"schema_version", "mode", "checks", "placeholders", "working_set"})
 CHECK_NAMES = ("build", "test", "lint", "secret_scan")
 WORKING_SET_KEYS = frozenset({"enabled", "directory", "maximum_pointers", "maximum_reason_length"})
@@ -143,34 +147,118 @@ def validate_config(root: Path = ROOT) -> tuple[dict[str, Any] | None, list[dict
     return config, errors
 
 
-def parse_frontmatter(path: Path) -> dict[str, object]:
-    text = path.read_text(encoding="utf-8")
-    if not text.startswith("---\n"):
-        return {}
-    end = text.find("\n---\n", 4)
-    if end < 0:
-        return {}
+def parse_quoted_string(raw: str) -> str | None:
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError:
+        return None
+    return value if isinstance(value, str) else None
+
+
+def parse_frontmatter(path: Path, root: Path = ROOT) -> tuple[dict[str, object] | None, list[dict[str, str | None]]]:
+    try:
+        text = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        relative = path.relative_to(root).as_posix() if path.is_relative_to(root) else None
+        return None, [error("DOCUMENT_MISSING", relative, "active knowledge document is missing")]
+    except UnicodeError:
+        relative = path.relative_to(root).as_posix() if path.is_relative_to(root) else None
+        return None, [error("DOCUMENT_INVALID_UTF8", relative, "active knowledge document must be valid UTF-8")]
+    except OSError as exc:
+        relative = path.relative_to(root).as_posix() if path.is_relative_to(root) else None
+        return None, [error("DOCUMENT_UNREADABLE", relative, f"active knowledge document could not be read: {exc.strerror or exc}")]
+
+    relative = path.relative_to(root).as_posix() if path.is_relative_to(root) else None
+    errors: list[dict[str, str | None]] = []
+    if text.startswith("\ufeff"):
+        return None, [error("FRONTMATTER_BOM", relative, "UTF-8 byte-order marks are not supported")]
+    lines = text.splitlines()
+    if not lines or lines[0] != "---":
+        return None, [error("FRONTMATTER_MISSING_OPEN", relative, "frontmatter must begin with an exact --- delimiter")]
+
+    closing_index: int | None = None
+    for index, line in enumerate(lines[1:], start=1):
+        if line == "---":
+            closing_index = index
+            break
+        if line.strip().startswith("---"):
+            errors.append(error("FRONTMATTER_INVALID_DELIMITER", relative, f"line {index + 1}: delimiter must contain only ---"))
+    if closing_index is None:
+        errors.append(error("FRONTMATTER_MISSING_CLOSE", relative, "frontmatter requires an exact closing --- delimiter"))
+        return None, errors
+
     data: dict[str, object] = {}
+    seen_keys: set[str] = set()
     current_list: str | None = None
-    for line in text[4:end].splitlines():
-        if line.startswith("  - ") and current_list:
-            value = line[4:].strip().strip('"')
-            cast = data.setdefault(current_list, [])
-            if isinstance(cast, list):
-                cast.append(value)
+    for line_number, line in enumerate(lines[1:closing_index], start=2):
+        if not line:
             continue
-        match = re.match(r"^([a-z_]+):\s*(.*)$", line)
+        if line.startswith("  - "):
+            if current_list != "answers":
+                errors.append(error("FRONTMATTER_UNEXPECTED_LIST_ITEM", relative, f"line {line_number}: list item is not under answers"))
+                continue
+            value = parse_quoted_string(line[4:].strip())
+            if value is None or not value.strip():
+                errors.append(error("FRONTMATTER_INVALID_ANSWER", relative, f"line {line_number}: answer must be a non-empty double-quoted string"))
+            else:
+                cast = data.get("answers")
+                if isinstance(cast, list):
+                    cast.append(value)
+            continue
+        current_list = None
+        if line[0].isspace():
+            errors.append(error("FRONTMATTER_INVALID_INDENTATION", relative, f"line {line_number}: unsupported indentation"))
+            continue
+        match = re.fullmatch(r"([a-z_]+):(.*)", line)
         if not match:
+            errors.append(error("FRONTMATTER_MALFORMED_FIELD", relative, f"line {line_number}: expected key: value"))
             continue
-        key, raw = match.groups()
-        current_list = key if raw == "" else None
-        if raw == "":
-            data[key] = []
-        elif raw.startswith("[") and raw.endswith("]"):
-            data[key] = [item.strip().strip('"') for item in raw[1:-1].split(",") if item.strip()]
+        key, remainder = match.groups()
+        if key in seen_keys:
+            errors.append(error("FRONTMATTER_DUPLICATE_KEY", relative, f"line {line_number}: duplicate key {key}"))
+            continue
+        seen_keys.add(key)
+        if key not in FRONTMATTER_KEYS:
+            errors.append(error("FRONTMATTER_UNKNOWN_KEY", relative, f"line {line_number}: unknown key {key}"))
+            continue
+        raw = remainder[1:] if remainder.startswith(" ") else remainder
+        if key == "answers":
+            if raw == "":
+                data[key] = []
+                current_list = key
+                continue
+            try:
+                value = json.loads(raw)
+            except json.JSONDecodeError:
+                value = None
+            if not isinstance(value, list) or not value or any(not isinstance(item, str) or not item.strip() for item in value):
+                errors.append(error("FRONTMATTER_INVALID_ANSWERS", relative, f"line {line_number}: answers must be a non-empty JSON-style list of non-empty strings"))
+            else:
+                data[key] = value
+            continue
+        if not raw or raw != raw.strip() or raw.startswith(('"', "'")):
+            errors.append(error("FRONTMATTER_INVALID_SCALAR", relative, f"line {line_number}: {key} must be an unquoted non-empty scalar"))
         else:
-            data[key] = raw.strip().strip('"')
-    return data
+            data[key] = raw
+
+    for key in REQUIRED:
+        if key not in data:
+            errors.append(error("FRONTMATTER_MISSING_KEY", relative, f"missing required key: {key}"))
+    answers = data.get("answers")
+    if isinstance(answers, list) and not answers:
+        errors.append(error("FRONTMATTER_EMPTY_ANSWERS", relative, "answers must contain at least one question"))
+    if data.get("authority") not in AUTHORITIES:
+        errors.append(error("FRONTMATTER_INVALID_AUTHORITY", relative, "authority must be canonical, derived, or scratch"))
+    if data.get("status") not in STATUSES:
+        errors.append(error("FRONTMATTER_INVALID_STATUS", relative, "status must be active, superseded, or archived"))
+    elif data.get("status") != "active":
+        errors.append(error("FRONTMATTER_INACTIVE_IN_ACTIVE_ROOT", relative, "documents in active roots must have status active"))
+    owner = data.get("owner")
+    if not safe_relative_posix(owner):
+        errors.append(error("FRONTMATTER_INVALID_OWNER", relative, "owner must be a safe repository-relative POSIX path"))
+    elif owner != relative:
+        errors.append(error("FRONTMATTER_OWNER_MISMATCH", relative, f"owner must equal document path: {relative}"))
+    return data, errors
 
 
 def normalize_question(value: str) -> str:
@@ -194,15 +282,11 @@ def run(root: Path = ROOT) -> list[str]:
     documents = active_documents() if root == ROOT else [index, docs / "GLOSSARY.md", *[path for directory in KNOWLEDGE_DIRS for path in sorted((docs / directory).glob("*.md"))]]
     for path in documents:
         relative = path.relative_to(root).as_posix()
-        metadata = parse_frontmatter(path)
-        for field in REQUIRED:
-            if not metadata.get(field):
-                errors.append(f"{relative}: missing frontmatter field {field}")
-        if metadata.get("owner") != relative:
-            errors.append(f"{relative}: owner must equal repository path")
+        metadata, metadata_errors = parse_frontmatter(path, root)
+        errors.extend(f"{item['path']}: {item['code']}: {item['message']}" for item in metadata_errors)
         if path != index and f"`{relative}`" not in index_text:
             errors.append(f"{relative}: missing from docs/INDEX.md")
-        answers = metadata.get("answers", [])
+        answers = metadata.get("answers", []) if metadata and not metadata_errors else []
         if isinstance(answers, list):
             for answer in answers:
                 key = normalize_question(str(answer))

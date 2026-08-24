@@ -130,5 +130,106 @@ maximum_reason_length = 160
         self.assertTrue(MEMORY_HEALTH.safe_relative_posix(".memory/working-sets"))
 
 
+class FrontmatterTests(unittest.TestCase):
+    def validate(self, content: str | bytes, relative: str = "docs/spec/example.md") -> tuple[dict[str, object] | None, set[str]]:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            path = root / Path(relative)
+            path.parent.mkdir(parents=True)
+            if isinstance(content, bytes):
+                path.write_bytes(content)
+            else:
+                path.write_text(content, encoding="utf-8")
+            metadata, errors = MEMORY_HEALTH.parse_frontmatter(path, root)
+            return metadata, {str(item["code"]) for item in errors}
+
+    def valid_inline(self) -> str:
+        return '''---
+owner: docs/spec/example.md
+authority: canonical
+status: active
+answers: ["What does this example own?", "How is it validated?"]
+---
+# Example
+'''
+
+    def test_valid_inline_and_block_answers(self) -> None:
+        metadata, codes = self.validate(self.valid_inline())
+        self.assertEqual(codes, set())
+        self.assertEqual(len(metadata["answers"]), 2)
+        block = self.valid_inline().replace('answers: ["What does this example own?", "How is it validated?"]', 'answers:\n  - "What does this example own?"\n  - "How is it validated?"')
+        _, block_codes = self.validate(block)
+        self.assertEqual(block_codes, set())
+
+    def test_missing_and_invalid_delimiters_fail(self) -> None:
+        _, missing = self.validate("# No frontmatter\n")
+        self.assertIn("FRONTMATTER_MISSING_OPEN", missing)
+        _, close = self.validate("---\nowner: docs/spec/example.md\n")
+        self.assertIn("FRONTMATTER_MISSING_CLOSE", close)
+        _, malformed = self.validate(self.valid_inline().replace("\n---\n# Example", "\n--- trailing\n# Example"))
+        self.assertIn("FRONTMATTER_INVALID_DELIMITER", malformed)
+
+    def test_duplicate_unknown_and_missing_keys_fail(self) -> None:
+        duplicate = self.valid_inline().replace("authority: canonical", "authority: canonical\nauthority: derived")
+        self.assertIn("FRONTMATTER_DUPLICATE_KEY", self.validate(duplicate)[1])
+        unknown = self.valid_inline().replace("authority: canonical", "extra: value\nauthority: canonical")
+        self.assertIn("FRONTMATTER_UNKNOWN_KEY", self.validate(unknown)[1])
+        missing = self.valid_inline().replace("status: active\n", "")
+        self.assertIn("FRONTMATTER_MISSING_KEY", self.validate(missing)[1])
+
+    def test_duplicate_key_is_reported_when_first_value_is_invalid(self) -> None:
+        content = self.valid_inline().replace("authority: canonical", 'authority: "canonical"\nauthority: canonical')
+        codes = self.validate(content)[1]
+        self.assertIn("FRONTMATTER_INVALID_SCALAR", codes)
+        self.assertIn("FRONTMATTER_DUPLICATE_KEY", codes)
+
+    def test_answers_must_be_nonempty_quoted_lists(self) -> None:
+        variants = {
+            "scalar": "answers: one",
+            "empty": "answers: []",
+            "empty_string": 'answers: [""]',
+            "unquoted_block": "answers:\n  - not-quoted",
+        }
+        original = 'answers: ["What does this example own?", "How is it validated?"]'
+        for name, replacement in variants.items():
+            with self.subTest(name=name):
+                codes = self.validate(self.valid_inline().replace(original, replacement))[1]
+                self.assertTrue({"FRONTMATTER_INVALID_ANSWERS", "FRONTMATTER_EMPTY_ANSWERS", "FRONTMATTER_INVALID_ANSWER"} & codes)
+
+    def test_authority_status_and_owner_are_strict(self) -> None:
+        self.assertIn("FRONTMATTER_INVALID_AUTHORITY", self.validate(self.valid_inline().replace("authority: canonical", "authority: banana"))[1])
+        self.assertIn("FRONTMATTER_INVALID_STATUS", self.validate(self.valid_inline().replace("status: active", "status: imaginary"))[1])
+        self.assertIn("FRONTMATTER_INACTIVE_IN_ACTIVE_ROOT", self.validate(self.valid_inline().replace("status: active", "status: archived"))[1])
+        self.assertIn("FRONTMATTER_OWNER_MISMATCH", self.validate(self.valid_inline().replace("docs/spec/example.md", "docs/spec/other.md"))[1])
+        self.assertIn("FRONTMATTER_INVALID_OWNER", self.validate(self.valid_inline().replace("docs/spec/example.md", "../outside.md"))[1])
+
+    def test_bom_invalid_utf8_and_indentation_fail_gracefully(self) -> None:
+        self.assertIn("FRONTMATTER_BOM", self.validate("\ufeff" + self.valid_inline())[1])
+        self.assertIn("DOCUMENT_INVALID_UTF8", self.validate(b"\xff\xfe")[1])
+        indented = self.valid_inline().replace("authority: canonical", " authority: canonical")
+        self.assertIn("FRONTMATTER_INVALID_INDENTATION", self.validate(indented)[1])
+
+    def test_invalid_document_answers_do_not_enter_ownership_checks(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            for directory in ("spec", "runbooks", "explain", "decisions"):
+                (root / "docs" / directory).mkdir(parents=True)
+            def document(owner: str, answers: str) -> str:
+                return f"---\nowner: {owner}\nauthority: canonical\nstatus: active\nanswers: {answers}\n---\n# Test\n"
+
+            index_content = document("docs/INDEX.md", '["Where is test knowledge indexed?"]') + "\n`docs/GLOSSARY.md`\n`docs/spec/example.md`\n`docs/spec/other.md`\n"
+            (root / "docs" / "INDEX.md").write_text(index_content, encoding="utf-8")
+            (root / "docs" / "GLOSSARY.md").write_text(document("docs/GLOSSARY.md", '["What test vocabulary exists?"]'), encoding="utf-8")
+            first = document("docs/spec/example.md", '\n  - "Shared question?"\n  - invalid')
+            second = document("docs/spec/other.md", '["Shared question?"]')
+            (root / "docs" / "spec" / "example.md").write_text(first, encoding="utf-8")
+            (root / "docs" / "spec" / "other.md").write_text(second, encoding="utf-8")
+            (root / "PROJECT.md").write_text("# Project\n", encoding="utf-8")
+            (root / "memory.toml").write_text(MemoryConfigTests().valid_config(), encoding="utf-8")
+            failures = MEMORY_HEALTH.run(root)
+        self.assertTrue(any("FRONTMATTER_INVALID_ANSWER" in item for item in failures))
+        self.assertFalse(any("duplicate ownership question" in item for item in failures))
+
+
 if __name__ == "__main__":
     unittest.main()
