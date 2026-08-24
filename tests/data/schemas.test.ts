@@ -7,6 +7,8 @@ import { SiteSchema } from "../../src/schemas/site.ts";
 import { TeamSchema } from "../../src/schemas/team.ts";
 import { TemplateMetadataSchema } from "../../src/schemas/template.ts";
 import { TestimonialsSchema } from "../../src/schemas/testimonial.ts";
+import { PublicManifestSchema } from "../../src/schemas/public-manifest.ts";
+import { ProductionApprovalSchema } from "../../src/schemas/production.ts";
 import { site } from "../../src/config/site.ts";
 import {
   business,
@@ -173,6 +175,31 @@ describe("technical identity contracts", () => {
       TemplateMetadataSchema.safeParse({
         schemaVersion: 1,
         templateVersion: "01.2.3",
+      }).success,
+      false,
+    );
+  });
+
+  test("rejects public manifests with extra or private fields", () => {
+    assert.equal(
+      PublicManifestSchema.safeParse({
+        schemaVersion: 1,
+        siteId: "00000000-0000-4000-8000-000000000000",
+        templateVersion: "0.3.0",
+        canonicalUrl: "https://example.com",
+        repositoryToken: "must-never-be-public",
+      }).success,
+      false,
+    );
+  });
+
+  test("requires explicit boolean production approvals", () => {
+    assert.equal(
+      ProductionApprovalSchema.safeParse({
+        schemaVersion: 1,
+        businessFactsVerified: "yes",
+        domainOwnershipVerified: false,
+        privacyNoticeApproved: false,
       }).success,
       false,
     );

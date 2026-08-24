@@ -22,6 +22,7 @@ Implemented repository-level ownership:
 | Team publication records | `src/data/team.json` |
 | Approved testimonials | `src/data/testimonials.json` |
 | Social accounts | `src/data/social.json` |
+| Recorded business-fact, domain, and privacy launch approvals | `src/data/production.json` |
 | Template version | `src/data/template.json` |
 | Data validation contracts | `src/schemas/*.ts` |
 | Portable implemented visual contract | `DESIGN.md` |
@@ -36,11 +37,9 @@ Implemented repository-level ownership:
 | Contact-form field and provider contract | `src/components/forms/ContactForm.astro` |
 | Generated content security policy | `astro.config.ts` |
 | Hosting build, stable response headers, and hashed-asset caching | `netlify.toml` |
+| Public interoperability manifest contract | `src/schemas/public-manifest.ts` |
+| Public interoperability manifest output | `src/pages/.well-known/pyme-site.json.ts` |
+| Production validation order | `package.json` (`quality:production`) |
+| Individual source and artifact validation behavior | `scripts/*.ts` |
 
-Planned ownership after later runtime implementation:
-
-| Fact | Canonical owner |
-|---|---|
-| Public interoperability schema | `schemas/public-manifest.schema.json` |
-
-Until planned files exist, their rows define intended ownership, not implemented data. If external JSON Schemas are later needed, they are generated from the Zod contracts and remain derived artifacts.
+If an external JSON Schema is later needed, it will be generated from the Zod manifest contract and remain a derived artifact rather than a second manually maintained authority.

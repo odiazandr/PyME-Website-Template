@@ -44,7 +44,7 @@ Template mode permits a valid unresolved token only when `<actual file path>::<K
 
 The initial repository-memory scan includes `PROJECT.md`, `README.md`, active knowledge documents, and recursive text files under `src/` and `public/`. Text files are extensionless files or files ending in `.md`, `.txt`, `.html`, `.htm`, `.astro`, `.ts`, `.tsx`, `.js`, `.mjs`, `.cjs`, `.json`, `.toml`, `.yaml`, `.yml`, `.css`, `.scss`, `.svg`, `.xml`, `.csv`, or `.env`. Invalid UTF-8 in those surfaces fails; symbolic links fail and are not followed.
 
-The scan excludes `.git/`, `docs/archive/`, `docs/audits/`, `docs/migrations/`, binary/media extensions, and directories named `.astro`, `.cache`, `__fixtures__`, `__tests__`, `build`, `cache`, `coverage`, `dist`, `fixtures`, `generated`, `node_modules`, or `tests` below `src/` and `public/`. Runtime production validation later extends the same contract to active client configuration, content, legal documents, and the final `dist/` artifact.
+The scan excludes `.git/`, `docs/archive/`, `docs/audits/`, `docs/migrations/`, binary/media extensions, and directories named `.astro`, `.cache`, `__fixtures__`, `__tests__`, `build`, `cache`, `coverage`, `dist`, `fixtures`, `generated`, `node_modules`, or `tests` below `src/` and `public/`. Implemented runtime production validation extends this contract to active client configuration, content, legal documents, and the final `dist/` artifact as defined in `docs/spec/website-validation.md`.
 
 ## Result contract
 

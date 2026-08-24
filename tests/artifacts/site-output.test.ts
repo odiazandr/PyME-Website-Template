@@ -2,9 +2,15 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
+import { site } from "../../src/config/site.ts";
+import { templateMetadata } from "../../src/data/index.ts";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const read = (path: string) => readFileSync(`${root}dist/${path}`, "utf8");
+const escapedCanonical = site.canonicalUrl.replace(
+  /[.*+?^${}()|[\]\\]/g,
+  "\\$&",
+);
 
 const findHtml = (directory: string): string[] =>
   readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -18,7 +24,10 @@ const findHtml = (directory: string): string[] =>
 
 test("index output contains canonical SEO and schema.org metadata", () => {
   const html = read("index.html");
-  assert.match(html, /<link rel="canonical" href="https:\/\/example\.com\/">/);
+  assert.match(
+    html,
+    new RegExp(`<link rel="canonical" href="${escapedCanonical}/">`),
+  );
   assert.match(html, /<meta property="og:type" content="website">/);
   assert.match(html, /<script type="application\/ld\+json">/);
   assert.match(html, /"@type":"Organization"/);
@@ -76,8 +85,30 @@ test("robots and sitemap expose only intended public routes", () => {
   const robots = read("robots.txt");
   const sitemap = read("sitemap-0.xml");
   assert.match(robots, /Disallow: \/gracias\//);
-  assert.match(robots, /Sitemap: https:\/\/example\.com\/sitemap-index\.xml/);
-  assert.doesNotMatch(sitemap, /\/gracias\//);
-  assert.doesNotMatch(sitemap, /\/aviso-de-privacidad\//);
-  assert.match(sitemap, /https:\/\/example\.com\/contacto\//);
+  assert.match(
+    robots,
+    new RegExp(`Sitemap: ${escapedCanonical}/sitemap-index\\.xml`),
+  );
+  const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+    (match) => match[1],
+  );
+  assert.deepEqual(
+    locations.sort(),
+    ["/", "/contacto/", "/nosotros/", "/servicios/"]
+      .map((path) => `${site.canonicalUrl}${path}`)
+      .sort(),
+  );
+});
+
+test("public manifest contains only the stable interoperability contract", () => {
+  const manifest = JSON.parse(read(".well-known/pyme-site.json"));
+  assert.deepEqual(Object.keys(manifest).sort(), [
+    "canonicalUrl",
+    "schemaVersion",
+    "siteId",
+    "templateVersion",
+  ]);
+  assert.equal(manifest.schemaVersion, 1);
+  assert.equal(manifest.templateVersion, templateMetadata.templateVersion);
+  assert.equal(manifest.canonicalUrl, site.canonicalUrl);
 });

@@ -6,6 +6,18 @@ answers: ["Which checks gate development and production?", "What must built-outp
 ---
 # Website validation
 
-Fast deterministic checks will cover memory health, formatting, Astro checking, schema validation, placeholder and domain validation, build, built-output verification, asset policy, public-output scanning, and internal links. Browser QA will cover critical routes, navigation, forms, 404 behavior, CTAs, keyboard interaction, and severe automated accessibility violations.
+## Implemented gates
 
-Production checks reject unresolved placeholders, sample identities, localhost or provider subdomain canonicals, invalid business data, missing required pages, invalid manifests, incorrect robots or sitemap output, and suspicious dummy strings. Validation inspects `dist/`, not source alone. Missing checks remain `UNVERIFIED`.
+`npm run quality` is the template-development gate. It checks formatting, Astro diagnostics, data schemas, security configuration, builds the reference site, and verifies its artifact contract.
+
+`npm run quality:production` is the strict client-production gate. It requires valid memory contracts, all static checks, valid navigation, `project` memory mode, explicit recorded approval of business facts, domain ownership, and privacy text, non-sample client identity, a non-provider HTTPS canonical domain, approved privacy content, no unresolved markers, reviewed public-asset sizes, a successful clean build, passing artifact contracts, required artifacts, a schema-valid public manifest, matching canonical values, valid robots output, resolvable internal links constrained to `dist/`, and no forbidden sample/development sentinels in `dist/`.
+
+The canonical template intentionally fails `quality:production`: it remains in template mode and contains clearly identified sample facts and unapproved reference legal text. Passing the development gate must never be interpreted as production approval. A future client initializer replaces those values and activates project mode.
+
+The approval flags are repository attestations, not cryptographic or legal proof. They may be set only after the applicable human or operational verification has occurred; an agent may not self-authorize them. Automated validation deliberately does not pretend it can determine whether business claims are true, a party owns a domain, or legal language is sufficient.
+
+Production validation inspects `dist/`, not source alone. The output scan is a bounded sanity layer, not comprehensive secret scanning. Browser QA remains a separate planned phase for critical routes, navigation, forms, 404 behavior, CTAs, keyboard interaction, and automated accessibility violations.
+
+## Command ownership
+
+The individual commands are exposed for diagnosis: `validate:project`, `validate:production`, `check:placeholders`, `check:assets`, `verify:dist`, `check:links`, and `check:public-output`. `quality:production` owns their required order and stops at the first failed gate.

@@ -1,5 +1,6 @@
 import businessInput from "./business.json" with { type: "json" };
 import locationsInput from "./locations.json" with { type: "json" };
+import productionInput from "./production.json" with { type: "json" };
 import servicesInput from "./services.json" with { type: "json" };
 import socialInput from "./social.json" with { type: "json" };
 import teamInput from "./team.json" with { type: "json" };
@@ -7,6 +8,7 @@ import templateInput from "./template.json" with { type: "json" };
 import testimonialsInput from "./testimonials.json" with { type: "json" };
 import { BusinessSchema } from "../schemas/business.ts";
 import { LocationsSchema } from "../schemas/location.ts";
+import { ProductionApprovalSchema } from "../schemas/production.ts";
 import { ServicesSchema } from "../schemas/service.ts";
 import { SocialAccountsSchema } from "../schemas/social.ts";
 import { TeamSchema } from "../schemas/team.ts";
@@ -14,6 +16,8 @@ import { TemplateMetadataSchema } from "../schemas/template.ts";
 import { TestimonialsSchema } from "../schemas/testimonial.ts";
 export const business = BusinessSchema.parse(businessInput);
 export const locations = LocationsSchema.parse(locationsInput);
+export const productionApproval =
+  ProductionApprovalSchema.parse(productionInput);
 export const services = ServicesSchema.parse(servicesInput);
 export const socialAccounts = SocialAccountsSchema.parse(socialInput);
 export const team = TeamSchema.parse(teamInput);

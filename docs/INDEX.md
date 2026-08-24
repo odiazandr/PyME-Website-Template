@@ -100,7 +100,7 @@ Pointers only; summaries belong to their canonical owners.
 | `memory.toml` | Memory mode and configured checks |
 | `ops/` | Deterministic memory-health tooling |
 | `schemas/` | Public JSON contracts; reserved until implemented |
-| `scripts/` | Implemented data validation; production validators and initialization remain planned |
-| `tests/` | Implemented memory, data, route, serialization, and built-artifact verification; browser and Axe suites are planned |
+| `scripts/` | Implemented data and production validation; client initialization remains planned |
+| `tests/` | Implemented memory, data, route, serialization, security, artifact, and production-gate verification; browser and Axe suites are planned |
 | `src/` | Implemented Astro, data, design, routes, SEO, privacy, and form foundations |
 | `docs/archive/` | Cold superseded material; inventory by path only |

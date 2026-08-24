@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "phase": "production-validation",
+  "phase": "browser-qa",
   "capabilities": {
     "memorySystem": "verified",
     "memoryValidation": "verified",
@@ -14,7 +14,7 @@
     "privacy": "verified",
     "forms": "verified",
     "securityConfiguration": "verified",
-    "productionValidation": "planned",
+    "productionValidation": "verified",
     "browserTests": "planned",
     "ci": "planned",
     "netlifyDeployment": "partial",
