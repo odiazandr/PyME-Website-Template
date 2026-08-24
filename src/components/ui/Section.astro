@@ -1,0 +1,37 @@
+---
+interface Props {
+  id?: string;
+  tone?: "default" | "surface" | "brand";
+  class?: string;
+}
+
+const { id, tone = "default", class: className } = Astro.props;
+---
+
+<section {id} class:list={["section", `section--${tone}`, className]}>
+  <slot />
+</section>
+
+<style>
+  .section {
+    padding-block: clamp(var(--space-16), 9vw, var(--space-24));
+  }
+
+  .section--surface {
+    background: var(--color-surface);
+  }
+
+  .section--brand {
+    --section-muted: color-mix(
+      in srgb,
+      var(--color-brand-contrast) 84%,
+      transparent
+    );
+    --button-secondary-color: var(--color-brand-contrast);
+    --button-secondary-border: var(--color-brand-contrast);
+    --button-secondary-hover-color: var(--color-brand);
+    --button-secondary-hover-bg: var(--color-brand-contrast);
+    color: var(--color-brand-contrast);
+    background: var(--color-brand);
+  }
+</style>

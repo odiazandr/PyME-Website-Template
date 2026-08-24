@@ -1,0 +1,19 @@
+@media print {
+  @page {
+    margin: 2cm;
+  }
+
+  body {
+    color: #000;
+    background: #fff;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

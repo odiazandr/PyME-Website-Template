@@ -1,6 +1,12 @@
 ---
 import { site } from "../config/site";
-import { business, templateMetadata } from "../data";
+import Container from "../components/ui/Container.astro";
+import Section from "../components/ui/Section.astro";
+import SectionHeading from "../components/ui/SectionHeading.astro";
+import ButtonLink from "../components/ui/ButtonLink.astro";
+import Card from "../components/ui/Card.astro";
+import { business, locations, services, templateMetadata } from "../data";
+import "../styles/global.css";
 
 const title = business.publicName;
 const description = business.description;
@@ -15,21 +21,294 @@ const description = business.description;
     <title>{title}</title>
   </head>
   <body>
-    <header>
-      <nav aria-label="Navegación principal">
-        <a href="/">{title}</a>
-      </nav>
+    <!-- THESIS: A precisely set foundation refuses the generic starter grid; hierarchy and measure make the system visible. OWN-WORLD: Bright proof stock, ink text, mineral action color, square controls, crisp rules, and generous reading space. STORY: The operator sees verified data, understands the current foundation, and knows where customization begins. FIRST VIEWPORT: A compact masthead opens to an asymmetric proof field with the main thesis left and a ruled implementation register right. FORM: Typesetter's Galley, grounded direction 4, seed 71e87adc. FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance. -->
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <header class="site-header">
+      <Container>
+        <nav class="masthead" aria-label="Navegación principal">
+          <a class="wordmark" href="/">PyME / Foundation</a>
+          <span class="release">v{templateMetadata.templateVersion}</span>
+        </nav>
+      </Container>
     </header>
-    <main>
-      <h1>{title}</h1>
-      <p>{description}</p>
-      <p>
-        La base de ejecución y los datos canónicos están conectados. El diseño
-        se incorpora en la siguiente fase.
-      </p>
+    <main id="contenido">
+      <Section class="intro">
+        <Container>
+          <div class="proof-layout">
+            <div class="proof-copy u-flow">
+              <h1>{title}</h1>
+              <p class="lede">{description}</p>
+              <div class="u-cluster actions">
+                <ButtonLink href="#sistema">Explorar el sistema</ButtonLink>
+                <ButtonLink href="#datos" variant="secondary"
+                  >Revisar datos</ButtonLink
+                >
+              </div>
+            </div>
+            <aside class="register" aria-label="Estado de implementación">
+              <p class="register__title">Registro de la base</p>
+              <dl>
+                <div><dt>Salida</dt><dd>Astro estático</dd></div>
+                <div><dt>Idioma</dt><dd>{site.defaultLocale}</dd></div>
+                <div><dt>Datos</dt><dd>Esquema válido</dd></div>
+                <div><dt>Diseño</dt><dd>En construcción</dd></div>
+                <div><dt>Producción</dt><dd>No lista</dd></div>
+              </dl>
+            </aside>
+          </div>
+        </Container>
+      </Section>
+
+      <Section id="sistema" tone="surface">
+        <Container>
+          <SectionHeading
+            title="Una base clara antes de una identidad particular"
+            description="El sistema resuelve estructura, legibilidad y comportamiento. Cada cliente aporta marca, contenido, fotografía y composición propia."
+          />
+          <div class="principles">
+            <Card title="Jerarquía legible">
+              <p>
+                La información y las acciones mantienen una lectura evidente en
+                cualquier tamaño.
+              </p>
+            </Card>
+            <Card title="Piezas predecibles">
+              <p>
+                Los componentes describen significado; los tokens controlan su
+                expresión visual.
+              </p>
+            </Card>
+            <Card title="Respuesta coordinada">
+              <p>
+                El diseño se reorganiza como un sistema, sin reducir el
+                escritorio hasta hacerlo caber.
+              </p>
+            </Card>
+          </div>
+        </Container>
+      </Section>
+
+      <Section id="datos">
+        <Container>
+          <SectionHeading
+            title="Datos conectados, no copiados"
+            description="Esta página consume los mismos dominios canónicos que utilizarán las páginas, los llamados a la acción y los metadatos."
+          />
+          <div class="data-register">
+            <div>
+              <span>Servicios registrados</span><strong
+                >{services.length}</strong
+              >
+            </div>
+            <div>
+              <span>Ubicaciones registradas</span><strong
+                >{locations.length}</strong
+              >
+            </div>
+            <div>
+              <span>Dominio canónico</span><strong
+                >{new URL(site.canonicalUrl).hostname}</strong
+              >
+            </div>
+          </div>
+        </Container>
+      </Section>
     </main>
-    <footer>
-      <p>Plantilla {templateMetadata.templateVersion} en desarrollo.</p>
+    <footer class="site-footer">
+      <Container>
+        <p>
+          PyME Website Foundation <span aria-hidden="true">—</span> plantilla {
+            templateMetadata.templateVersion
+          }
+        </p>
+        <p>Base en desarrollo; no representa un negocio real.</p>
+      </Container>
     </footer>
   </body>
 </html>
+
+<style>
+  .skip-link {
+    position: fixed;
+    z-index: 10;
+    top: var(--space-3);
+    left: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    color: var(--color-brand-contrast);
+    background: var(--color-brand);
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
+  .site-header {
+    padding-block: var(--space-5);
+    border-block-end: 1px solid var(--color-border-strong);
+    background: color-mix(in srgb, var(--color-bg) 94%, transparent);
+  }
+
+  .masthead {
+    display: flex;
+    gap: var(--space-6);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .wordmark {
+    font-size: var(--text-sm);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+
+  .release,
+  .register__title,
+  dt {
+    font-size: var(--text-xs);
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .release {
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .intro {
+    min-height: min(48rem, calc(100svh - 4rem));
+    display: grid;
+    align-items: center;
+  }
+
+  .proof-layout {
+    display: grid;
+    gap: var(--space-12);
+    min-width: 0;
+  }
+
+  .proof-copy {
+    --flow-space: var(--space-6);
+    min-width: 0;
+  }
+
+  .lede {
+    max-width: 38rem;
+    color: var(--color-text-muted);
+    font-size: var(--text-lg);
+  }
+
+  .actions {
+    --cluster-gap: var(--space-3);
+    padding-block-start: var(--space-2);
+  }
+
+  .register {
+    align-self: stretch;
+    min-width: 0;
+    padding: var(--space-6);
+    border-block-start: 1px solid var(--color-text);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-raised);
+  }
+
+  .register__title {
+    margin-block-end: var(--space-8);
+    color: var(--color-accent);
+  }
+
+  .register dl {
+    margin: 0;
+  }
+
+  .register dl > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: var(--space-4);
+    padding-block: var(--space-3);
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  dt {
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+  }
+
+  .principles {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .data-register {
+    border-block-start: 1px solid var(--color-border-strong);
+  }
+
+  .data-register > div {
+    display: grid;
+    gap: var(--space-2);
+    padding-block: var(--space-5);
+    border-block-end: 1px solid var(--color-border);
+  }
+
+  .data-register span {
+    color: var(--color-text-muted);
+  }
+
+  .data-register strong {
+    overflow-wrap: anywhere;
+    font-size: var(--text-xl);
+    line-height: var(--leading-heading);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .site-footer {
+    padding-block: var(--space-8);
+    color: var(--color-brand-contrast);
+    background: var(--color-text);
+  }
+
+  .site-footer :global(.container) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-8);
+    justify-content: space-between;
+  }
+
+  .site-footer p {
+    font-size: var(--text-sm);
+  }
+
+  @media (min-width: 48rem) {
+    .proof-layout {
+      grid-template-columns: minmax(0, 2fr) minmax(17rem, 0.85fr);
+      gap: clamp(var(--space-12), 7vw, var(--space-24));
+      align-items: start;
+    }
+
+    .register {
+      transform: translateY(var(--space-8));
+    }
+
+    .principles {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .data-register > div {
+      grid-template-columns: 1fr minmax(16rem, 0.8fr);
+      align-items: baseline;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skip-link {
+      transition: none;
+    }
+  }
+</style>

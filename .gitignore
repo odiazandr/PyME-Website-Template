@@ -27,3 +27,9 @@ test-results/
 Thumbs.db
 .idea/
 .vscode/
+
+# Local design-review artifacts
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/questions/
+.impeccable/phase*-direction*.json

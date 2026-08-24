@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "phase": "design-foundation",
+  "phase": "core-runtime",
   "capabilities": {
     "memorySystem": "verified",
     "memoryValidation": "verified",
     "projectState": "verified",
     "astroRuntime": "verified",
     "businessDataSchemas": "verified",
-    "designSystem": "planned",
+    "designSystem": "verified",
     "coreWebsite": "planned",
     "seo": "planned",
     "accessibility": "planned",

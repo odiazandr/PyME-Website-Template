@@ -1,0 +1,25 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<article class="card">
+  <h3>{title}</h3>
+  <div class="card__body"><slot /></div>
+</article>
+
+<style>
+  .card {
+    display: grid;
+    gap: var(--space-5);
+    padding-block: var(--space-6);
+    border-block-start: 1px solid var(--color-border-strong);
+  }
+
+  .card__body {
+    color: var(--color-text-muted);
+  }
+</style>

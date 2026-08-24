@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-24T00:00:00.000Z",
+  "title": "Design System: PyME Website Foundation",
+  "extensions": {
+    "colorMeta": {
+      "paper": {"role":"neutral","displayName":"Proof Paper","canonical":"#f4f3ee","tonalRamp":["#252a2c","#414846","#5c6662","#77827d","#929e98","#adb8b1","#c8d0c9","#e4e7df"]},
+      "surface": {"role":"neutral","displayName":"Surface White","canonical":"#ffffff","tonalRamp":["#262626","#484848","#696969","#898989","#aaaaaa","#cacaca","#e6e6e6","#ffffff"]},
+      "surface-muted": {"role":"neutral","displayName":"Muted Mineral","canonical":"#e9ebe7","tonalRamp":["#252a28","#444a47","#626965","#7f8782","#9ca49f","#b9c0ba","#d1d6d0","#e9ebe7"]},
+      "ink": {"role":"neutral","displayName":"Ink","canonical":"#172129","tonalRamp":["#172129","#2f3b43","#47545b","#606c72","#7a858a","#939da1","#adb5b8","#c7ccce"]},
+      "ink-muted": {"role":"neutral","displayName":"Muted Ink","canonical":"#55616a","tonalRamp":["#252c31","#3a444a","#4f5b62","#647077","#7a858b","#909a9f","#a6afb3","#bdc4c7"]},
+      "wayfinding-teal": {"role":"primary","displayName":"Wayfinding Teal","canonical":"#165f5b","tonalRamp":["#07312f","#0b423f","#0f514d","#165f5b","#407a75","#6a9690","#95b2ac","#c0ceca"]},
+      "wayfinding-teal-deep": {"role":"primary","displayName":"Wayfinding Teal Deep","canonical":"#104b48","tonalRamp":["#062623","#0b3532","#104b48","#2e625e","#547a75","#7d9893","#a5b6b2","#ced7d3"]},
+      "proof-vermilion": {"role":"secondary","displayName":"Proof Vermilion","canonical":"#b54b2e","tonalRamp":["#5b2115","#762b1c","#913a25","#b54b2e","#c86b53","#d68c79","#e4ada0","#f2cec6"]},
+      "proof-vermilion-soft": {"role":"secondary","displayName":"Proof Vermilion Soft","canonical":"#f3e3db","tonalRamp":["#5b3e34","#79564a","#987063","#b78b7d","#cda69a","#ddbbb0","#e8cfc6","#f3e3db"]},
+      "rule": {"role":"neutral","displayName":"Rule","canonical":"#c9cfcc","tonalRamp":["#303331","#4e514f","#6d706e","#898d8a","#a5aaa6","#c9cfcc","#dde1dc","#eff1ed"]},
+      "rule-strong": {"role":"neutral","displayName":"Strong Rule","canonical":"#8c9794","tonalRamp":["#242927","#3d4542","#555e5b","#6d7874","#8c9794","#a8b0ad","#c3c9c5","#dfe2df"]},
+      "focus-vermilion": {"role":"secondary","displayName":"Focus Vermilion","canonical":"#b54b2e","tonalRamp":["#5b2115","#762b1c","#913a25","#b54b2e","#c86b53","#d68c79","#e4ada0","#f2cec6"]},
+      "selection-mint": {"role":"neutral","displayName":"Selection Mint","canonical":"#d8e8e5","tonalRamp":["#293d3b","#46615d","#63807b","#819e98","#9fbbb5","#bdd1cc","#d8e8e5","#edf4f2"]}
+    },
+    "typographyMeta": {
+      "display": {"displayName":"Display","purpose":"Page thesis and identity; capped at 12ch."},
+      "headline": {"displayName":"Headline","purpose":"Section titles and primary explanatory statements."},
+      "title": {"displayName":"Title","purpose":"Component and card titles."},
+      "body": {"displayName":"Body","purpose":"Reading copy with a 70ch maximum measure."},
+      "label": {"displayName":"Label","purpose":"Tracked uppercase system annotations and metadata."},
+      "action": {"displayName":"Action","purpose":"Bold sentence-case button labels."}
+    },
+    "shadows": [
+      {"name":"raised-register","value":"0 0.75rem 2rem rgb(23 33 41 / 0.1)","purpose":"Ambient separation for the implementation status register."}
+    ],
+    "motion": [
+      {"name":"ease-standard","value":"cubic-bezier(0.22, 1, 0.36, 1)","purpose":"Fast state transitions and button feedback."},
+      {"name":"duration-fast","value":"140ms","purpose":"Button color and translation changes."},
+      {"name":"duration-normal","value":"240ms","purpose":"Available for coordinated transitions."}
+    ],
+    "breakpoints": [
+      {"name":"wide","value":"48rem / 768px","purpose":"Switches proof field to two columns and principles to three."}
+    ]
+  },
+  "components": [
+    {"name":"Primary Button","kind":"button","refersTo":"button-primary","description":"Teal action for the main route or next step.","html":"<a class=\"ds-btn-primary\" href=\"#\">Explorar el sistema</a>","css":".ds-btn-primary{display:inline-flex;min-height:2.875rem;align-items:center;justify-content:center;padding:.75rem 1.25rem;border:1px solid transparent;border-radius:.25rem;background:#165f5b;color:#fff;font:700 .875rem/1.2 system-ui,sans-serif;text-decoration:none;transition:color 140ms cubic-bezier(.22,1,.36,1),background-color 140ms cubic-bezier(.22,1,.36,1),transform 140ms cubic-bezier(.22,1,.36,1)}.ds-btn-primary:hover{background:#104b48;transform:translateY(-1px)}.ds-btn-primary:focus-visible{outline:.1875rem solid #b54b2e;outline-offset:.1875rem}.ds-btn-primary:active{transform:none}"},
+    {"name":"Secondary Button","kind":"button","refersTo":"button-secondary","description":"Quiet alternate route with a visible rule.","html":"<a class=\"ds-btn-secondary\" href=\"#\">Revisar datos</a>","css":".ds-btn-secondary{display:inline-flex;min-height:2.875rem;align-items:center;justify-content:center;padding:.75rem 1.25rem;border:1px solid #8c9794;border-radius:.25rem;background:transparent;color:#172129;font:700 .875rem/1.2 system-ui,sans-serif;text-decoration:none;transition:color 140ms cubic-bezier(.22,1,.36,1),background-color 140ms cubic-bezier(.22,1,.36,1),border-color 140ms cubic-bezier(.22,1,.36,1),transform 140ms cubic-bezier(.22,1,.36,1)}.ds-btn-secondary:hover{border-color:#172129;background:#fff;transform:translateY(-1px)}.ds-btn-secondary:focus-visible{outline:.1875rem solid #b54b2e;outline-offset:.1875rem}.ds-btn-secondary:active{transform:none}"},
+    {"name":"Ruled Card","kind":"card","refersTo":"card","description":"Open record for a principle or supporting idea.","html":"<article class=\"ds-card\"><h3>Readable hierarchy</h3><p>Meaning stays visible at every size.</p></article>","css":".ds-card{display:grid;gap:1.25rem;padding-block:1.5rem;border-block-start:1px solid #8c9794;color:#172129}.ds-card h3{margin:0;font:680 clamp(1.375rem,1.15rem + .9vw,1.875rem)/1.16 system-ui,sans-serif;letter-spacing:-.03em}.ds-card p{margin:0;color:#55616a;font:400 1rem/1.65 system-ui,sans-serif}"},
+    {"name":"Masthead","kind":"nav","description":"Compact identity bar with release marker.","html":"<nav class=\"ds-nav\" aria-label=\"Primary\"><a href=\"#\">PyME / Foundation</a><span>V0.3.0</span></nav>","css":".ds-nav{display:flex;gap:1.5rem;align-items:center;justify-content:space-between;padding-block:1.25rem;border-block-end:1px solid #8c9794;color:#172129}.ds-nav a{font:800 .875rem/1.2 system-ui,sans-serif;text-decoration:none}.ds-nav span{color:#55616a;font:750 .75rem/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;font-variant-numeric:tabular-nums}"},
+    {"name":"Status Register","kind":"custom","description":"Raised ruled definition list for implementation state.","html":"<aside class=\"ds-register\"><p>BASE REGISTER</p><dl><div><dt>OUTPUT</dt><dd>Static Astro</dd></div><div><dt>DATA</dt><dd>Validated</dd></div></dl></aside>","css":".ds-register{padding:1.5rem;border-block-start:1px solid #172129;background:#fff;box-shadow:0 .75rem 2rem rgb(23 33 41 / .1)}.ds-register p{margin:0 0 2rem;color:#b54b2e;font:750 .75rem/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}.ds-register dl{margin:0}.ds-register dl>div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:1rem;padding-block:.75rem;border-block-start:1px solid #c9cfcc}.ds-register dt{color:#55616a;font:750 .75rem/1.2 system-ui,sans-serif;letter-spacing:.08em}.ds-register dd{margin:0;color:#172129;font:650 1rem/1.65 system-ui,sans-serif}"}
+  ],
+  "narrative": {
+    "northStar": "The Composed Foundation",
+    "overview": "Typesetter's Galley is the primary visual language: the foundation reads as a precisely set proof sheet where measure, alignment, and reading order are visible. Bright paper, graphite rules, and a restrained blue-green action ink keep the reference premium and calm while leaving client identity room to change. Civic Wayfinding supplies action clarity; Build Instructions supplies component legibility; Linked Fold supplies responsive coordination.\n\nThe system is intentionally operational rather than ornamental. A ruled paper field gives structure, the asymmetric proof layout gives the thesis room to breathe, and the narrow register makes implementation state inspectable without becoming a dashboard. Controls are crisp and tactile; cards are open, ruled records rather than floating tiles. Mobile preserves the same relationships by moving the register beneath the primary measure instead of compressing the desktop composition.",
+    "keyCharacteristics": ["Proof-stock canvas with a subtle four-rem ruling.","Ink-first typography with a narrow annotation rail.","Teal actions and vermilion verification accents used semantically.","Square controls, crisp rules, generous reading space, and responsive relationship preservation."],
+    "rules": [
+      {"name":"The Proof-Ink Rule","body":"Use accent color to identify action or verification; do not turn the entire page into a colored surface.","section":"colors"},
+      {"name":"The Measure Rule","body":"Let display and body text retain their intentional measures; do not flatten every section into a centered, equal-width column.","section":"typography"},
+      {"name":"The One-Lift Rule","body":"Keep surfaces flat by default; reserve the single raised treatment for the register that needs clear separation from the ruled field.","section":"elevation"}
+    ],
+    "dos": ["Do compose pages around a clear primary measure and a supporting rail when the content warrants it.","Do use rules, spacing, and type measure to make hierarchy legible before adding decoration.","Do use teal for actions and vermilion for verification/focus so color carries meaning.","Do preserve connected layout relationships across breakpoints and honor reduced-motion preferences."],
+    "donts": ["Don't turn the neutral foundation into an administrative dashboard or a dense grid of status widgets.","Don't use pill controls, gratuitous rounded cards, or ornamental hatching as the default client language.","Don't use shadows on every surface; the register is the deliberate exception.","Don't invent client claims, imagery, or identity inside the reference foundation."]
+  }
+}

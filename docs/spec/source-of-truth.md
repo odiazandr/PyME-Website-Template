@@ -24,6 +24,9 @@ Implemented repository-level ownership:
 | Social accounts | `src/data/social.json` |
 | Template version | `src/data/template.json` |
 | Data validation contracts | `src/schemas/*.ts` |
+| Portable implemented visual contract | `DESIGN.md` |
+| Runtime design tokens | `src/styles/tokens.css` |
+| Design-tool extensions derived from the implementation | `.impeccable/design.json` |
 
 Planned ownership after later runtime implementation:
 
@@ -31,7 +34,6 @@ Planned ownership after later runtime implementation:
 |---|---|
 | Navigation | `src/config/navigation.ts` |
 | Build-time features | `src/config/features.ts` |
-| Design values | `src/styles/tokens.css` |
 | Privacy text | `src/content/legal/aviso-de-privacidad.md` |
 | Public interoperability schema | `schemas/public-manifest.schema.json` |
 

@@ -1,0 +1,79 @@
+@layer reset, tokens, base, components, utilities;
+
+@import "./tokens.css";
+@import "./reset.css";
+@import "./utilities.css";
+@import "./print.css";
+
+@layer base {
+  html {
+    background: var(--color-bg);
+  }
+
+  body {
+    color: var(--color-text);
+    background:
+      linear-gradient(var(--color-border) 1px, transparent 1px) 0 0 / 100% 4rem,
+      var(--color-bg);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    color: var(--color-text);
+    background: var(--color-selection);
+  }
+
+  :focus-visible {
+    outline: 0.1875rem solid var(--color-focus);
+    outline-offset: 0.1875rem;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-heading);
+    font-weight: 680;
+    line-height: var(--leading-heading);
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  h1 {
+    max-width: 12ch;
+    font-size: var(--text-display);
+    line-height: var(--leading-tight);
+  }
+
+  h2 {
+    font-size: var(--text-2xl);
+  }
+
+  h3 {
+    font-size: var(--text-xl);
+  }
+
+  p,
+  li {
+    max-width: 70ch;
+  }
+
+  a:not([class]) {
+    text-decoration-color: var(--color-brand);
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.2em;
+  }
+
+  a:not([class]):hover {
+    color: var(--color-brand-hover);
+  }
+
+  hr {
+    height: 1px;
+    margin: var(--space-8) 0;
+    border: 0;
+    background: var(--color-border);
+  }
+}

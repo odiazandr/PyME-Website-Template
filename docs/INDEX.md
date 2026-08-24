@@ -27,8 +27,8 @@ Pointers only; summaries belong to their canonical owners.
 | T2 | `docs/spec/content-model.md` | Implemented business data and planned editorial domains |
 | T2 | `docs/spec/site-archetypes.md` | Starting information-architecture recipes |
 | T2 | `docs/spec/routing.md` | Public route and URL policy |
-| T2 | `docs/spec/design-system.md` | Design tokens and visual-system boundaries |
-| T2 | `docs/spec/component-system.md` | Planned component taxonomy and API rules |
+| T2 | `docs/spec/design-system.md` | Implemented design foundation and identity boundaries |
+| T2 | `docs/spec/component-system.md` | Implemented primitives and planned component taxonomy |
 | T2 | `docs/spec/media.md` | Image, font, and public-asset policy |
 | T2 | `docs/spec/accessibility.md` | Accessibility target and QA contract |
 | T2 | `docs/spec/performance.md` | Performance architecture and cost review |
@@ -100,5 +100,5 @@ Pointers only; summaries belong to their canonical owners.
 | `schemas/` | Public JSON contracts; reserved until implemented |
 | `scripts/` | Implemented data validation; production validators and initialization remain planned |
 | `tests/` | Implemented memory and data verification; browser and accessibility suites are planned |
-| `src/` | Implemented Astro runtime and data foundation; later website layers remain planned |
+| `src/` | Implemented Astro, data, and design foundations; later website layers remain planned |
 | `docs/archive/` | Cold superseded material; inventory by path only |
