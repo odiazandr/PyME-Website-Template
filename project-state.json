@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "phase": "runtime-foundation",
+  "capabilities": {
+    "memorySystem": "verified",
+    "memoryValidation": "verified",
+    "projectState": "verified",
+    "astroRuntime": "planned",
+    "businessDataSchemas": "planned",
+    "designSystem": "planned",
+    "coreWebsite": "planned",
+    "seo": "planned",
+    "accessibility": "planned",
+    "privacy": "planned",
+    "forms": "planned",
+    "securityConfiguration": "planned",
+    "productionValidation": "planned",
+    "browserTests": "planned",
+    "ci": "planned",
+    "netlifyDeployment": "planned",
+    "clientInitialization": "planned",
+    "lifecycleTest": "planned",
+    "migrationTest": "planned",
+    "productionReadiness": "not_implemented"
+  }
+}

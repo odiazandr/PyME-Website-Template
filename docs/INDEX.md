@@ -20,6 +20,7 @@ Pointers only; summaries belong to their canonical owners.
 | T2 | `docs/spec/portability.md` | Host independence and degraded operation |
 | T2 | `docs/spec/frontmatter.md` | Knowledge-document metadata contract |
 | T2 | `docs/spec/validation.md` | Template/project modes and validation results |
+| T2 | `docs/spec/project-state.md` | Machine-readable implementation state and transitions |
 | T2 | `docs/spec/product-scope.md` | Supported website classes and escalation boundary |
 | T2 | `docs/spec/architecture.md` | Static-first technical architecture |
 | T2 | `docs/spec/source-of-truth.md` | Planned canonical ownership of website facts |
@@ -74,6 +75,7 @@ Pointers only; summaries belong to their canonical owners.
 | T3 | `docs/decisions/0003-active-working-set.md` | Why relevance pointers are cached |
 | T3 | `docs/decisions/0004-deterministic-ownership-key.md` | Why ownership uses normalized questions |
 | T3 | `docs/decisions/0005-memory-validator-hardening.md` | Why memory validation uses explicit strict contracts |
+| T3 | `docs/decisions/0006-machine-readable-project-state.md` | Machine-readable implementation evidence |
 | T3 | `docs/decisions/0100-static-first-architecture.md` | Static-first selection |
 | T3 | `docs/decisions/0101-astro-as-site-framework.md` | Astro selection |
 | T3 | `docs/decisions/0102-plain-css-and-design-tokens.md` | Styling selection |

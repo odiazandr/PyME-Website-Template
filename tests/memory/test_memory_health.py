@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import os
 import sys
 import tempfile
@@ -15,6 +16,14 @@ SPEC = importlib.util.spec_from_file_location("memory_health", ROOT / "ops" / "m
 assert SPEC and SPEC.loader
 MEMORY_HEALTH = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MEMORY_HEALTH)
+
+
+def valid_project_state() -> dict[str, object]:
+    return {
+        "schemaVersion": 1,
+        "phase": "runtime-foundation",
+        "capabilities": {name: "planned" for name in MEMORY_HEALTH.PROJECT_CAPABILITIES},
+    }
 
 
 class MemoryHealthTests(unittest.TestCase):
@@ -239,6 +248,65 @@ maximum_reason_length = 160
         self.assertTrue(MEMORY_HEALTH.safe_relative_posix(".memory/working-sets"))
 
 
+class ProjectStateTests(unittest.TestCase):
+    def validate(self, value: object | bytes, *, raw: bool = False) -> set[str]:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            path = root / "project-state.json"
+            if isinstance(value, bytes):
+                path.write_bytes(value)
+            elif raw:
+                path.write_text(str(value), encoding="utf-8")
+            else:
+                path.write_text(json.dumps(value), encoding="utf-8")
+            return {str(item["code"]) for item in MEMORY_HEALTH.validate_project_state(root)}
+
+    def test_valid_project_state_passes(self) -> None:
+        self.assertEqual(self.validate(valid_project_state()), set())
+
+    def test_missing_malformed_invalid_utf8_and_duplicate_keys_are_structured(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            self.assertEqual({item["code"] for item in MEMORY_HEALTH.validate_project_state(Path(temporary))}, {"PROJECT_STATE_MISSING"})
+        self.assertIn("PROJECT_STATE_MALFORMED_JSON", self.validate("{", raw=True))
+        self.assertIn("PROJECT_STATE_INVALID_UTF8", self.validate(b"\xff\xfe"))
+        duplicate = '{"schemaVersion":1,"schemaVersion":1,"phase":"runtime-foundation","capabilities":{}}'
+        self.assertIn("PROJECT_STATE_DUPLICATE_KEY", self.validate(duplicate, raw=True))
+        self.assertIn("PROJECT_STATE_NESTING_TOO_DEEP", self.validate("[" * 20000 + "]" * 20000, raw=True))
+        self.assertIn("PROJECT_STATE_TOO_LARGE", self.validate(b" " * (MEMORY_HEALTH.PROJECT_STATE_SIZE_LIMIT + 1)))
+
+    def test_root_keys_schema_and_phase_are_strict(self) -> None:
+        self.assertIn("PROJECT_STATE_INVALID_ROOT", self.validate([]))
+        state = valid_project_state()
+        del state["phase"]
+        state["extra"] = True
+        codes = self.validate(state)
+        self.assertIn("PROJECT_STATE_MISSING_KEY", codes)
+        self.assertIn("PROJECT_STATE_UNKNOWN_KEY", codes)
+        for schema in (True, 2, "1"):
+            with self.subTest(schema=schema):
+                state = valid_project_state()
+                state["schemaVersion"] = schema
+                self.assertIn("PROJECT_STATE_UNSUPPORTED_SCHEMA", self.validate(state))
+        state = valid_project_state()
+        state["phase"] = "banana"
+        self.assertIn("PROJECT_STATE_INVALID_PHASE", self.validate(state))
+
+    def test_capability_shape_names_and_states_are_strict(self) -> None:
+        state = valid_project_state()
+        state["capabilities"] = []
+        self.assertIn("PROJECT_STATE_INVALID_CAPABILITIES", self.validate(state))
+        state = valid_project_state()
+        capabilities = state["capabilities"]
+        assert isinstance(capabilities, dict)
+        del capabilities["astroRuntime"]
+        capabilities["inventedCapability"] = "verified"
+        capabilities["memorySystem"] = "ready"
+        codes = self.validate(state)
+        self.assertIn("PROJECT_STATE_MISSING_CAPABILITY", codes)
+        self.assertIn("PROJECT_STATE_UNKNOWN_CAPABILITY", codes)
+        self.assertIn("PROJECT_STATE_INVALID_CAPABILITY_STATE", codes)
+
+
 class FrontmatterTests(unittest.TestCase):
     def validate(self, content: str | bytes, relative: str = "docs/spec/example.md") -> tuple[dict[str, object] | None, set[str]]:
         with tempfile.TemporaryDirectory() as raw:
@@ -361,6 +429,7 @@ class MemoryStructureTests(unittest.TestCase):
         (root / "docs" / "INDEX.md").write_text(index, encoding="utf-8")
         (root / "PROJECT.md").write_text("# Project\n", encoding="utf-8")
         (root / "memory.toml").write_text(MemoryConfigTests().valid_config(), encoding="utf-8")
+        (root / "project-state.json").write_text(json.dumps(valid_project_state()), encoding="utf-8")
         return temporary
 
     def add_index_row(self, root: Path, row: str) -> None:

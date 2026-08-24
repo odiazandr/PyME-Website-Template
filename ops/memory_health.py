@@ -44,10 +44,90 @@ OUTPUT_LIMIT = 65_536
 TRUNCATION_MARKER = "...[TRUNCATED]"
 DEFAULT_CHECK_TIMEOUT_SECONDS = 300
 CHECK_GUARD_ENV = "PYME_MEMORY_CHECK_ACTIVE"
+PROJECT_STATE_KEYS = frozenset({"schemaVersion", "phase", "capabilities"})
+PROJECT_PHASES = frozenset({"memory-integrity", "implementation-state", "runtime-foundation", "data-foundation", "design-foundation", "core-runtime", "site-fundamentals", "security", "production-validation", "browser-qa", "ci", "deployment", "client-initialization", "lifecycle-validation", "migration-validation", "adversarial-hardening", "stable"})
+CAPABILITY_STATES = frozenset({"not_implemented", "planned", "partial", "implemented", "verified", "production_verified", "deprecated"})
+PROJECT_CAPABILITIES = (
+    "memorySystem", "memoryValidation", "projectState", "astroRuntime", "businessDataSchemas",
+    "designSystem", "coreWebsite", "seo", "accessibility", "privacy", "forms",
+    "securityConfiguration", "productionValidation", "browserTests", "ci", "netlifyDeployment",
+    "clientInitialization", "lifecycleTest", "migrationTest", "productionReadiness",
+)
+PROJECT_STATE_SIZE_LIMIT = 65_536
+
+
+class DuplicateJsonKey(ValueError):
+    pass
 
 
 def error(code: str, path: str | None, message: str) -> dict[str, str | None]:
     return {"code": code, "path": path, "message": message}
+
+
+def reject_duplicate_json_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    value: dict[str, Any] = {}
+    for key, item in pairs:
+        if key in value:
+            raise DuplicateJsonKey(key)
+        value[key] = item
+    return value
+
+
+def validate_project_state(root: Path = ROOT) -> list[dict[str, str | None]]:
+    path = root / "project-state.json"
+    relative = "project-state.json"
+    if path.is_symlink():
+        return [error("PROJECT_STATE_SYMLINK", relative, "project state may not be a symbolic link")]
+    try:
+        with path.open("rb") as stream:
+            raw = stream.read(PROJECT_STATE_SIZE_LIMIT + 1)
+    except FileNotFoundError:
+        return [error("PROJECT_STATE_MISSING", relative, "project state is missing")]
+    except OSError as exc:
+        return [error("PROJECT_STATE_UNREADABLE", relative, f"project state could not be read: {exc.strerror or exc}")]
+    if len(raw) > PROJECT_STATE_SIZE_LIMIT:
+        return [error("PROJECT_STATE_TOO_LARGE", relative, f"project state exceeds {PROJECT_STATE_SIZE_LIMIT} bytes")]
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeError:
+        return [error("PROJECT_STATE_INVALID_UTF8", relative, "project state must be valid UTF-8")]
+    try:
+        state = json.loads(text, object_pairs_hook=reject_duplicate_json_keys)
+    except DuplicateJsonKey as exc:
+        return [error("PROJECT_STATE_DUPLICATE_KEY", relative, f"duplicate JSON key: {exc}")]
+    except json.JSONDecodeError as exc:
+        return [error("PROJECT_STATE_MALFORMED_JSON", relative, f"malformed JSON at line {exc.lineno}, column {exc.colno}")]
+    except RecursionError:
+        return [error("PROJECT_STATE_NESTING_TOO_DEEP", relative, "project state JSON nesting exceeds the supported decoder depth")]
+    if not isinstance(state, dict):
+        return [error("PROJECT_STATE_INVALID_ROOT", relative, "project state root must be an object")]
+
+    errors: list[dict[str, str | None]] = []
+    keys = set(state)
+    for key in sorted(PROJECT_STATE_KEYS - keys):
+        errors.append(error("PROJECT_STATE_MISSING_KEY", relative, f"missing root key: {key}"))
+    for key in sorted(keys - PROJECT_STATE_KEYS):
+        errors.append(error("PROJECT_STATE_UNKNOWN_KEY", relative, f"unknown root key: {key}"))
+    schema_version = state.get("schemaVersion")
+    if isinstance(schema_version, bool) or not isinstance(schema_version, int) or schema_version != 1:
+        errors.append(error("PROJECT_STATE_UNSUPPORTED_SCHEMA", relative, "schemaVersion must be integer 1"))
+    phase = state.get("phase")
+    if not isinstance(phase, str) or phase not in PROJECT_PHASES:
+        errors.append(error("PROJECT_STATE_INVALID_PHASE", relative, "phase is not a supported implementation phase"))
+    capabilities = state.get("capabilities")
+    if not isinstance(capabilities, dict):
+        errors.append(error("PROJECT_STATE_INVALID_CAPABILITIES", relative, "capabilities must be an object"))
+    else:
+        capability_keys = set(capabilities)
+        expected = set(PROJECT_CAPABILITIES)
+        for name in sorted(expected - capability_keys):
+            errors.append(error("PROJECT_STATE_MISSING_CAPABILITY", relative, f"missing capability: {name}"))
+        for name in sorted(capability_keys - expected):
+            errors.append(error("PROJECT_STATE_UNKNOWN_CAPABILITY", relative, f"unknown capability: {name}"))
+        for name in PROJECT_CAPABILITIES:
+            if name in capabilities and (not isinstance(capabilities[name], str) or capabilities[name] not in CAPABILITY_STATES):
+                errors.append(error("PROJECT_STATE_INVALID_CAPABILITY_STATE", relative, f"invalid state for capability {name}"))
+    return sorted(errors, key=lambda item: (item["path"] or "", item["code"] or "", item["message"] or ""))
 
 
 def safe_relative_posix(value: object) -> bool:
@@ -507,6 +587,7 @@ def validate_contracts(root: Path = ROOT) -> tuple[dict[str, Any] | None, list[d
 
     config, config_errors = validate_config(root)
     errors.extend(config_errors)
+    errors.extend(validate_project_state(root))
     if config and not config_errors:
         errors.extend(validate_placeholders(root, config, documents))
     return config, sorted(errors, key=lambda item: (item["path"] or "", item["code"] or "", item["message"] or ""))

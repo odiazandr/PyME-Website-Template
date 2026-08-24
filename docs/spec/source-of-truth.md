@@ -6,6 +6,12 @@ answers: ["Where will each website fact live?"]
 ---
 # Source of truth
 
+Implemented repository-level ownership:
+
+| Fact | Canonical owner |
+|---|---|
+| Current implementation phase and capability evidence level | `project-state.json` |
+
 Planned ownership after runtime implementation:
 
 | Fact | Canonical owner |

@@ -50,7 +50,7 @@ Purpose: Provide a versioned, production-grade foundation for independent, clien
 
 ## Project checks
 
-Project-specific checks are configured in `memory.toml`. Empty commands are `UNVERIFIED`, never passed. Run memory health with `python ops/memory_health.py`.
+Project-specific checks are configured in `memory.toml`. Empty commands are `NOT_CONFIGURED`, never passed. Run memory health with `python ops/memory_health.py`.
 
 ## Definition of done
 
