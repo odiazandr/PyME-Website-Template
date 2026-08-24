@@ -1,0 +1,14 @@
+schema_version = 1
+mode = "template"
+
+[checks]
+build = ""
+test = "python -m unittest discover -s tests/memory"
+lint = ""
+secret_scan = ""
+
+[working_set]
+enabled = true
+directory = ".memory/working-sets"
+maximum_pointers = 20
+maximum_reason_length = 160

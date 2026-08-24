@@ -1,0 +1,38 @@
+{
+  "campaign_date": "2026-08-24",
+  "canonical_branch": "main",
+  "canonical_origin": "https://github.com/odiazandr/PyME-Website-Template.git",
+  "baseline_snapshot_sha256": "506ac824b47c7b4e9e429261ef4d9e3f7649b4e7515419d1b71608e63d9d2400",
+  "baseline_files_excluding_audit_artifacts": 87,
+  "environment": {
+    "os": "Windows",
+    "shell": "PowerShell",
+    "python": "3.14.7"
+  },
+  "budget": {
+    "maximum_cheap_agent_invocations": 12,
+    "maximum_concurrent_cheap_agents": 3,
+    "maximum_stages": 5,
+    "maximum_retries_per_experiment": 1,
+    "maximum_premium_subagent_invocations": 0,
+    "maximum_wall_clock_minutes": 30,
+    "maximum_artifact_bytes": 5242880
+  },
+  "usage": {
+    "cheap_agent_invocations": 6,
+    "cheap_agent_class": "gpt-5.6-luna",
+    "maximum_observed_concurrent_cheap_agents": 3,
+    "premium_subagent_invocations": 0,
+    "stages_completed": 5,
+    "agent_retries": 0,
+    "monte_carlo_scenarios": 100,
+    "deterministic_mutation_claims_independently_confirmed": 5
+  },
+  "stop_conditions": [
+    "Planned bounded stages completed",
+    "Remaining runtime/deployment hypotheses require implementations or external systems that do not exist"
+  ],
+  "production_actions": false,
+  "network_actions": false,
+  "canonical_source_repairs": false
+}

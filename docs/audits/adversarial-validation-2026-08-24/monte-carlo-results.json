@@ -1,0 +1,1693 @@
+{
+  "aggregate": {
+    "accepted": 29,
+    "by_variable": {
+      "document": {
+        "add_unindexed": {
+          "accepted": 0,
+          "crashed": 11,
+          "samples": 25
+        },
+        "delete_indexed": {
+          "accepted": 22,
+          "crashed": 8,
+          "samples": 31
+        },
+        "intact": {
+          "accepted": 7,
+          "crashed": 8,
+          "samples": 24
+        },
+        "missing_frontmatter": {
+          "accepted": 0,
+          "crashed": 7,
+          "samples": 20
+        }
+      },
+      "encoding": {
+        "invalid_utf8": {
+          "accepted": 8,
+          "crashed": 24,
+          "samples": 32
+        },
+        "utf8": {
+          "accepted": 14,
+          "crashed": 4,
+          "samples": 38
+        },
+        "utf8_bom": {
+          "accepted": 7,
+          "crashed": 6,
+          "samples": 30
+        }
+      },
+      "index": {
+        "duplicate_row": {
+          "accepted": 8,
+          "crashed": 9,
+          "samples": 31
+        },
+        "intact": {
+          "accepted": 18,
+          "crashed": 12,
+          "samples": 43
+        },
+        "remove_row": {
+          "accepted": 3,
+          "crashed": 13,
+          "samples": 26
+        }
+      },
+      "metadata": {
+        "duplicate_question": {
+          "accepted": 4,
+          "crashed": 11,
+          "samples": 20
+        },
+        "invalid_authority": {
+          "accepted": 7,
+          "crashed": 8,
+          "samples": 23
+        },
+        "invalid_status": {
+          "accepted": 10,
+          "crashed": 6,
+          "samples": 28
+        },
+        "valid": {
+          "accepted": 8,
+          "crashed": 9,
+          "samples": 29
+        }
+      },
+      "mode": {
+        "PROJECT": {
+          "accepted": 9,
+          "crashed": 4,
+          "samples": 22
+        },
+        "malformed": {
+          "accepted": 0,
+          "crashed": 19,
+          "samples": 19
+        },
+        "missing": {
+          "accepted": 7,
+          "crashed": 6,
+          "samples": 23
+        },
+        "project": {
+          "accepted": 7,
+          "crashed": 2,
+          "samples": 19
+        },
+        "template": {
+          "accepted": 6,
+          "crashed": 3,
+          "samples": 17
+        }
+      },
+      "placeholder": {
+        "none": {
+          "accepted": 9,
+          "crashed": 6,
+          "samples": 26
+        },
+        "project": {
+          "accepted": 5,
+          "crashed": 9,
+          "samples": 22
+        },
+        "readme": {
+          "accepted": 10,
+          "crashed": 3,
+          "samples": 21
+        },
+        "reserved_source": {
+          "accepted": 5,
+          "crashed": 16,
+          "samples": 31
+        }
+      }
+    },
+    "crashed": 34,
+    "rejected": 37,
+    "signatures": {
+      "accepted": 29,
+      "crash": 34,
+      "rejected:PROJECT.md: unresolved template placeholder": 1,
+      "rejected:PROJECT.md: unresolved template placeholder|docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority": 1,
+      "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md": 6,
+      "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md|docs/spec/seo.md: missing from docs/INDEX.md": 2,
+      "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md|docs/spec/seo.md: missing from docs/INDEX.md|docs/spec/seo.md: missing frontmatter field answers": 1,
+      "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md|docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority": 4,
+      "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md|duplicate ownership question: docs/spec/seo.md and docs/spec/localization.md": 1,
+      "rejected:docs/spec/seo.md: missing from docs/INDEX.md": 2,
+      "rejected:docs/spec/seo.md: missing from docs/INDEX.md|docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority": 5,
+      "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner": 13,
+      "rejected:duplicate ownership question: docs/spec/seo.md and docs/spec/localization.md": 1
+    },
+    "unique_signatures": 13
+  },
+  "dimensions": {
+    "document": [
+      "intact",
+      "delete_indexed",
+      "add_unindexed",
+      "missing_frontmatter"
+    ],
+    "encoding": [
+      "utf8",
+      "utf8_bom",
+      "invalid_utf8"
+    ],
+    "index": [
+      "intact",
+      "duplicate_row",
+      "remove_row"
+    ],
+    "metadata": [
+      "valid",
+      "invalid_authority",
+      "invalid_status",
+      "duplicate_question"
+    ],
+    "mode": [
+      "template",
+      "project",
+      "PROJECT",
+      "missing",
+      "malformed"
+    ],
+    "placeholder": [
+      "none",
+      "project",
+      "readme",
+      "reserved_source"
+    ]
+  },
+  "results": [
+    {
+      "exit_code": 1,
+      "id": "MC-001",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8_bom",
+        "index": "duplicate_row",
+        "metadata": "valid",
+        "mode": "missing",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md|docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-002",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_authority",
+        "mode": "missing",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-003",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md\n- duplicate ownership question: docs/spec/seo.md and docs/spec/localization.md",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8",
+        "index": "duplicate_row",
+        "metadata": "duplicate_question",
+        "mode": "template",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md|duplicate ownership question: docs/spec/seo.md and docs/spec/localization.md"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-004",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-34nke6pj\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-34nke6pj\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8_bom",
+        "index": "intact",
+        "metadata": "duplicate_question",
+        "mode": "malformed",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-005",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-la363hc3\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-la363hc3\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-la363hc3\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "intact",
+        "encoding": "invalid_utf8",
+        "index": "intact",
+        "metadata": "duplicate_question",
+        "mode": "malformed",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-006",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path\n- docs/spec/seo.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8_bom",
+        "index": "remove_row",
+        "metadata": "duplicate_question",
+        "mode": "PROJECT",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md|docs/spec/seo.md: missing from docs/INDEX.md|docs/spec/seo.md: missing frontmatter field answers"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-007",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-hclprsje\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-hclprsje\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-hclprsje\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "invalid_utf8",
+        "index": "intact",
+        "metadata": "duplicate_question",
+        "mode": "missing",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-008",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8_bom",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "project",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-009",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path\n- docs/spec/seo.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8_bom",
+        "index": "remove_row",
+        "metadata": "invalid_status",
+        "mode": "template",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing from docs/INDEX.md|docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-010",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "invalid_status",
+        "mode": "PROJECT",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-011",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8_bom",
+        "index": "duplicate_row",
+        "metadata": "invalid_authority",
+        "mode": "project",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md|docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-012",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path\n- docs/spec/seo.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8",
+        "index": "remove_row",
+        "metadata": "invalid_authority",
+        "mode": "project",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing from docs/INDEX.md|docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-013",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-oeo4kraw\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-oeo4kraw\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "invalid_utf8",
+        "index": "remove_row",
+        "metadata": "duplicate_question",
+        "mode": "malformed",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-014",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-mwuxxee9\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-mwuxxee9\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "invalid_authority",
+        "mode": "malformed",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-015",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "project",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-016",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "missing",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-017",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-_d47vdwj\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-_d47vdwj\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-_d47vdwj\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "invalid_utf8",
+        "index": "intact",
+        "metadata": "duplicate_question",
+        "mode": "malformed",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-018",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "invalid_utf8",
+        "index": "duplicate_row",
+        "metadata": "valid",
+        "mode": "template",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-019",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-n2e02bjr\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-n2e02bjr\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-n2e02bjr\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "invalid_utf8",
+        "index": "duplicate_row",
+        "metadata": "duplicate_question",
+        "mode": "template",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-020",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-pbpsrl9y\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-pbpsrl9y\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-pbpsrl9y\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "intact",
+        "encoding": "invalid_utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_authority",
+        "mode": "missing",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-021",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "missing",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-022",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-bt84u19k\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-bt84u19k\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-bt84u19k\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "intact",
+        "encoding": "invalid_utf8",
+        "index": "remove_row",
+        "metadata": "invalid_authority",
+        "mode": "project",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-023",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "invalid_utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_authority",
+        "mode": "template",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-024",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "duplicate_question",
+        "mode": "template",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-025",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "invalid_utf8",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "template",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-026",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8_bom",
+        "index": "duplicate_row",
+        "metadata": "valid",
+        "mode": "PROJECT",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-027",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-davkb7t7\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-davkb7t7\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8_bom",
+        "index": "intact",
+        "metadata": "invalid_status",
+        "mode": "malformed",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-028",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "invalid_status",
+        "mode": "template",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-029",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-i6lb8cv4\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-i6lb8cv4\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "invalid_utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_status",
+        "mode": "malformed",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-030",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-2e3orn7k\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-2e3orn7k\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8_bom",
+        "index": "duplicate_row",
+        "metadata": "invalid_status",
+        "mode": "malformed",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-031",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-3sge0ki6\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-3sge0ki6\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-3sge0ki6\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "invalid_utf8",
+        "index": "remove_row",
+        "metadata": "invalid_authority",
+        "mode": "missing",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-032",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-46ez17kv\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-46ez17kv\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-46ez17kv\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "invalid_utf8",
+        "index": "remove_row",
+        "metadata": "valid",
+        "mode": "missing",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-033",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8_bom",
+        "index": "remove_row",
+        "metadata": "invalid_status",
+        "mode": "PROJECT",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-034",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-117w189c\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-117w189c\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-117w189c\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "invalid_utf8",
+        "index": "remove_row",
+        "metadata": "valid",
+        "mode": "template",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-035",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "invalid_utf8",
+        "index": "intact",
+        "metadata": "invalid_status",
+        "mode": "missing",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-036",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8_bom",
+        "index": "intact",
+        "metadata": "invalid_status",
+        "mode": "PROJECT",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-037",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-xsf2fdri\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-xsf2fdri\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8",
+        "index": "remove_row",
+        "metadata": "invalid_authority",
+        "mode": "malformed",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-038",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_status",
+        "mode": "project",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-039",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8_bom",
+        "index": "intact",
+        "metadata": "invalid_authority",
+        "mode": "missing",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-040",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "duplicate_question",
+        "mode": "project",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-041",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-6yetr395\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-6yetr395\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-6yetr395\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "invalid_utf8",
+        "index": "intact",
+        "metadata": "invalid_authority",
+        "mode": "PROJECT",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-042",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "invalid_utf8",
+        "index": "duplicate_row",
+        "metadata": "duplicate_question",
+        "mode": "PROJECT",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-043",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "invalid_status",
+        "mode": "missing",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-044",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-dxqv193r\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-dxqv193r\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-dxqv193r\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "invalid_utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_status",
+        "mode": "project",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-045",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-i0fx1i87\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-i0fx1i87\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-i0fx1i87\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "intact",
+        "encoding": "invalid_utf8",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "malformed",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-046",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8_bom",
+        "index": "duplicate_row",
+        "metadata": "valid",
+        "mode": "missing",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md|docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-047",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "project",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-048",
+      "output": "MEMORY HEALTH: FAILED\n- duplicate ownership question: docs/spec/seo.md and docs/spec/localization.md",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8",
+        "index": "duplicate_row",
+        "metadata": "duplicate_question",
+        "mode": "template",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "rejected:duplicate ownership question: docs/spec/seo.md and docs/spec/localization.md"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-049",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "missing",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-050",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-e3deflth\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-e3deflth\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-e3deflth\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "invalid_utf8",
+        "index": "intact",
+        "metadata": "duplicate_question",
+        "mode": "malformed",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-051",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8_bom",
+        "index": "duplicate_row",
+        "metadata": "valid",
+        "mode": "PROJECT",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-052",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_authority",
+        "mode": "PROJECT",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-053",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "invalid_status",
+        "mode": "PROJECT",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-054",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md\n- docs/spec/seo.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8",
+        "index": "remove_row",
+        "metadata": "valid",
+        "mode": "project",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md|docs/spec/seo.md: missing from docs/INDEX.md"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-055",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "invalid_status",
+        "mode": "template",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-056",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "invalid_status",
+        "mode": "template",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-057",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-h9ba422j\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-h9ba422j\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-h9ba422j\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "intact",
+        "encoding": "invalid_utf8",
+        "index": "duplicate_row",
+        "metadata": "valid",
+        "mode": "missing",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-058",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path\n- docs/spec/seo.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8_bom",
+        "index": "remove_row",
+        "metadata": "valid",
+        "mode": "template",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing from docs/INDEX.md|docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-059",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-dqgclyaf\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-dqgclyaf\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-dqgclyaf\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "invalid_utf8",
+        "index": "remove_row",
+        "metadata": "duplicate_question",
+        "mode": "PROJECT",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-060",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "project",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-061",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "missing",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-062",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-h8d05k3f\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-h8d05k3f\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "invalid_utf8",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "malformed",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-063",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8_bom",
+        "index": "intact",
+        "metadata": "invalid_status",
+        "mode": "PROJECT",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-064",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8_bom",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "template",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md|docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-065",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8_bom",
+        "index": "duplicate_row",
+        "metadata": "invalid_status",
+        "mode": "missing",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-066",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8_bom",
+        "index": "duplicate_row",
+        "metadata": "invalid_status",
+        "mode": "missing",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-067",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-ikfux0qx\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-ikfux0qx\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "invalid_utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_authority",
+        "mode": "malformed",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-068",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path\n- PROJECT.md: unresolved template placeholder",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8_bom",
+        "index": "duplicate_row",
+        "metadata": "invalid_authority",
+        "mode": "project",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "rejected:PROJECT.md: unresolved template placeholder|docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-069",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-49h0qg6d\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-49h0qg6d\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8_bom",
+        "index": "remove_row",
+        "metadata": "invalid_status",
+        "mode": "malformed",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-070",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "project",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-071",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8",
+        "index": "remove_row",
+        "metadata": "valid",
+        "mode": "project",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing from docs/INDEX.md"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-072",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-sm0ljkk5\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-sm0ljkk5\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-sm0ljkk5\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "invalid_utf8",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "PROJECT",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-073",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-c4c2yxst\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-c4c2yxst\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-c4c2yxst\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "intact",
+        "encoding": "invalid_utf8",
+        "index": "remove_row",
+        "metadata": "duplicate_question",
+        "mode": "PROJECT",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-074",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "invalid_status",
+        "mode": "template",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-075",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8_bom",
+        "index": "intact",
+        "metadata": "invalid_authority",
+        "mode": "PROJECT",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-076",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md\n- docs/spec/seo.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8",
+        "index": "remove_row",
+        "metadata": "valid",
+        "mode": "PROJECT",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md|docs/spec/seo.md: missing from docs/INDEX.md"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-077",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-a14mplp4\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-a14mplp4\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8_bom",
+        "index": "duplicate_row",
+        "metadata": "valid",
+        "mode": "malformed",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-078",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-irtl0up0\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-irtl0up0\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8",
+        "index": "remove_row",
+        "metadata": "duplicate_question",
+        "mode": "malformed",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-079",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path\n- docs/spec/seo.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8_bom",
+        "index": "remove_row",
+        "metadata": "invalid_authority",
+        "mode": "missing",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing from docs/INDEX.md|docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-080",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path\n- docs/spec/seo.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8_bom",
+        "index": "remove_row",
+        "metadata": "invalid_status",
+        "mode": "project",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing from docs/INDEX.md|docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-081",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "invalid_utf8",
+        "index": "intact",
+        "metadata": "invalid_authority",
+        "mode": "missing",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-082",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-haksx6u9\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-haksx6u9\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-haksx6u9\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "invalid_utf8",
+        "index": "remove_row",
+        "metadata": "invalid_authority",
+        "mode": "template",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-083",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-8k8le0fo\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-8k8le0fo\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-8k8le0fo\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "invalid_utf8",
+        "index": "remove_row",
+        "metadata": "valid",
+        "mode": "malformed",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-084",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8_bom",
+        "index": "intact",
+        "metadata": "duplicate_question",
+        "mode": "PROJECT",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-085",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_status",
+        "mode": "PROJECT",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-086",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_authority",
+        "mode": "PROJECT",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-087",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "invalid_utf8",
+        "index": "intact",
+        "metadata": "invalid_authority",
+        "mode": "project",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-088",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_status",
+        "mode": "PROJECT",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-089",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-cavyyiaj\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-cavyyiaj\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_status",
+        "mode": "malformed",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-090",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_authority",
+        "mode": "missing",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-091",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8_bom",
+        "index": "remove_row",
+        "metadata": "invalid_status",
+        "mode": "project",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-092",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "intact",
+        "encoding": "utf8",
+        "index": "remove_row",
+        "metadata": "invalid_authority",
+        "mode": "missing",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing from docs/INDEX.md"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-093",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8",
+        "index": "intact",
+        "metadata": "duplicate_question",
+        "mode": "project",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-094",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: missing frontmatter field owner\n- docs/spec/seo.md: missing frontmatter field authority\n- docs/spec/seo.md: missing frontmatter field status\n- docs/spec/seo.md: missing frontmatter field answers\n- docs/spec/seo.md: owner must equal repository path",
+      "parameters": {
+        "document": "missing_frontmatter",
+        "encoding": "utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_status",
+        "mode": "template",
+        "placeholder": "readme"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/seo.md: missing frontmatter field answers|docs/spec/seo.md: missing frontmatter field authority|docs/spec/seo.md: missing frontmatter field owner"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-095",
+      "output": "MEMORY HEALTH: FAILED\n- docs/spec/adversarial-extra.md: missing from docs/INDEX.md",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "utf8",
+        "index": "duplicate_row",
+        "metadata": "invalid_status",
+        "mode": "missing",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "rejected:docs/spec/adversarial-extra.md: missing from docs/INDEX.md"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-096",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "invalid_utf8",
+        "index": "remove_row",
+        "metadata": "duplicate_question",
+        "mode": "PROJECT",
+        "placeholder": "none"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-097",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-rf7328s6\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-rf7328s6\\repo\\ops\\memory_health.py\", line 66, in run\n    metadata = parse_frontmatter(path)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-rf7328s6\\repo\\ops\\memory_health.py\", line 19, in parse_frontmatter\n    text = path.read_text(encoding=\"utf-8\")\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\pathlib\\__init__.py\", line 788, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"<frozen codecs>\", line 325, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "parameters": {
+        "document": "add_unindexed",
+        "encoding": "invalid_utf8",
+        "index": "remove_row",
+        "metadata": "duplicate_question",
+        "mode": "missing",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-098",
+      "output": "Traceback (most recent call last):\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-g788pfyw\\repo\\ops\\memory_health.py\", line 92, in <module>\n    failures = run()\n  File \"C:\\Users\\orduz\\AppData\\Local\\Temp\\pyme-mc-g788pfyw\\repo\\ops\\memory_health.py\", line 83, in run\n    config = tomllib.loads((ROOT / \"memory.toml\").read_text(encoding=\"utf-8\"))\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 182, in loads\n    pos = key_value_rule(src, pos, out, header, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 411, in key_value_rule\n    pos, key, value = parse_key_value_pair(src, pos, parse_float)\n                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 454, in parse_key_value_pair\n    pos, value = parse_value(src, pos, parse_float)\n                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 707, in parse_value\n    return parse_array(src, pos, parse_float)\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 509, in parse_array\n    pos, val = parse_value(src, pos, parse_float)\n               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\orduz\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\tomllib\\_parser.py\", line 740, in parse_value\n    raise TOMLDecodeError(\"Invalid value\", src, pos)\ntomllib.TOMLDecodeError: Invalid value (at line 2, column 1)",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8_bom",
+        "index": "intact",
+        "metadata": "valid",
+        "mode": "malformed",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "crash"
+    },
+    {
+      "exit_code": 1,
+      "id": "MC-099",
+      "output": "MEMORY HEALTH: FAILED\n- PROJECT.md: unresolved template placeholder",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8_bom",
+        "index": "intact",
+        "metadata": "invalid_authority",
+        "mode": "project",
+        "placeholder": "project"
+      },
+      "seed": 20260824,
+      "signature": "rejected:PROJECT.md: unresolved template placeholder"
+    },
+    {
+      "exit_code": 0,
+      "id": "MC-100",
+      "output": "MEMORY HEALTH: PASSED",
+      "parameters": {
+        "document": "delete_indexed",
+        "encoding": "utf8_bom",
+        "index": "intact",
+        "metadata": "invalid_status",
+        "mode": "PROJECT",
+        "placeholder": "reserved_source"
+      },
+      "seed": 20260824,
+      "signature": "accepted"
+    }
+  ],
+  "samples": 100,
+  "seed": 20260824
+}

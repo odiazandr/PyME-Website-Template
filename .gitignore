@@ -1,0 +1,15 @@
+node_modules/
+__pycache__/
+*.py[cod]
+dist/
+.astro/
+.netlify/
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example
+.memory/current
+.memory/working-sets/*
+!.memory/working-sets/.gitignore
+!.memory/working-sets/README.md
