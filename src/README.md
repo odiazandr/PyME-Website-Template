@@ -1,3 +1,3 @@
 # Runtime source
 
-The Astro runtime, validated business-data foundation, design tokens, global styles, shared layout, core components, business sections, and explicit reference routes are implemented. The pages consume canonical data and deliberately identify unresolved client facts. Later phases add SEO resources, forms, security configuration, and strict production validation according to the canonical specifications.
+The Astro runtime, validated business-data foundation, design system, shared layout, reference routes, SEO resources, structured data, privacy content owner, and progressive contact form are implemented. The pages consume canonical data and deliberately identify unresolved client facts. Later phases add security configuration, strict production validation, and browser automation according to the canonical specifications.

@@ -181,6 +181,9 @@ The form language is crisp and typographic. Controls use a gently softened squar
 - **Hover / Focus:** Deep teal hover with a one-pixel upward translation; global vermilion focus ring is `0.1875rem` with `0.1875rem` offset. Reduced motion removes translation, transitions, and smooth anchor scrolling.
 - **Secondary:** Transparent ink button with strong-rule border; hover fills white and strengthens the border. Brand-toned sections supply contextual contrast tokens so default and hover text remain legible.
 
+### Forms and Privacy Content
+Forms are compact, single-column reading flows capped at the small container. Each field keeps its label above the control, uses a one-pixel strong-rule border, surface-white fill, and the shared gently softened square corner. Supporting hints stay muted and directly precede the control. Privacy guidance is an inline notice rather than a modal or decorative card: use muted small text with a vermilion accent rule at the start edge, and keep the approved privacy link in the notice's reading flow. Submit actions use the primary teal button treatment and remain aligned to the form's start edge. Legal-content pages use the shared page hero and a small, surface-toned reading column; placeholder or review-pending legal copy is visibly framed as non-production content and the route remains non-indexable until approved.
+
 ### Cards / Containers
 - **Corner Style:** Cards remain square/open; no outer radius.
 - **Background:** Transparent on paper or white section surfaces.

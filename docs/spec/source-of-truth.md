@@ -30,12 +30,15 @@ Implemented repository-level ownership:
 | Primary navigation | `src/config/navigation.ts` |
 | Build-time feature availability | `src/config/features.ts` |
 | Explicit public page composition | `src/pages/*.astro` |
+| Page metadata and canonical generation | `src/components/core/SEOHead.astro` |
+| Structured-data shape and safe serialization | `src/components/core/StructuredData.astro`, `src/utils/structured-data.ts` |
+| Privacy notice text | `src/content/legal/aviso-de-privacidad.md` |
+| Contact-form field and provider contract | `src/components/forms/ContactForm.astro` |
 
 Planned ownership after later runtime implementation:
 
 | Fact | Canonical owner |
 |---|---|
-| Privacy text | `src/content/legal/aviso-de-privacidad.md` |
 | Public interoperability schema | `schemas/public-manifest.schema.json` |
 
 Until planned files exist, their rows define intended ownership, not implemented data. If external JSON Schemas are later needed, they are generated from the Zod contracts and remain derived artifacts.

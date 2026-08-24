@@ -1,8 +1,10 @@
 ---
 import Locations from "../components/sections/Locations.astro";
 import PageHero from "../components/sections/PageHero.astro";
+import ContactForm from "../components/forms/ContactForm.astro";
 import Container from "../components/ui/Container.astro";
 import Section from "../components/ui/Section.astro";
+import { features } from "../config/features";
 import { business, locations } from "../data";
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
@@ -13,7 +15,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 >
   <PageHero
     title="Contacto"
-    description="Elige el medio adecuado. El formulario se habilitará en una fase posterior únicamente cuando su tratamiento de datos esté definido."
+    description="Elige el medio adecuado o envía una consulta general. La recepción del formulario debe verificarse en el despliegue del cliente."
   />
   <Section tone="surface">
     <Container>
@@ -37,6 +39,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </Container>
   </Section>
   <Locations locations={locations} />
+  {
+    features.contactForm && (
+      <Section tone="surface">
+        <Container size="sm">
+          <div class="u-flow">
+            <h2>Enviar una consulta</h2>
+            <ContactForm />
+          </div>
+        </Container>
+      </Section>
+    )
+  }
 </BaseLayout>
 
 <style>
@@ -46,7 +60,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     margin-block-start: var(--space-6);
   }
   .reference-note {
-    color: var(--color-proof);
+    color: var(--color-accent);
     font-size: var(--text-sm);
     font-weight: 680;
   }

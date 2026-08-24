@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "phase": "site-fundamentals",
+  "phase": "security",
   "capabilities": {
     "memorySystem": "verified",
     "memoryValidation": "verified",
@@ -9,10 +9,10 @@
     "businessDataSchemas": "verified",
     "designSystem": "verified",
     "coreWebsite": "verified",
-    "seo": "planned",
-    "accessibility": "planned",
-    "privacy": "planned",
-    "forms": "planned",
+    "seo": "verified",
+    "accessibility": "partial",
+    "privacy": "verified",
+    "forms": "verified",
     "securityConfiguration": "planned",
     "productionValidation": "planned",
     "browserTests": "planned",

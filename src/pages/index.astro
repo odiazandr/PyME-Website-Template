@@ -8,7 +8,11 @@ import { business, locations, services } from "../data";
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title={business.publicName} description={business.description}>
+<BaseLayout
+  title={business.publicName}
+  description={business.description}
+  structuredData
+>
   <PageHero
     title={business.publicName}
     description={business.description}

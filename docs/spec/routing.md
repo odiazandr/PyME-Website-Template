@@ -10,4 +10,4 @@ Routes are explicit Astro page files rather than records in a homemade page-buil
 
 The implemented reference routes are `/`, `/nosotros/`, `/servicios/`, `/contacto/`, `/aviso-de-privacidad/`, `/gracias/`, and the static `404` page. The first four form primary navigation; privacy and recovery destinations remain contextual links.
 
-Sitemap generation and built-output link validation remain Phase 6 and Phase 8 work. Thank-you, preview, draft, and internal utility routes will be excluded from public sitemap output where appropriate.
+The Astro sitemap integration now publishes canonical public routes and excludes the noindex thank-you and reference privacy routes. `robots.txt` points to the sitemap and disallows the thank-you route. Comprehensive built-output link validation remains Phase 8 work.

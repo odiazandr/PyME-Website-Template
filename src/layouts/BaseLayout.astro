@@ -2,16 +2,24 @@
 import SkipLink from "../components/core/SkipLink.astro";
 import SiteFooter from "../components/core/SiteFooter.astro";
 import SiteHeader from "../components/core/SiteHeader.astro";
+import SEOHead from "../components/core/SEOHead.astro";
+import StructuredData from "../components/core/StructuredData.astro";
 import { site } from "../config/site";
 import "../styles/global.css";
 
 interface Props {
   title: string;
   description: string;
+  noindex?: boolean;
+  structuredData?: boolean;
 }
 
-const { title, description } = Astro.props;
-const pageTitle = site.titleTemplate.replace("%s", title);
+const {
+  title,
+  description,
+  noindex = false,
+  structuredData = false,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -19,8 +27,13 @@ const pageTitle = site.titleTemplate.replace("%s", title);
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="description" content={description} />
-    <title>{pageTitle}</title>
+    <SEOHead
+      title={title}
+      description={description}
+      pathname={Astro.url.pathname}
+      noindex={noindex}
+    />
+    {structuredData && <StructuredData />}
   </head>
   <body>
     <!-- THESIS: A precisely set foundation refuses the generic starter grid; hierarchy and measure make the system visible. OWN-WORLD: Bright proof stock, ink text, mineral action color, square controls, crisp rules, and generous reading space. STORY: Visitors find verified business information and a clear next action without runtime complexity. FIRST VIEWPORT: A compact masthead opens to an asymmetric content field that folds into one mobile reading flow. FORM: Typesetter's Galley, grounded direction 4, seed 71e87adc. FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance. -->

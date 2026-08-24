@@ -1,0 +1,73 @@
+---
+import Field from "./Field.astro";
+import FormNotice from "./FormNotice.astro";
+---
+
+<form
+  name="contacto"
+  method="POST"
+  action="/gracias/"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+  class="contact-form"
+>
+  <input type="hidden" name="form-name" value="contacto" />
+  <p class="u-visually-hidden" aria-hidden="true">
+    <label for="bot-field">No llenes este campo</label><input
+      id="bot-field"
+      name="bot-field"
+      autocomplete="off"
+      tabindex="-1"
+    />
+  </p>
+  <Field
+    id="nombre"
+    name="nombre"
+    label="Nombre"
+    autocomplete="name"
+    maxLength={100}
+    required
+  />
+  <Field
+    id="correo"
+    name="correo"
+    label="Correo electrónico"
+    type="email"
+    autocomplete="email"
+    maxLength={254}
+    required
+  />
+  <Field
+    id="mensaje"
+    name="mensaje"
+    label="Consulta general"
+    multiline
+    maxLength={2000}
+    required
+    hint="Describe brevemente cómo podemos contactarte; evita datos sensibles."
+  />
+  <FormNotice />
+  <button type="submit">Enviar consulta</button>
+</form>
+
+<style>
+  .contact-form {
+    display: grid;
+    gap: var(--space-6);
+    max-width: var(--container-sm);
+  }
+  button {
+    justify-self: start;
+    min-height: 2.875rem;
+    padding: var(--space-3) var(--space-5);
+    border: 1px solid var(--color-brand);
+    border-radius: var(--radius-sm);
+    color: var(--color-brand-contrast);
+    background: var(--color-brand);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button:hover {
+    background: var(--color-brand-hover);
+  }
+</style>

@@ -1,0 +1,25 @@
+---
+import { site } from "../../config/site";
+import { business, locations } from "../../data";
+import { serializeJsonLd } from "../../utils/structured-data";
+
+const data = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: business.publicName,
+  url: site.canonicalUrl,
+  description: business.description,
+  telephone: business.primaryPhone.e164,
+  email: business.email,
+  address: locations.map((location) => ({
+    "@type": "PostalAddress",
+    streetAddress: location.street,
+    addressLocality: location.locality,
+    addressRegion: location.region,
+    postalCode: location.postalCode,
+    addressCountry: location.country,
+  })),
+};
+---
+
+<script is:inline type="application/ld+json" set:html={serializeJsonLd(data)} />

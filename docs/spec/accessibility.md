@@ -8,4 +8,6 @@ answers: ["What is the accessibility target?", "Which checks are required?"]
 
 The engineering target is WCAG 2.2 AA-oriented implementation, not an unsupported certification claim. Native semantics precede ARIA.
 
-Every site provides correct language, landmarks, a skip link, logical headings, keyboard access, visible focus, sufficient contrast, labeled forms, useful errors, meaningful image alternatives, suitable touch targets, reduced-motion support, and no keyboard traps. Automated Axe-assisted checks complement—not replace—manual keyboard, zoom, focus, form, heading, image, motion, and responsive review.
+The implemented foundation provides correct language, landmarks, a skip link, logical headings, native-link navigation, visible focus, reviewed contrast, labeled form controls, native validation, suitable control targets, reduced-motion support, and no client-side interaction traps. The contact form connects its hint to the relevant field and remains usable without JavaScript.
+
+Automated Axe-assisted and cross-browser checks remain planned and will complement—not replace—manual keyboard, zoom, focus, form, heading, image, motion, and responsive review. The current implementation is therefore partial against the complete accessibility evidence contract.

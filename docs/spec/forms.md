@@ -6,6 +6,6 @@ answers: ["How do forms work by default?", "What data may forms collect?"]
 ---
 # Forms
 
-Forms are optional and progressively enhanced. The default implementation, when needed, uses semantic HTML submission through Netlify Forms and redirects to an explicit thank-you route without requiring JavaScript.
+The optional contact form is implemented behind `features.contactForm`. It uses semantic HTML submission through Netlify Forms, a provider-recognized hidden form name, a honeypot, and a redirect to the explicitly non-indexable thank-you route. It requires no JavaScript.
 
-Default fields are limited to identity, a contact method, and a message when justified. Avoid soliciting medical, financial, or otherwise sensitive detail through generic contact forms. Adding a form requires privacy, retention, validation, spam, error-state, accessibility, and failure-path review.
+The implemented fields are name, email, and a general message. Labels, native required/email validation, autocomplete, bounded lengths, a privacy link, and a warning against sensitive data are present. The provider honeypot remains a successful form control while being removed from keyboard and assistive navigation. Provider-side receipt, spam behavior, retention, deletion, and failure handling remain deployment-specific checks and are not locally production-verified.

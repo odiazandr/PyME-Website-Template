@@ -8,4 +8,4 @@ answers: ["What is the default privacy posture?", "How is Mexican privacy notice
 
 The default posture is data minimization: no analytics, ad pixels, personalization, social feeds, or unnecessary cookies. Collect only data required for a stated business purpose.
 
-Sites that collect personal data provide an appropriate relationship to a client-approved Mexican privacy notice and ARCO process. The foundation supplies placement, data-flow, and review procedures—not legal advice or fabricated legal text. Provider retention and deletion procedures must be documented when forms or integrations store submissions.
+`src/content/legal/aviso-de-privacidad.md` is the implemented canonical owner for client-approved privacy text. Its template content is explicitly unapproved, carries `noindex`, and must be replaced and reviewed before production. The contact form links to that route and warns against sensitive data. The foundation supplies placement, data-flow, and review procedures—not legal advice or fabricated legal text. Provider retention and deletion procedures must be documented when forms or integrations store submissions.

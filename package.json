@@ -11,17 +11,19 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "format": "prettier --write src scripts tests/data tests/site package.json astro.config.ts tsconfig.json prettier.config.mjs",
-    "format:check": "prettier --check src scripts tests/data tests/site package.json astro.config.ts tsconfig.json prettier.config.mjs",
+    "format": "prettier --write src scripts tests/data tests/site tests/artifacts package.json astro.config.ts tsconfig.json prettier.config.mjs",
+    "format:check": "prettier --check src scripts tests/data tests/site tests/artifacts package.json astro.config.ts tsconfig.json prettier.config.mjs",
     "validate:data": "node scripts/validate-data.ts",
     "quality:static": "npm run format:check && npm run check && npm run validate:data",
-    "quality": "npm run quality:static && npm run build",
+    "quality": "npm run quality:static && npm run test:artifacts",
     "test:memory": "python -m unittest discover -s tests/memory",
     "test:data": "node --test tests/data/*.test.ts",
     "test:site": "node --test tests/site/*.test.ts",
-    "test": "npm run test:memory && npm run test:data && npm run test:site"
+    "test:artifacts": "npm run build && node --test tests/artifacts/*.test.ts",
+    "test": "npm run test:memory && npm run test:data && npm run test:site && npm run test:artifacts"
   },
   "dependencies": {
+    "@astrojs/sitemap": "3.7.3",
     "astro": "7.2.4",
     "zod": "4.4.3"
   },

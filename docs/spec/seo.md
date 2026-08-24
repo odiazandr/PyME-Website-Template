@@ -6,6 +6,6 @@ answers: ["What SEO output is required?", "How is structured data governed?"]
 ---
 # SEO
 
-Every indexable page has a verified title, description, canonical URL, robots intent, Open Graph metadata, and appropriate semantic structure. One site configuration owns the canonical domain. Sitemap, redirects, canonical annotations, and HTTPS remain consistent.
+`SEOHead` now emits a title, description, canonical URL, robots intent, and Open Graph metadata for every page from the canonical `site` configuration. The static build generates `robots.txt`, `sitemap-index.xml`, and its child sitemap. Thank-you and reference legal pages are `noindex` and excluded from the sitemap; an approved client privacy notice may become indexable only through deliberate project customization.
 
-Structured data is generated from validated business and location facts, using the most specific supported business type without inventing claims. Each physical location is represented accurately. Thin pages are not created merely to multiply keywords.
+The home page emits safely serialized `Organization` JSON-LD from validated business and location facts. A more specific business subtype requires verified client classification; agents do not guess one. Thin pages are not created merely to multiply keywords. Post-build artifact tests verify the current metadata, robots, sitemap, and JSON-LD contracts against `dist/`.

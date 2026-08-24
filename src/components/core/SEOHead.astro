@@ -1,0 +1,23 @@
+---
+import { site } from "../../config/site";
+
+interface Props {
+  title: string;
+  description: string;
+  pathname: string;
+  noindex?: boolean;
+}
+const { title, description, pathname, noindex = false } = Astro.props;
+const pageTitle = site.titleTemplate.replace("%s", title);
+const canonical = new URL(pathname, site.canonicalUrl);
+---
+
+<title>{pageTitle}</title>
+<meta name="description" content={description} />
+<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
+<link rel="canonical" href={canonical} />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content={site.defaultLocale.replace("-", "_")} />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />

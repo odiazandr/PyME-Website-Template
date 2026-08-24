@@ -13,3 +13,4 @@ All notable template changes will be recorded here.
 - Added strict canonical Zod contracts, bounded business-data domains, validation commands, and negative contract tests for Phase 3.
 - Implemented and visually reviewed the neutral design-token foundation, CSS layers, reusable UI primitives, and responsive reference composition for Phase 4.
 - Built and verified the shared layout, navigation, core and section components, and seven explicit static reference pages for Phase 5.
+- Added verified metadata, sitemap and robots output, safe structured data, a canonical privacy-content surface, and a no-JavaScript Netlify contact form for Phase 6.

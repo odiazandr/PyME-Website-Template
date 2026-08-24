@@ -1,5 +1,5 @@
 export const features = {
-  contactForm: false,
+  contactForm: true,
   whatsapp: false,
   testimonials: false,
   team: false,

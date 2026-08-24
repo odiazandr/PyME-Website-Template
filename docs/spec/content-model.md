@@ -14,4 +14,4 @@ Team members and testimonials may be absent, but any stored entry must set `appr
 
 Data files contain facts, not HTML, secrets, internal notes, or unapproved personal data. Reusable facts are stored once and consumed everywhere. Unknown business claims remain unresolved or are requested from an authorized source; agents never interpolate them creatively.
 
-Navigation, page SEO metadata, legal documents, and editorial collections remain planned until their runtime owners exist.
+Navigation is owned by `src/config/navigation.ts`, page SEO output by `SEOHead`, and legal privacy content by `src/content/legal/aviso-de-privacidad.md`. Editorial collections remain planned until a verified publishing requirement exists.
