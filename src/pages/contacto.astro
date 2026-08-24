@@ -1,0 +1,66 @@
+---
+import Locations from "../components/sections/Locations.astro";
+import PageHero from "../components/sections/PageHero.astro";
+import Container from "../components/ui/Container.astro";
+import Section from "../components/ui/Section.astro";
+import { business, locations } from "../data";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Contacto"
+  description={`Datos de contacto de ${business.publicName}.`}
+>
+  <PageHero
+    title="Contacto"
+    description="Elige el medio adecuado. El formulario se habilitará en una fase posterior únicamente cuando su tratamiento de datos esté definido."
+  />
+  <Section tone="surface">
+    <Container>
+      <p class="reference-note">
+        Datos de referencia; sustituir y verificar antes de publicar.
+      </p>
+      <div class="contact-list">
+        <article>
+          <h2>Teléfono</h2><p>
+            <a href={`tel:${business.primaryPhone.e164}`}
+              >{business.primaryPhone.display}</a
+            >
+          </p>
+        </article>
+        <article>
+          <h2>Correo</h2><p>
+            <a href={`mailto:${business.email}`}>{business.email}</a>
+          </p>
+        </article>
+      </div>
+    </Container>
+  </Section>
+  <Locations locations={locations} />
+</BaseLayout>
+
+<style>
+  .contact-list {
+    display: grid;
+    gap: var(--space-8);
+    margin-block-start: var(--space-6);
+  }
+  .reference-note {
+    color: var(--color-proof);
+    font-size: var(--text-sm);
+    font-weight: 680;
+  }
+  article {
+    padding-block: var(--space-6);
+    border-block-start: 1px solid var(--color-border-strong);
+  }
+  article p {
+    margin-block-start: var(--space-4);
+    font-size: var(--text-lg);
+  }
+  @media (min-width: 48rem) {
+    .contact-list {
+      grid-template-columns: repeat(auto-fit, minmax(18rem, 30rem));
+    }
+  }
+</style>

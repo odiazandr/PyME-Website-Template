@@ -1,0 +1,44 @@
+---
+import { business } from "../../data";
+import ButtonLink from "../ui/ButtonLink.astro";
+import Container from "../ui/Container.astro";
+import Section from "../ui/Section.astro";
+---
+
+<Section tone="brand">
+  <Container>
+    <div class="contact-grid">
+      <h2>Hablemos</h2>
+      <div class="u-flow">
+        <p>
+          Utiliza información de contacto verificada antes de publicar este
+          sitio.
+        </p>
+        <div class="u-cluster">
+          <ButtonLink href={`tel:${business.primaryPhone.e164}`}
+            >Llamar</ButtonLink
+          >
+          <ButtonLink href="/contacto/" variant="secondary"
+            >Ver contacto</ButtonLink
+          >
+        </div>
+      </div>
+    </div>
+  </Container>
+</Section>
+
+<style>
+  .contact-grid {
+    display: grid;
+    gap: var(--space-8);
+  }
+  p {
+    color: var(--section-muted);
+  }
+  @media (min-width: 48rem) {
+    .contact-grid {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+</style>

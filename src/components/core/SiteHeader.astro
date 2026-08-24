@@ -1,0 +1,89 @@
+---
+import { navigation } from "../../config/navigation";
+import { business } from "../../data";
+import Container from "../ui/Container.astro";
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+const isCurrent = (href: string) =>
+  href === "/" ? currentPath === href : currentPath.startsWith(href);
+---
+
+<header class="site-header">
+  <Container>
+    <nav class="site-nav" aria-label="Navegación principal">
+      <a class="wordmark" href="/">{business.publicName}</a>
+      <ul>
+        {
+          navigation.map(({ href, label }) => (
+            <li>
+              <a
+                href={href}
+                aria-current={isCurrent(href) ? "page" : undefined}
+              >
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </Container>
+</header>
+
+<style>
+  .site-header {
+    padding-block: var(--space-4);
+    border-block-end: 1px solid var(--color-border-strong);
+    background: var(--color-bg);
+  }
+
+  .site-nav {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .wordmark {
+    width: fit-content;
+    font-size: var(--text-sm);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+
+  a:not(.wordmark) {
+    display: inline-block;
+    padding-block: var(--space-2);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    font-weight: 650;
+    text-decoration: none;
+  }
+
+  a[aria-current="page"],
+  a:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 0.12em;
+    text-underline-offset: 0.3em;
+  }
+
+  @media (min-width: 48rem) {
+    .site-nav {
+      grid-template-columns: minmax(12rem, 1fr) auto;
+      align-items: center;
+    }
+  }
+</style>

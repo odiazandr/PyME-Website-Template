@@ -1,0 +1,20 @@
+---
+import ContactCTA from "../components/sections/ContactCTA.astro";
+import PageHero from "../components/sections/PageHero.astro";
+import ServicesGrid from "../components/sections/ServicesGrid.astro";
+import { services } from "../data";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Servicios"
+  description="Servicios publicados desde datos canónicos y verificados."
+>
+  <PageHero
+    title="Servicios"
+    description="Una descripción útil explica qué recibe el cliente, para quién es y cuál es el siguiente paso."
+    primaryAction={{ href: "/contacto/", label: "Solicitar información" }}
+  />
+  <ServicesGrid services={services} />
+  <ContactCTA />
+</BaseLayout>

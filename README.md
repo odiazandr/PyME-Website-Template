@@ -4,7 +4,7 @@ A repository-native foundation for creating independent, client-owned websites f
 
 Canonical repository: `https://github.com/odiazandr/PyME-Website-Template.git`
 
-The repository contains its constitution and memory architecture plus verified static Astro, canonical business-data, and neutral design-system foundations. The complete reference website, production validation, and deployment are introduced in later phases.
+The repository contains its constitution and memory architecture plus a verified static Astro reference website, canonical business data, and a neutral design system. SEO fundamentals, forms, security configuration, production validation, and deployment are introduced in later phases.
 
 ## Start here
 
@@ -15,6 +15,6 @@ The repository contains its constitution and memory architecture plus verified s
 
 ## Current phase
 
-Phases 1.1 through 4 are complete: memory validation, machine-readable implementation state, the static Astro runtime, canonical Zod-validated business data, and the neutral design foundation are verified within their declared scopes. `project-state.json` identifies the core website as the next phase. The full reference website, production validation, and production deployment remain unimplemented.
+Phases 1.1 through 5 are complete: memory validation, machine-readable implementation state, the static Astro runtime, canonical Zod-validated business data, the neutral design foundation, and the complete reference route set are verified within their declared scopes. `project-state.json` identifies site fundamentals as the next phase. Production validation and production deployment remain unimplemented.
 
 Implemented runtime boundaries and the remaining planned layers are documented in `docs/spec/architecture.md`. `project-state.json` is the concise evidence-level source of truth.

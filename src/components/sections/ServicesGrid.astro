@@ -1,0 +1,42 @@
+---
+import type { Service } from "../../schemas/service";
+import Card from "../ui/Card.astro";
+import Container from "../ui/Container.astro";
+import Section from "../ui/Section.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+
+interface Props {
+  services: Service[];
+}
+const { services } = Astro.props;
+---
+
+<Section tone="surface">
+  <Container>
+    <SectionHeading
+      title="Servicios"
+      description="Información estructurada pendiente de sustituir con datos verificados del cliente."
+    />
+    <div class="services-grid">
+      {
+        services.map((service) => (
+          <Card title={service.name}>
+            <p>{service.shortDescription}</p>
+          </Card>
+        ))
+      }
+    </div>
+  </Container>
+</Section>
+
+<style>
+  .services-grid {
+    display: grid;
+    gap: var(--space-8);
+  }
+  @media (min-width: 48rem) {
+    .services-grid {
+      grid-template-columns: repeat(auto-fit, minmax(18rem, 24rem));
+    }
+  }
+</style>

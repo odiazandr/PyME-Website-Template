@@ -1,0 +1,72 @@
+---
+import { business, templateMetadata } from "../../data";
+import Container from "../ui/Container.astro";
+---
+
+<footer class="site-footer">
+  <Container>
+    <div class="footer-grid">
+      <div>
+        <p class="footer-name">{business.publicName}</p>
+        <p>{business.description}</p>
+      </div>
+      <div>
+        <p>
+          <a href={`tel:${business.primaryPhone.e164}`}
+            >{business.primaryPhone.display}</a
+          >
+        </p>
+        <p><a href={`mailto:${business.email}`}>{business.email}</a></p>
+      </div>
+    </div>
+    <div class="footer-meta">
+      <a href="/aviso-de-privacidad/">Aviso de privacidad</a>
+      <span>Plantilla {templateMetadata.templateVersion}</span>
+      <span>Referencia; no representa un negocio real.</span>
+    </div>
+  </Container>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: var(--space-12) var(--space-8);
+    color: var(--color-brand-contrast);
+    background: var(--color-text);
+  }
+
+  .footer-grid {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .footer-grid p {
+    color: color-mix(in srgb, var(--color-brand-contrast) 78%, transparent);
+  }
+
+  .footer-name {
+    margin-block-end: var(--space-3);
+    color: var(--color-brand-contrast) !important;
+    font-weight: 750;
+  }
+
+  a {
+    text-underline-offset: 0.2em;
+  }
+
+  .footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-6);
+    padding-block-start: var(--space-8);
+    margin-block-start: var(--space-8);
+    border-block-start: 1px solid rgb(255 255 255 / 0.25);
+    color: color-mix(in srgb, var(--color-brand-contrast) 70%, transparent);
+    font-size: var(--text-xs);
+  }
+
+  @media (min-width: 48rem) {
+    .footer-grid {
+      grid-template-columns: 1.5fr 1fr;
+    }
+  }
+</style>

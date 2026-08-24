@@ -1,0 +1,34 @@
+---
+import ContactCTA from "../components/sections/ContactCTA.astro";
+import PageHero from "../components/sections/PageHero.astro";
+import Container from "../components/ui/Container.astro";
+import Section from "../components/ui/Section.astro";
+import { business } from "../data";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Nosotros"
+  description={`Conoce la información pública de ${business.publicName}.`}
+>
+  <PageHero
+    title="Nosotros"
+    description="Historia, enfoque y credenciales pendientes de verificación con el negocio."
+  />
+  <Section tone="surface">
+    <Container size="sm">
+      <div class="u-flow">
+        <h2>Contenido que debe demostrar, no adornar</h2>
+        <p>
+          Esta ruta reserva un lugar claro para explicar quién opera el negocio,
+          a quién sirve y qué información verificable respalda su trabajo.
+        </p>
+        <p>
+          No se publican años de experiencia, certificaciones, premios ni
+          garantías hasta recibir confirmación de una fuente autorizada.
+        </p>
+      </div>
+    </Container>
+  </Section>
+  <ContactCTA />
+</BaseLayout>

@@ -27,13 +27,14 @@ Implemented repository-level ownership:
 | Portable implemented visual contract | `DESIGN.md` |
 | Runtime design tokens | `src/styles/tokens.css` |
 | Design-tool extensions derived from the implementation | `.impeccable/design.json` |
+| Primary navigation | `src/config/navigation.ts` |
+| Build-time feature availability | `src/config/features.ts` |
+| Explicit public page composition | `src/pages/*.astro` |
 
 Planned ownership after later runtime implementation:
 
 | Fact | Canonical owner |
 |---|---|
-| Navigation | `src/config/navigation.ts` |
-| Build-time features | `src/config/features.ts` |
 | Privacy text | `src/content/legal/aviso-de-privacidad.md` |
 | Public interoperability schema | `schemas/public-manifest.schema.json` |
 

@@ -1,0 +1,63 @@
+---
+import type { Location } from "../../schemas/location";
+import Container from "../ui/Container.astro";
+import Section from "../ui/Section.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+
+interface Props {
+  locations: Location[];
+}
+const { locations } = Astro.props;
+---
+
+<Section>
+  <Container>
+    <SectionHeading
+      title="Ubicaciones"
+      description="Direcciones y horarios proceden de una sola fuente canónica."
+    />
+    <div class="locations">
+      {
+        locations.map((location) => (
+          <article>
+            <h3>{location.name}</h3>
+            <address>
+              {location.street}
+              <br />
+              {location.locality}, {location.region} {location.postalCode}
+            </address>
+            {location.mapUrl && (
+              <p>
+                <a href={location.mapUrl}>Cómo llegar</a>
+              </p>
+            )}
+          </article>
+        ))
+      }
+    </div>
+  </Container>
+</Section>
+
+<style>
+  .locations {
+    display: grid;
+    gap: var(--space-8);
+  }
+  article {
+    padding-block: var(--space-6);
+    border-block-start: 1px solid var(--color-border-strong);
+  }
+  address {
+    margin-block-start: var(--space-4);
+    color: var(--color-text-muted);
+    font-style: normal;
+  }
+  article p {
+    margin-block-start: var(--space-4);
+  }
+  @media (min-width: 48rem) {
+    .locations {
+      grid-template-columns: repeat(auto-fit, minmax(18rem, 30rem));
+    }
+  }
+</style>

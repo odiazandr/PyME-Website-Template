@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "phase": "core-runtime",
+  "phase": "site-fundamentals",
   "capabilities": {
     "memorySystem": "verified",
     "memoryValidation": "verified",
@@ -8,7 +8,7 @@
     "astroRuntime": "verified",
     "businessDataSchemas": "verified",
     "designSystem": "verified",
-    "coreWebsite": "planned",
+    "coreWebsite": "verified",
     "seo": "planned",
     "accessibility": "planned",
     "privacy": "planned",

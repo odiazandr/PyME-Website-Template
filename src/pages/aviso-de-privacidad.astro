@@ -1,0 +1,31 @@
+---
+import PageHero from "../components/sections/PageHero.astro";
+import Container from "../components/ui/Container.astro";
+import Section from "../components/ui/Section.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Aviso de privacidad"
+  description="Espacio reservado para el aviso de privacidad aprobado del negocio."
+>
+  <PageHero
+    title="Aviso de privacidad"
+    description="Este contenido de referencia no constituye asesoría legal ni un aviso aprobado para producción."
+  />
+  <Section tone="surface">
+    <Container size="sm">
+      <div class="u-flow">
+        <h2>Revisión obligatoria antes de publicar</h2>
+        <p>
+          El responsable del negocio y la persona asesora correspondiente deben
+          proporcionar o aprobar el texto aplicable, incluyendo finalidades,
+          datos tratados y mecanismos para ejercer derechos.
+        </p>
+        <p>
+          La validación de producción deberá rechazar este estado de referencia.
+        </p>
+      </div>
+    </Container>
+  </Section>
+</BaseLayout>

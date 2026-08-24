@@ -11,14 +11,15 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "format": "prettier --write src scripts tests/data package.json astro.config.ts tsconfig.json prettier.config.mjs",
-    "format:check": "prettier --check src scripts tests/data package.json astro.config.ts tsconfig.json prettier.config.mjs",
+    "format": "prettier --write src scripts tests/data tests/site package.json astro.config.ts tsconfig.json prettier.config.mjs",
+    "format:check": "prettier --check src scripts tests/data tests/site package.json astro.config.ts tsconfig.json prettier.config.mjs",
     "validate:data": "node scripts/validate-data.ts",
     "quality:static": "npm run format:check && npm run check && npm run validate:data",
     "quality": "npm run quality:static && npm run build",
     "test:memory": "python -m unittest discover -s tests/memory",
     "test:data": "node --test tests/data/*.test.ts",
-    "test": "npm run test:memory && npm run test:data"
+    "test:site": "node --test tests/site/*.test.ts",
+    "test": "npm run test:memory && npm run test:data && npm run test:site"
   },
   "dependencies": {
     "astro": "7.2.4",

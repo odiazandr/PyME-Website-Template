@@ -189,9 +189,22 @@ The form language is crisp and typographic. Controls use a gently softened squar
 - **Internal Padding:** `1.5rem` block padding with `1.25rem` internal flow gap.
 
 ### Navigation
-- **Style:** Compact masthead with wordmark on the left and version/release marker on the right, separated from content by a strong rule.
+- **Style:** Compact masthead with the client wordmark on the left and a wrapping primary route list on the right at wide widths, separated from content by a strong rule.
 - **Typography:** Wordmark is small and heavy; release is tracked uppercase, muted, and tabular.
-- **Mobile treatment:** Preserve the two-edge masthead and its spacing; do not collapse identity into a menu icon without an actual navigation requirement.
+- **Active state:** Current route and hover use ink plus a vermilion underline with a deliberate offset; route links remain text-first rather than button-like.
+- **Mobile treatment:** Stack the wordmark and route list while allowing links to wrap; do not collapse identity into a menu icon without an actual navigation requirement.
+
+### Page Hero
+The reusable page hero is a centered, viewport-aware proof opening: it uses a minimum height capped at `38rem` (accounting for the masthead), aligns content to the lower edge, and preserves an asymmetric thesis/copy relationship. At `48rem` and wider, the title uses a flexible `1.45fr` measure beside an `18rem` minimum action/copy rail with a generous gap; below it, the same content flows vertically. Optional primary and secondary actions stay clustered beneath the supporting copy.
+
+### Services and Locations
+Repeated business records use open, ruled articles rather than floating cards. Services become three equal columns at `48rem` and wider; locations become two columns at the same threshold. Each location keeps address text muted and places the directions link after the address, preserving scan order. Both grids collapse to a single flow on narrow screens.
+
+### Brand CTA Sections
+Brand-toned sections use Wayfinding Teal as a semantic contrast surface. Text and muted copy switch to the contrast token, and secondary controls invert to contrast-on-teal with a contrast border and teal hover surface. The default section rhythm remains intact; color carries the action moment without adding ornament.
+
+### Footer
+The footer is a deliberate dark ink closure with contrast text: business identity/description and direct contact occupy a `1.5fr / 1fr` split at `48rem` and wider, then stack on mobile. A full-width metadata row follows after generous spacing and a translucent white rule; privacy, template state, and reference status remain visibly separate from the contact block.
 
 ### Status Register
 The signature component is a raised, ruled definition list: a vermilion uppercase title followed by label/value rows. It is a clarity device for implementation state, not a generic card. On wide screens it anchors the composing rail; on mobile it follows the actions at full available width.
