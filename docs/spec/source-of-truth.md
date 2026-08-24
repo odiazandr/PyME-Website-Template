@@ -34,6 +34,8 @@ Implemented repository-level ownership:
 | Structured-data shape and safe serialization | `src/components/core/StructuredData.astro`, `src/utils/structured-data.ts` |
 | Privacy notice text | `src/content/legal/aviso-de-privacidad.md` |
 | Contact-form field and provider contract | `src/components/forms/ContactForm.astro` |
+| Generated content security policy | `astro.config.ts` |
+| Hosting build, stable response headers, and hashed-asset caching | `netlify.toml` |
 
 Planned ownership after later runtime implementation:
 

@@ -12,4 +12,4 @@ The implemented runtime foundation is Node.js 24 LTS, npm, Astro 7 static output
 
 The verified core runtime generates seven explicit static reference pages plus `robots.txt` and sitemap artifacts, and consumes the implemented, Zod-validated business data and site configuration. `BaseLayout` coordinates shared document structure, metadata, optional structured data, skip navigation, header, navigation, and footer. Pages compose small UI, business-section, and form primitives directly; there is no page-builder abstraction and no client-side application runtime. The responsive navigation and progressive contact form require no JavaScript.
 
-Security configuration, production validation, browser automation, and deployment remain later phases. Do not infer production readiness merely because the reference site and local artifact contracts build.
+Astro-managed CSP and repository-controlled Netlify header configuration are implemented and locally verified. Production validation, browser automation, and a real deployment remain later phases. Do not infer production readiness merely because the reference site and local security/artifact contracts build.

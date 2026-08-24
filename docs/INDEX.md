@@ -87,6 +87,7 @@ Pointers only; summaries belong to their canonical owners.
 | T3 | `docs/decisions/0107-no-backend-by-default.md` | Backend exclusion from core |
 | T3 | `docs/decisions/0108-client-owned-domain.md` | Domain ownership policy |
 | T3 | `docs/decisions/0109-independent-template-versioning.md` | Explicit migration model |
+| T3 | `docs/decisions/0110-astro-csp.md` | CSP generation and response-header ownership |
 
 ## Machinery and reserved paths
 
