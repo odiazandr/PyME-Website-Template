@@ -101,6 +101,6 @@ Pointers only; summaries belong to their canonical owners.
 | `ops/` | Deterministic memory-health tooling |
 | `schemas/` | Public JSON contracts; reserved until implemented |
 | `scripts/` | Implemented data and production validation; client initialization remains planned |
-| `tests/` | Implemented memory, data, route, serialization, security, artifact, and production-gate verification; browser and Axe suites are planned |
+| `tests/` | Implemented memory, data, route, serialization, security, artifact, production-gate, browser, and Axe verification |
 | `src/` | Implemented Astro, data, design, routes, SEO, privacy, and form foundations |
 | `docs/archive/` | Cold superseded material; inventory by path only |

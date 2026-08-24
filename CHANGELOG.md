@@ -16,3 +16,4 @@ All notable template changes will be recorded here.
 - Added verified metadata, sitemap and robots output, safe structured data, a canonical privacy-content surface, and a no-JavaScript Netlify contact form for Phase 6.
 - Enabled Astro-generated CSP hashes, repository-owned Netlify security headers, immutable asset caching, and deterministic security configuration tests for Phase 7.
 - Added the strict source-and-artifact production validation pipeline and public site manifest contract for Phase 8.
+- Added Playwright critical-journey and Axe-assisted accessibility coverage for desktop/mobile Chromium, configured WebKit coverage, and corrected skip-link focus transfer.

@@ -14,6 +14,7 @@ colors:
   rule: "#c9cfcc"
   rule-strong: "#8c9794"
   focus-vermilion: "#b54b2e"
+  focus-contrast: "#ffffff"
   selection-mint: "#d8e8e5"
 typography:
   display:
@@ -178,7 +179,7 @@ The form language is crisp and typographic. Controls use a gently softened squar
 ### Buttons
 - **Shape:** Square-edged with a slight softening (`0.25rem`), minimum height `2.875rem`.
 - **Primary:** Teal background with white text; `0.75rem 1.25rem` padding and bold, sentence-case action text.
-- **Hover / Focus:** Deep teal hover with a one-pixel upward translation; global vermilion focus ring is `0.1875rem` with `0.1875rem` offset. Reduced motion removes translation, transitions, and smooth anchor scrolling.
+- **Hover / Focus:** Deep teal hover with a one-pixel upward translation; the global focus treatment combines a white inner outline with a vermilion outer ring so it remains visible on both paper and teal. Reduced motion removes translation, transitions, and smooth anchor scrolling.
 - **Secondary:** Transparent ink button with strong-rule border; hover fills white and strengthens the border. Brand-toned sections supply contextual contrast tokens so default and hover text remain legible.
 
 ### Forms and Privacy Content

@@ -15,7 +15,7 @@
     "forms": "verified",
     "securityConfiguration": "verified",
     "productionValidation": "verified",
-    "browserTests": "planned",
+    "browserTests": "partial",
     "ci": "planned",
     "netlifyDeployment": "partial",
     "clientInitialization": "planned",

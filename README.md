@@ -4,7 +4,7 @@ A repository-native foundation for creating independent, client-owned websites f
 
 Canonical repository: `https://github.com/odiazandr/PyME-Website-Template.git`
 
-The repository contains its constitution and memory architecture plus a verified static Astro reference website, canonical business data, neutral design system, SEO output, privacy integration, progressive contact form, Astro-managed CSP, repository-controlled Netlify headers, a public site manifest, and strict source-and-artifact production validation. Browser automation and real deployment remain later phases.
+The repository contains its constitution and memory architecture plus a verified static Astro reference website, canonical business data, neutral design system, SEO output, privacy integration, progressive contact form, Astro-managed CSP, repository-controlled Netlify headers, a public site manifest, strict source-and-artifact production validation, and desktop/mobile/narrow Chromium browser and accessibility automation. Cross-browser verification and real deployment remain incomplete.
 
 ## Start here
 
@@ -15,7 +15,7 @@ The repository contains its constitution and memory architecture plus a verified
 
 ## Current phase
 
-Phases 1.1 through 8 are complete within their declared local scopes. `project-state.json` identifies browser QA as the next phase; accessibility remains partial and Netlify deployment remains only partially implemented until external evidence exists.
+Phases 1.1 through 8 are complete within their declared local scopes. Phase 9 browser QA is partially verified in desktop, mobile, and narrow Chromium; WebKit is configured but blocked on this Windows host and remains unverified until CI or another supported environment runs it. Accessibility and Netlify deployment therefore remain partial.
 
 Implemented runtime boundaries and the remaining planned layers are documented in `docs/spec/architecture.md`. `project-state.json` is the concise evidence-level source of truth.
 
