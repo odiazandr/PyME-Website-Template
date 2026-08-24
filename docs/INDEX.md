@@ -23,8 +23,8 @@ Pointers only; summaries belong to their canonical owners.
 | T2 | `docs/spec/project-state.md` | Machine-readable implementation state and transitions |
 | T2 | `docs/spec/product-scope.md` | Supported website classes and escalation boundary |
 | T2 | `docs/spec/architecture.md` | Static-first technical architecture |
-| T2 | `docs/spec/source-of-truth.md` | Planned canonical ownership of website facts |
-| T2 | `docs/spec/content-model.md` | Planned business and editorial data domains |
+| T2 | `docs/spec/source-of-truth.md` | Implemented and planned ownership of website facts |
+| T2 | `docs/spec/content-model.md` | Implemented business data and planned editorial domains |
 | T2 | `docs/spec/site-archetypes.md` | Starting information-architecture recipes |
 | T2 | `docs/spec/routing.md` | Public route and URL policy |
 | T2 | `docs/spec/design-system.md` | Design tokens and visual-system boundaries |
@@ -98,7 +98,7 @@ Pointers only; summaries belong to their canonical owners.
 | `memory.toml` | Memory mode and configured checks |
 | `ops/` | Deterministic memory-health tooling |
 | `schemas/` | Public JSON contracts; reserved until implemented |
-| `scripts/` | Website validators and initialization; reserved until implemented |
-| `tests/` | Implemented memory verification; browser and accessibility suites are planned |
-| `src/` | Implemented Astro runtime source; later website layers remain planned |
+| `scripts/` | Implemented data validation; production validators and initialization remain planned |
+| `tests/` | Implemented memory and data verification; browser and accessibility suites are planned |
+| `src/` | Implemented Astro runtime and data foundation; later website layers remain planned |
 | `docs/archive/` | Cold superseded material; inventory by path only |

@@ -15,22 +15,24 @@ Implemented repository-level ownership:
 | Complete resolved npm dependency graph | `package-lock.json` |
 | Astro build mode and integration configuration | `astro.config.ts` |
 | TypeScript compiler policy | `tsconfig.json` |
+| Business identity and contact | `src/data/business.json` |
+| Canonical domain, locale, and stable site ID | `src/config/site.ts` |
+| Locations and hours | `src/data/locations.json` |
+| Services | `src/data/services.json` |
+| Team publication records | `src/data/team.json` |
+| Approved testimonials | `src/data/testimonials.json` |
+| Social accounts | `src/data/social.json` |
+| Template version | `src/data/template.json` |
+| Data validation contracts | `src/schemas/*.ts` |
 
-Planned ownership after runtime implementation:
+Planned ownership after later runtime implementation:
 
 | Fact | Canonical owner |
 |---|---|
-| Business identity and contact | `src/data/business.json` |
-| Canonical domain and locale | `src/config/site.ts` |
-| Locations and hours | `src/data/locations.json` |
-| Services | `src/data/services.json` |
-| Team | `src/data/team.json` |
-| Approved testimonials | `src/data/testimonials.json` |
 | Navigation | `src/config/navigation.ts` |
 | Build-time features | `src/config/features.ts` |
-| Template version | `src/data/template.json` |
 | Design values | `src/styles/tokens.css` |
 | Privacy text | `src/content/legal/aviso-de-privacidad.md` |
 | Public interoperability schema | `schemas/public-manifest.schema.json` |
 
-Until those files exist, this table defines intended ownership, not implemented data.
+Until planned files exist, their rows define intended ownership, not implemented data. If external JSON Schemas are later needed, they are generated from the Zod contracts and remain derived artifacts.

@@ -3,7 +3,7 @@ mode = "template"
 
 [checks]
 build = ["npm", "run", "build"]
-test = ["python", "-m", "unittest", "discover", "-s", "tests/memory"]
+test = ["npm", "test"]
 lint = ["npm", "run", "quality:static"]
 secret_scan = []
 

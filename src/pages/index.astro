@@ -1,11 +1,13 @@
 ---
-const title = "PyME Website Foundation";
-const description =
-  "Base técnica estática para sitios web profesionales de pequeñas y medianas empresas.";
+import { site } from "../config/site";
+import { business, templateMetadata } from "../data";
+
+const title = business.publicName;
+const description = business.description;
 ---
 
 <!doctype html>
-<html lang="es-MX">
+<html lang={site.defaultLocale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -22,12 +24,12 @@ const description =
       <h1>{title}</h1>
       <p>{description}</p>
       <p>
-        La base de ejecución está instalada. El diseño y los datos del negocio
-        se incorporan en fases posteriores.
+        La base de ejecución y los datos canónicos están conectados. El diseño
+        se incorpora en la siguiente fase.
       </p>
     </main>
     <footer>
-      <p>Plantilla en desarrollo.</p>
+      <p>Plantilla {templateMetadata.templateVersion} en desarrollo.</p>
     </footer>
   </body>
 </html>

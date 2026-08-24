@@ -1,0 +1,23 @@
+[
+  {
+    "id": "ubicacion-principal",
+    "name": "Ubicación principal",
+    "street": "Dirección pendiente",
+    "locality": "Puebla",
+    "region": "Puebla",
+    "postalCode": "72000",
+    "country": "MX",
+    "phone": null,
+    "mapUrl": null,
+    "geo": { "latitude": null, "longitude": null },
+    "hours": [
+      { "day": "monday", "closed": true, "opens": null, "closes": null },
+      { "day": "tuesday", "closed": true, "opens": null, "closes": null },
+      { "day": "wednesday", "closed": true, "opens": null, "closes": null },
+      { "day": "thursday", "closed": true, "opens": null, "closes": null },
+      { "day": "friday", "closed": true, "opens": null, "closes": null },
+      { "day": "saturday", "closed": true, "opens": null, "closes": null },
+      { "day": "sunday", "closed": true, "opens": null, "closes": null }
+    ]
+  }
+]

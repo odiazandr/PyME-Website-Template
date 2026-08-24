@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "publicName": "Negocio de ejemplo",
+  "legalName": null,
+  "description": "Descripción pendiente de verificación para el negocio del cliente.",
+  "primaryPhone": { "display": "+52 222 000 0000", "e164": "+522220000000" },
+  "email": "contacto@example.com",
+  "whatsapp": { "enabled": false, "number": null }
+}
