@@ -88,6 +88,7 @@ Pointers only; summaries belong to their canonical owners.
 | T3 | `docs/decisions/0108-client-owned-domain.md` | Domain ownership policy |
 | T3 | `docs/decisions/0109-independent-template-versioning.md` | Explicit migration model |
 | T3 | `docs/decisions/0110-astro-csp.md` | CSP generation and response-header ownership |
+| T3 | `docs/decisions/0112-per-record-publication-approval.md` | Per-record content publication approval |
 
 ## Machinery and reserved paths
 

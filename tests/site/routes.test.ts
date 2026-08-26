@@ -15,6 +15,9 @@ function pageFileFor(href: string): string {
 test("primary navigation has unique, local, trailing-slash routes", () => {
   const hrefs = navigation.map(({ href }) => href);
 
+  // Guard before iterating: every assertion below lives inside a loop, so an
+  // empty navigation array would satisfy this test without checking anything.
+  assert.ok(navigation.length > 0, "navigation must not be empty");
   assert.equal(new Set(hrefs).size, hrefs.length);
   for (const { href, label } of navigation) {
     assert.match(href, /^\/(?:[a-z0-9-]+\/)?$/);
@@ -23,6 +26,7 @@ test("primary navigation has unique, local, trailing-slash routes", () => {
 });
 
 test("every primary navigation route has an explicit Astro page", () => {
+  assert.ok(navigation.length > 0, "navigation must not be empty");
   for (const { href } of navigation) {
     assert.ok(existsSync(pageFileFor(href)), `missing page for ${href}`);
   }
@@ -39,6 +43,7 @@ test("the required Phase 5 reference routes exist", () => {
     "404.astro",
   ];
 
+  assert.ok(requiredPages.length > 0);
   for (const page of requiredPages) {
     assert.ok(existsSync(`${projectRoot}src/pages/${page}`), `missing ${page}`);
   }

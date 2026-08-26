@@ -4,6 +4,7 @@
     "name": "Servicio principal",
     "shortDescription": "Contenido de referencia pendiente de sustituir con información verificada.",
     "featured": true,
-    "detailPage": false
+    "detailPage": false,
+    "approvedForPublication": false
   }
 ]

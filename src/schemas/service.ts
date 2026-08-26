@@ -6,6 +6,7 @@ export const ServiceSchema = z.strictObject({
   shortDescription: NonEmptyTextSchema,
   featured: z.boolean(),
   detailPage: z.boolean(),
+  approvedForPublication: z.boolean(),
 });
 export const ServicesSchema = z
   .array(ServiceSchema)

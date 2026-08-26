@@ -65,6 +65,7 @@ export const LocationSchema = z.strictObject({
       (items) => new Set(items.map(({ day }) => day)).size === 7,
       "hours must contain each weekday exactly once",
     ),
+  approvedForPublication: z.boolean(),
 });
 export const LocationsSchema = z
   .array(LocationSchema)

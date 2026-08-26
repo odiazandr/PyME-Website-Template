@@ -1,8 +1,13 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { evaluateProduction } from "../../scripts/validate-production.ts";
+import {
+  SAMPLE_VALUES,
+  evaluateProduction,
+  validateProduction,
+} from "../../scripts/validate-production.ts";
 import { scanPublicText } from "../../scripts/check-public-output.ts";
 import {
   extractReferences,
@@ -67,6 +72,8 @@ test("production evaluation accepts a completed client state", () => {
         domainOwnershipVerified: true,
         privacyNoticeApproved: true,
       },
+      locations: [],
+      services: [],
     }),
     [],
   );
@@ -83,6 +90,8 @@ test("production evaluation requires explicit operational approvals", () => {
       domainOwnershipVerified: false,
       privacyNoticeApproved: false,
     },
+    locations: [],
+    services: [],
   });
   assert.equal(
     findings.filter(
@@ -129,4 +138,151 @@ test("link resolution rejects traversal and malformed encoding", () => {
     /outside/,
   );
   assert.match(resolveReference("/bad%ZZ", source).error ?? "", /malformed/);
+});
+
+// --- content contract mutation resistance ---------------------------------
+//
+// Each case mutates one aspect of an otherwise launch-ready client state and
+// asserts the specific rule that must reject it. A rule with no failing
+// mutation here is a rule that could be deleted without any test noticing.
+
+const openWeek = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+].map((day) => ({ day, closed: false }));
+
+const launchReady = () => ({
+  mode: "project",
+  facts: {
+    business: { publicName: "Taller Nopal" },
+    site: { canonicalUrl: "https://tallernopal.mx" },
+  },
+  canonicalUrl: "https://tallernopal.mx",
+  privacyText: "Aviso aprobado por la persona responsable.",
+  approvals: {
+    businessFactsVerified: true,
+    domainOwnershipVerified: true,
+    privacyNoticeApproved: true,
+  },
+  locations: [
+    {
+      id: "sucursal-centro",
+      approvedForPublication: true,
+      hours: openWeek,
+    },
+  ],
+  services: [{ id: "carpinteria", approvedForPublication: true }],
+});
+
+const codesFor = (mutate: (state: ReturnType<typeof launchReady>) => void) => {
+  const state = launchReady();
+  mutate(state);
+  return evaluateProduction(state).map((finding) => finding.code);
+};
+
+test("the launch-ready baseline produces no findings", () => {
+  assert.deepEqual(evaluateProduction(launchReady()), []);
+});
+
+for (const [label, mutate, expected] of [
+  [
+    "an unreviewed location",
+    (s) => (s.locations[0].approvedForPublication = false),
+    "CONTENT_REVIEW_REQUIRED",
+  ],
+  [
+    "an unreviewed service",
+    (s) => (s.services[0].approvedForPublication = false),
+    "CONTENT_REVIEW_REQUIRED",
+  ],
+  [
+    "a published location closed all week",
+    (s) =>
+      (s.locations[0].hours = openWeek.map((h) => ({ ...h, closed: true }))),
+    "LOCATION_NEVER_OPEN",
+  ],
+  [
+    "a retained placeholder address",
+    (s) => (s.facts.locations = [{ street: "Dirección pendiente" }]),
+    "SAMPLE_VALUE",
+  ],
+  [
+    "retained placeholder service copy",
+    (s) =>
+      (s.facts.services = [
+        {
+          shortDescription:
+            "Contenido de referencia pendiente de sustituir con información verificada.",
+        },
+      ]),
+    "SAMPLE_VALUE",
+  ],
+  [
+    "a retained sample identity",
+    (s) => (s.facts.business = { publicName: "Negocio de ejemplo" }),
+    "SAMPLE_VALUE",
+  ],
+  [
+    "a provider canonical domain",
+    (s) => (s.canonicalUrl = "https://taller.netlify.app"),
+    "PROVIDER_CANONICAL",
+  ],
+  [
+    "template memory mode",
+    (s) => (s.mode = "template"),
+    "PROJECT_MODE_REQUIRED",
+  ],
+  [
+    "unapproved privacy text",
+    (s) => (s.privacyText = "Revisión legal pendiente."),
+    "PRIVACY_UNAPPROVED",
+  ],
+  [
+    "a withdrawn approval",
+    (s) => (s.approvals.businessFactsVerified = false),
+    "PRODUCTION_APPROVAL_REQUIRED",
+  ],
+] as [string, (s: any) => void, string][]) {
+  test(`production evaluation rejects ${label}`, () => {
+    assert.ok(
+      codesFor(mutate).includes(expected),
+      `expected ${expected} for ${label}`,
+    );
+  });
+}
+
+test("the distribution template cannot reach production", () => {
+  const codes = validateProduction().map((finding) => finding.code);
+  assert.ok(codes.includes("CONTENT_REVIEW_REQUIRED"));
+  assert.ok(codes.includes("SAMPLE_VALUE"));
+});
+
+test("every registered sample value still occurs in the shipped fixtures", () => {
+  // Guards the registry against silent drift: if a fixture is reworded, the rule
+  // protecting it must be reworded in the same change. Only meaningful in the
+  // distribution template, where those fixtures are still present.
+  const memory = readFileSync(`${root}memory.toml`, "utf8");
+  if (!/^mode\s*=\s*"template"\s*$/m.test(memory)) return;
+
+  const shipped = [
+    "src/data/business.json",
+    "src/data/locations.json",
+    "src/data/services.json",
+    "src/config/site.ts",
+  ]
+    .map((file) => readFileSync(`${root}${file}`, "utf8"))
+    .join("\n")
+    .toLowerCase();
+
+  for (const value of SAMPLE_VALUES) {
+    assert.ok(
+      shipped.includes(value),
+      `registered sample value no longer occurs in any fixture: ${value}`,
+    );
+  }
 });

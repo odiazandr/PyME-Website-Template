@@ -1,14 +1,34 @@
 import { readFileSync } from "node:fs";
-import { business, productionApproval } from "../src/data/index.ts";
+import {
+  business,
+  locations,
+  productionApproval,
+  services,
+  socialAccounts,
+  team,
+  testimonials,
+} from "../src/data/index.ts";
 import { site } from "../src/config/site.ts";
 import { ROOT, isMain, report, type Finding } from "./lib/validation.ts";
 
-const sampleValues = [
+// Literal strings the distribution template ships as reference content. They are
+// deliberately unambiguous: a real business may legitimately call itself
+// "Ubicación principal", so only wording that cannot be a verified fact belongs
+// here. tests/production/validation.test.ts asserts every entry still occurs in
+// the shipped fixtures, so removing a fixture cannot silently retire a rule.
+export const SAMPLE_VALUES = [
   "example.com",
   "negocio de ejemplo",
   "00000000-0000-4000-8000-000000000000",
   "pendiente de verificación",
+  "dirección pendiente",
+  "contenido de referencia pendiente de sustituir",
 ];
+
+type PublishableRecord = { id: string; approvedForPublication: boolean };
+type ReviewableLocation = PublishableRecord & {
+  hours: { closed: boolean }[];
+};
 
 type ProductionState = {
   mode: string;
@@ -20,6 +40,8 @@ type ProductionState = {
     domainOwnershipVerified: boolean;
     privacyNoticeApproved: boolean;
   };
+  locations: ReviewableLocation[];
+  services: PublishableRecord[];
 };
 
 export const evaluateProduction = (state: ProductionState): Finding[] => {
@@ -42,8 +64,40 @@ export const evaluateProduction = (state: ProductionState): Finding[] => {
     }
   }
 
+  // Every published record carries its own review attestation. An agent may not
+  // set these; they record that a person checked the fact against reality.
+  for (const [domain, records] of [
+    ["src/data/locations.json", state.locations],
+    ["src/data/services.json", state.services],
+  ] as const) {
+    for (const record of records) {
+      if (!record.approvedForPublication) {
+        findings.push({
+          code: "CONTENT_REVIEW_REQUIRED",
+          path: domain,
+          message: `${record.id} must set approvedForPublication before production`,
+        });
+      }
+    }
+  }
+
+  // A published location that is closed every day of the week is reference data
+  // that was never replaced, not a verified business fact.
+  for (const location of state.locations) {
+    if (
+      location.approvedForPublication &&
+      location.hours.every(({ closed }) => closed)
+    ) {
+      findings.push({
+        code: "LOCATION_NEVER_OPEN",
+        path: "src/data/locations.json",
+        message: `${location.id} is approved but closed every day of the week`,
+      });
+    }
+  }
+
   const facts = JSON.stringify(state.facts).toLowerCase();
-  for (const value of sampleValues) {
+  for (const value of SAMPLE_VALUES) {
     if (facts.includes(value)) {
       findings.push({
         code: "SAMPLE_VALUE",
@@ -81,13 +135,25 @@ export const validateProduction = (): Finding[] => {
   const mode = /^mode\s*=\s*"([^"]+)"\s*$/m.exec(memory)?.[1] ?? "missing";
   return evaluateProduction({
     mode,
-    facts: { business, site },
+    // Every canonical data domain is scanned. A domain missing here is a domain
+    // whose unreplaced reference content can reach a client's public website.
+    facts: {
+      business,
+      site,
+      locations,
+      services,
+      team,
+      testimonials,
+      socialAccounts,
+    },
     canonicalUrl: site.canonicalUrl,
     privacyText: readFileSync(
       `${ROOT}src/content/legal/aviso-de-privacidad.md`,
       "utf8",
     ),
     approvals: productionApproval,
+    locations,
+    services,
   });
 };
 

@@ -21,6 +21,11 @@ const suspicious = [
     code: "UNRESOLVED_MARKER_LEAK",
     pattern: new RegExp("@@PYME_" + "UNRESOLVED"),
   },
+  { code: "PLACEHOLDER_ADDRESS_LEAK", pattern: /direcci[oó]n pendiente/i },
+  {
+    code: "PLACEHOLDER_CONTENT_LEAK",
+    pattern: /contenido de referencia pendiente de sustituir/i,
+  },
 ];
 
 export const checkPublicOutput = (): Finding[] => {
