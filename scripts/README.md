@@ -4,4 +4,4 @@ The scripts implement data, project, production-source, placeholder, asset, buil
 
 `serve-dist.ts` is a localhost-only, foreground static server for Playwright's built-artifact tests. It exists so browser runs always start from the current `dist/` tree and cannot silently reuse a stale development server. It is not a production server or a Netlify substitute.
 
-Client initialization remains planned for its later implementation phase.
+`init-client.ts` rewrites client identity and memory mode from one reviewed JSON input document. Its procedure is owned by `docs/runbooks/create-client-site.md` and its rationale by `docs/decisions/0111-file-driven-client-initialization.md`.

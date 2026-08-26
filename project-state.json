@@ -18,7 +18,7 @@
     "browserTests": "verified",
     "ci": "verified",
     "netlifyDeployment": "partial",
-    "clientInitialization": "planned",
+    "clientInitialization": "verified",
     "lifecycleTest": "planned",
     "migrationTest": "planned",
     "productionReadiness": "not_implemented"

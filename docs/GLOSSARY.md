@@ -9,6 +9,8 @@ answers:
 
 **Canonical owner** — The single active source authorized to define a durable fact.
 
+**Client initializer** — The `init:client` command that rewrites a client repository's identity and memory mode from one reviewed input document.
+
 **Client site** — An independent repository created from this foundation for one business.
 
 **Class A** — Informational or marketing website within the default architecture.

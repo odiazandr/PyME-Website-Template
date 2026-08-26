@@ -11,6 +11,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "init:client": "node scripts/init-client.ts",
     "format": "prettier --write src scripts tests/data tests/site tests/artifacts tests/production tests/browser .github package.json astro.config.ts tsconfig.json playwright.config.ts prettier.config.mjs",
     "format:check": "prettier --check src scripts tests/data tests/site tests/artifacts tests/production tests/browser .github package.json astro.config.ts tsconfig.json playwright.config.ts prettier.config.mjs",
     "validate:data": "node scripts/validate-data.ts",

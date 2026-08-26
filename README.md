@@ -15,7 +15,7 @@ The repository contains its constitution and memory architecture plus a verified
 
 ## Current phase
 
-Phases 1.1 through 8 are complete within their declared local scopes. Phase 9 browser QA and Phase 10 CI are verified on GitHub-hosted Ubuntu across desktop, mobile, and narrow Chromium plus tablet WebKit. Manual accessibility review remains outstanding, and Phase 11 Netlify deployment has not yet been proven in a real deployment.
+Phases 1.1 through 8 are complete within their declared local scopes. Phase 9 browser QA and Phase 10 CI are verified on GitHub-hosted Ubuntu across desktop, mobile, and narrow Chromium plus tablet WebKit. Manual accessibility review remains outstanding, and Phase 11 Netlify deployment has not yet been proven in a real deployment. Phase 12 client initialization is implemented and covered by deterministic tests, but no client repository has completed a full initialized lifecycle yet.
 
 Implemented runtime boundaries and the remaining planned layers are documented in `docs/spec/architecture.md`. `project-state.json` is the concise evidence-level source of truth.
 

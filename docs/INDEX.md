@@ -88,6 +88,7 @@ Pointers only; summaries belong to their canonical owners.
 | T3 | `docs/decisions/0108-client-owned-domain.md` | Domain ownership policy |
 | T3 | `docs/decisions/0109-independent-template-versioning.md` | Explicit migration model |
 | T3 | `docs/decisions/0110-astro-csp.md` | CSP generation and response-header ownership |
+| T3 | `docs/decisions/0111-file-driven-client-initialization.md` | Reviewed-input client initialization |
 | T3 | `docs/decisions/0112-per-record-publication-approval.md` | Per-record content publication approval |
 
 ## Machinery and reserved paths
@@ -102,7 +103,7 @@ Pointers only; summaries belong to their canonical owners.
 | `memory.toml` | Memory mode and configured checks |
 | `ops/` | Deterministic memory-health tooling |
 | `schemas/` | Public JSON contracts; reserved until implemented |
-| `scripts/` | Implemented data and production validation; client initialization remains planned |
+| `scripts/` | Implemented client initialization, data validation, and production validation |
 | `tests/` | Implemented memory, data, route, serialization, security, artifact, production-gate, browser, and Axe verification |
 | `src/` | Implemented Astro, data, design, routes, SEO, privacy, and form foundations |
 | `docs/archive/` | Cold superseded material; inventory by path only |
