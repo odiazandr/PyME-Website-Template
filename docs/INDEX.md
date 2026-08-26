@@ -99,7 +99,7 @@ Pointers only; summaries belong to their canonical owners.
 | `.claude/skills/` | Derived adapters; reserved in this phase |
 | `.qwen/skills/` | Derived adapters; reserved in this phase |
 | `.memory/working-sets/` | Local task-scoped pointer caches |
-| `.github/` | Implemented CI, browser QA, ownership, dependency maintenance, and contribution forms |
+| `.github/` | Implemented CI, browser QA, ownership, dependency maintenance, contribution forms, and the importable default-branch ruleset |
 | `memory.toml` | Memory mode and configured checks |
 | `ops/` | Deterministic memory-health tooling |
 | `schemas/` | Public JSON contracts; reserved until implemented |
