@@ -1,0 +1,37 @@
+  ...20/60
+  ...40/60
+  ...60/60
+
+samples=60 seed=20260826
+all gates pass: 7 (12%)
+any crash:      0
+
+signature frequency (memory,data,project,production):
+  PPFF  20
+  PFFF  18
+  PPFP  13
+  PPPP  7
+  PPPF  2
+
+P(all gates pass | dimension = value):
+  mode:
+    project                n=60   P=0.12
+  identity:
+    client                 n=60   P=0.12
+  canonical:
+    client_domain          n=60   P=0.12
+  approvals:
+    all_true               n=60   P=0.12
+  privacy:
+    approved               n=60   P=0.12
+  content:
+    verified               n=20   P=0.35
+    placeholder_retained   n=22   P=0.00
+    empty_collections      n=18   P=0.00
+  navigation:
+    intact                 n=24   P=0.29
+    empty                  n=17   P=0.00
+    dangling               n=19   P=0.00
+  template_version:
+    matching               n=35   P=0.20
+    drifted                n=25   P=0.00

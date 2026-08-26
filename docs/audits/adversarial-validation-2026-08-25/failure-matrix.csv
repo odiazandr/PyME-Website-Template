@@ -1,0 +1,47 @@
+component,failure_class,result,evidence
+memory validator,malformed config input,tested_and_passed,12 mutations rejected cleanly
+memory validator,invalid frontmatter values,tested_and_passed,authority/status/scalar-answers rejected
+memory validator,index cardinality drift,tested_and_passed,deleted+duplicated+unindexed rejected
+memory validator,invalid UTF-8,tested_and_passed,rejected without traceback
+memory validator,mode enum bypass,tested_and_passed,bogus and missing mode rejected
+memory validator,project-mode self-rejection,tested_and_passed,project mode accepted on canonical template
+production validator,identity sample values,tested_and_passed,business+site sample values rejected case-insensitively
+production validator,provider canonical domain,tested_and_passed,netlify.app rejected
+production validator,unapproved privacy text,tested_and_passed,reference instruction rejected
+production validator,approval flag bypass,tested_and_passed,all three flags enforced
+production validator,placeholder content in other data domains,tested_and_failed,AV2-001 all 14 quality:production steps pass
+production validator,canonical URL origin hygiene,tested_and_failed,AV2-004 credentials and paths accepted
+project validator,dangling navigation route,tested_and_passed,rejected reliably (MC P=0.00)
+project validator,empty navigation,tested_and_failed,AV2-002 vacuous pass at source layer
+project validator,template version drift,tested_and_failed,AV2-005 no standing gate
+data schemas,structural invalid input,tested_and_passed,12 schema tests plus 32 fuzz cases
+data schemas,empty required collections,tested_and_passed,locations/services emptiness rejected
+data schemas,content truthfulness,not_applicable,explicitly out of scope per docs/spec/website-validation.md
+client initializer,malformed and hostile input,tested_and_passed,32 fuzz cases zero crashes
+client initializer,identity stability under --force,tested_and_failed,AV2-003 UUID silently reissued
+client initializer,concurrent execution,tested_and_failed,AV2-006 TOCTOU guard bypass
+client initializer,partial write on format failure,tested_and_passed,contents computed before any write
+test suite,vacuous loop assertions,tested_and_failed,AV2-002 navigation loops
+test suite,stale dist artifacts,tested_and_passed,rebuilt and re-run; artifact tests track current build
+CI workflows,action pinning,tested_and_passed,all actions pinned to immutable SHAs
+CI workflows,excessive permissions,tested_and_passed,contents: read on both workflows
+CI workflows,untrusted trigger,tested_and_passed,pull_request not pull_request_target
+CODEOWNERS,agent instruction file coverage,tested_and_passed,wildcard * covers all paths
+CODEOWNERS,enforcement,not_tested,requires GitHub branch protection; no network access
+build pipeline,clean build from source,tested_and_passed,astro build completed; 7 pages
+build pipeline,full quality:production sequence,tested_and_failed,AV2-001 all 14 steps pass on placeholder site
+built output,dist sentinel scanning,tested_and_failed,check-public-output passes on placeholder content
+built output,CSP emission,tested_and_passed,build emits configured policy; security tests pass
+built output,artifact contract,tested_and_passed,tests/artifacts pass against fresh build
+built output,structured data correctness,tested_and_failed,JSON-LD publishes placeholder streetAddress
+built output,internal link resolution,tested_and_passed,check-links passes
+built output,public manifest,tested_and_passed,verify-dist matches config
+browser layer,critical journeys,tested_and_passed,smoke suite passes on valid config; fails correctly on empty navigation
+browser layer,navigation regression detection,tested_and_passed,browser QA is the only layer catching empty navigation
+browser layer,accessibility violations,partially_tested,a11y suite available but not run across full matrix
+netlify deployment,headers in real response,not_tested,no deployment exists
+netlify deployment,form provider receipt,not_tested,no deployment exists
+DNS,cutover and recovery,not_tested,no domain; out of scope
+runbooks,incident and recovery usability,tested_and_failed,AV2-007 interpretation evidence only
+documentation,entry-point routing,tested_and_passed,agent reached correct canonical owner unaided
+documentation,README self-sufficiency,partially_tested,ambiguities recorded in interpretation report

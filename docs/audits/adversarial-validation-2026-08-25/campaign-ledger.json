@@ -1,0 +1,139 @@
+{
+  "campaign_date": "2026-08-25",
+  "prior_campaign": "2026-08-24",
+  "canonical_repository": "<repository>",
+  "canonical_origin": "https://github.com/odiazandr/PyME-Website-Template.git",
+  "canonical_branch": "main",
+  "baseline_head": "4bff8ed9912d5fee4a263060648abfa232bb1c50",
+  "tested_tree": "working tree including 11 modified and 4 untracked Phase 12 initializer files",
+  "baseline_manifest_sha256": "1615ba2e50dbc104a1449b1be906a2bf2d2cd367285c622a8bfd970266d73a61",
+  "baseline_files_hashed": 238,
+  "environment": {
+    "os": "Windows 11",
+    "shell": "Git Bash and PowerShell 7",
+    "node": "v24.19.0",
+    "npm": "11.17.0",
+    "python": "3.14"
+  },
+  "isolation": {
+    "method": "tar copy of the working tree into a scratchpad sandbox, with a Windows directory junction to the canonical node_modules",
+    "sandboxes_created": 19,
+    "canonical_repository_mutated": false,
+    "node_modules_mutated": false,
+    "network_actions": false,
+    "production_actions": false,
+    "pushes_or_deploys": false,
+    "secrets_in_artifacts": false,
+    "sandboxes_removed": true,
+    "junctions_unlinked_before_deletion": 17
+  },
+  "budget": {
+    "approved_cheap_agent_invocations": 20,
+    "approved_concurrent_cheap_agents": 4,
+    "approved_waves": 5,
+    "approved_retries_per_experiment": 2,
+    "approved_premium_subagent_invocations": 0,
+    "approved_wall_clock_minutes": 45
+  },
+  "usage": {
+    "cheap_agent_invocations": 10,
+    "cheap_agent_class": "claude-haiku-4-5",
+    "agent_types_used": [
+      "Explore (read-only)",
+      "general-purpose"
+    ],
+    "maximum_observed_concurrent_cheap_agents": 4,
+    "premium_subagent_invocations": 0,
+    "agent_retries": 0,
+    "waves_completed": 5,
+    "approximate_deterministic_tool_runs": 800,
+    "monte_carlo_scenarios": 160,
+    "monte_carlo_runs": 2,
+    "fuzz_cases": 32,
+    "prior_finding_regression_mutations": 13,
+    "targeted_experiments": 8,
+    "subagent_tokens_consumed": 523124
+  },
+  "wave_summary": [
+    {
+      "wave": 0,
+      "name": "Baseline and oracle",
+      "agents": 0,
+      "output": "12-check oracle recorded; canonical integrity manifest; sandbox factory verified"
+    },
+    {
+      "wave": 1,
+      "name": "Independent interpretation",
+      "agents": 7,
+      "output": "README-only, agent-entry-chain, source-first, test-first, operator, security-reviewer, conflicting-instruction lenses"
+    },
+    {
+      "wave": 2,
+      "name": "Static and structural",
+      "agents": 0,
+      "output": "gate scan-scope tracing, sentinel list analysis, CODEOWNERS and workflow verification"
+    },
+    {
+      "wave": 3,
+      "name": "Behavioural and mutation",
+      "agents": 0,
+      "output": "prior-finding regression harness, 32-case input fuzzing, 6 targeted experiments"
+    },
+    {
+      "wave": 4,
+      "name": "Monte Carlo sampling",
+      "agents": 0,
+      "output": "100 uniform samples then 60 conditioned samples"
+    },
+    {
+      "wave": 5,
+      "name": "Adversarial confirmation",
+      "agents": 3,
+      "output": "two falsification attempts and one overreach review; produced three claim retractions"
+    }
+  ],
+  "stop_conditions_triggered": [
+    "Planned five waves completed",
+    "Remaining untested hypotheses require a live Netlify deployment, a registered domain, or GitHub API access"
+  ],
+  "findings": {
+    "confirmed": 6,
+    "plausible": 1,
+    "invalidated_agent_claims": 3,
+    "prior_findings_retested": 13,
+    "prior_findings_still_open": 0,
+    "highest_severity": "high (AV2-001)"
+  },
+  "mid_campaign_correction": {
+    "what": "astro build, astro check and Playwright were reported blocked by Windows Application Control during Wave 0 and were treated as untestable.",
+    "how_surfaced": "A Wave 5 falsification agent returned built-output evidence that should not have been obtainable. Direct re-verification showed the native binding now loads.",
+    "cause": "Windows Application Control had been withholding a reputation verdict on Astro's unsigned rolldown binding; the block was transient, not permanent.",
+    "effect": "The full quality:production sequence, built output, structured data and Playwright browser QA were then exercised. Untested failure-matrix cells fell from 9 to 4, and AV2-001 was upgraded from partly-inferred to confirmed end to end."
+  },
+  "remediation_pass": {
+    "performed": true,
+    "decision_record": "docs/decisions/0112-per-record-publication-approval.md",
+    "findings_remediated": [
+      "AV2-001",
+      "AV2-002",
+      "AV2-003",
+      "AV2-004",
+      "AV2-005"
+    ],
+    "findings_accepted": [
+      "AV2-006"
+    ],
+    "findings_deferred": [
+      "AV2-007"
+    ],
+    "regression_introduced_and_caught_by_own_harness": true,
+    "final_state": {
+      "memory_contracts": "PASSED",
+      "npm_run_quality": "exit 0",
+      "npm_test": "69 tests, 0 failures",
+      "browser_qa_desktop_chromium": "13 passed",
+      "prior_campaign_mutations_closed": "13 of 13",
+      "template_rejected_by_production_gate": true
+    }
+  }
+}

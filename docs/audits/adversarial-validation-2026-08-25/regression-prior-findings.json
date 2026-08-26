@@ -1,0 +1,132 @@
+[
+  {
+    "id": "AV-001a",
+    "label": "bogus memory mode",
+    "expectation": "reject",
+    "exit": 1,
+    "rejected": true,
+    "outcome": "CLOSED",
+    "traceback": false,
+    "output": "MEMORY HEALTH: FAILED\n- memory.toml: CONFIG_INVALID_MODE: mode must be exactly template or project"
+  },
+  {
+    "id": "AV-001b",
+    "label": "missing memory mode",
+    "expectation": "reject",
+    "exit": 1,
+    "rejected": true,
+    "outcome": "CLOSED",
+    "traceback": false,
+    "output": "MEMORY HEALTH: FAILED\n- memory.toml: CONFIG_INVALID_MODE: mode must be exactly template or project\n- memory.toml: CONFIG_MISSING_KEY: missing top-level key: mode"
+  },
+  {
+    "id": "AV-003",
+    "label": "deleted indexed document",
+    "expectation": "reject",
+    "exit": 1,
+    "rejected": true,
+    "outcome": "CLOSED",
+    "traceback": false,
+    "output": "MEMORY HEALTH: FAILED\n- docs/INDEX.md: INDEX_ENTRY_STALE: indexed active document is not discovered: docs/spec/seo.md"
+  },
+  {
+    "id": "AV-005",
+    "label": "duplicate index entry",
+    "expectation": "reject",
+    "exit": 1,
+    "rejected": true,
+    "outcome": "CLOSED",
+    "traceback": false,
+    "output": "MEMORY HEALTH: FAILED\n- docs/INDEX.md: INDEX_ENTRY_DUPLICATE: active document is indexed 2 times: docs/spec/seo.md"
+  },
+  {
+    "id": "AV-004a",
+    "label": "invalid authority value",
+    "expectation": "reject",
+    "exit": 1,
+    "rejected": true,
+    "outcome": "CLOSED",
+    "traceback": false,
+    "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: FRONTMATTER_INVALID_AUTHORITY: authority must be canonical, derived, or scratch"
+  },
+  {
+    "id": "AV-004b",
+    "label": "invalid status value",
+    "expectation": "reject",
+    "exit": 1,
+    "rejected": true,
+    "outcome": "CLOSED",
+    "traceback": false,
+    "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: FRONTMATTER_INVALID_STATUS: status must be active, superseded, or archived"
+  },
+  {
+    "id": "AV-004c",
+    "label": "scalar answers field",
+    "expectation": "reject",
+    "exit": 1,
+    "rejected": true,
+    "outcome": "CLOSED",
+    "traceback": false,
+    "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: FRONTMATTER_INVALID_ANSWERS: line 5: answers must be a non-empty JSON-style list of non-empty strings\n- docs/spec/seo.md: FRONTMATTER_MISSING_KEY: missing required key: answers"
+  },
+  {
+    "id": "AV-003b",
+    "label": "active doc missing from index",
+    "expectation": "reject",
+    "exit": 1,
+    "rejected": true,
+    "outcome": "CLOSED",
+    "traceback": false,
+    "output": "MEMORY HEALTH: FAILED\n- docs/INDEX.md: INDEX_ENTRY_MISSING: active document is not indexed: docs/spec/orphan-contract.md"
+  },
+  {
+    "id": "AV-011",
+    "label": "duplicate ownership question",
+    "expectation": "reject",
+    "exit": 1,
+    "rejected": true,
+    "outcome": "CLOSED",
+    "traceback": false,
+    "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: OWNERSHIP_QUESTION_DUPLICATE: duplicates canonical question owned by docs/spec/security.md\n- docs/spec/seo.md: OWNERSHIP_QUESTION_DUPLICATE: duplicates canonical question owned by docs/spec/security.md"
+  },
+  {
+    "id": "AV-008a",
+    "label": "malformed TOML",
+    "expectation": "reject",
+    "exit": 1,
+    "rejected": true,
+    "outcome": "CLOSED",
+    "traceback": false,
+    "output": "MEMORY HEALTH: FAILED\n- memory.toml: CONFIG_MALFORMED_TOML: invalid TOML: Illegal character '\\n' (at line 2, column 17)"
+  },
+  {
+    "id": "AV-008b",
+    "label": "unknown config key",
+    "expectation": "reject",
+    "exit": 1,
+    "rejected": true,
+    "outcome": "CLOSED",
+    "traceback": false,
+    "output": "MEMORY HEALTH: FAILED\n- memory.toml: CONFIG_UNKNOWN_WORKING_SET_KEY: unknown working_set key: rogue_key"
+  },
+  {
+    "id": "AV-008c",
+    "label": "invalid UTF-8 in knowledge doc",
+    "expectation": "reject",
+    "exit": 1,
+    "rejected": true,
+    "outcome": "CLOSED",
+    "traceback": false,
+    "output": "MEMORY HEALTH: FAILED\n- docs/spec/seo.md: DOCUMENT_INVALID_UTF8: active knowledge document must be valid UTF-8\n- docs/spec/seo.md: PLACEHOLDER_SCAN_INVALID_UTF8: scanned text file must be valid UTF-8"
+  },
+  {
+    "id": "AV-002",
+    "label": "project mode on canonical template",
+    "expectation": "accept",
+    "exit": 0,
+    "rejected": false,
+    "outcome": "CLOSED",
+    "traceback": false,
+    "output": "MEMORY HEALTH: PASSED"
+  }
+]

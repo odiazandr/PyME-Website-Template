@@ -1,0 +1,249 @@
+{
+  "schema_version": 1,
+  "campaign": "adversarial-validation-2026-08-25",
+  "prior_campaign": "adversarial-validation-2026-08-24",
+  "baseline_head": "4bff8ed9912d5fee4a263060648abfa232bb1c50",
+  "tested_tree": "working tree including uncommitted Phase 12 initializer work",
+  "findings": [
+    {
+      "id": "AV2-001",
+      "title": "The complete production gate passes while the site publishes placeholder business content, including in structured data",
+      "category": "validation-scope",
+      "severity": "high",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "root_cause": "scripts/validate-production.ts builds its scan input as facts: { business, site }. The locations, services, team, testimonials and social domains are outside that scope entirely. Independently, the sampleValues list contains four literal strings that do not include the placeholder vocabulary the template actually ships in those files.",
+      "reproduction": "In a disposable copy: run the client initializer with a real client identity, set all three flags in src/data/production.json to true, replace src/content/legal/aviso-de-privacidad.md with approved text, then run node scripts/validate-production.ts, node scripts/check-placeholders.ts, node scripts/validate-data.ts, node scripts/validate-project.ts, node scripts/check-assets.ts and python ops/memory_health.py --scope contracts.",
+      "evidence": "Full launch simulated in an isolated copy with its own node_modules: client initialized, all three approval flags set true, approved privacy notice written. Every one of the 14 steps of npm run quality:production passed, including astro build, the built-artifact contract tests, verify-dist, check-links and check-public-output. The resulting dist/ publishes 'Direccion pendiente' on dist/index.html and dist/contacto/index.html, 'Servicio principal' and 'Contenido de referencia pendiente de sustituir con informacion verificada.' on dist/index.html and dist/servicios/index.html, and emits schema.org Organization structured data containing \"streetAddress\": \"Direccion pendiente\", \"postalCode\": \"72000\", \"addressLocality\": \"Puebla\".",
+      "monte_carlo": "Conditioned run (seed 20260826, n=60): P(all gates pass | content=placeholder_retained)=0.68 versus P(all gates pass | content=verified)=0.70. Retaining placeholder content has no measurable effect on gate outcome.",
+      "affected": [
+        "scripts/validate-production.ts",
+        "scripts/check-public-output.ts",
+        "src/data/locations.json",
+        "src/data/services.json",
+        "docs/spec/website-validation.md"
+      ],
+      "invariant_violated": "PROJECT.md invariant 4 (business claims must be verified, never invent availability) and invariant 8 (production validation is part of the definition of done)",
+      "remediation": "Widen the production scan input to every canonical data domain, and replace the literal sampleValues list with the template's actual shipped fixture values, derived from the committed fixtures rather than hand-maintained. Consider a distinct rule requiring at least one location with at least one open day before production.",
+      "regression_test": "A production-validation test that loads the shipped template fixtures for locations and services and asserts validate-production rejects them once identity, approvals and privacy are otherwise satisfied.",
+      "scope_precision_note": "An adversarial review of this finding correctly noted that the sampleValues entry 'pendiente de verificacion' DOES match the description shipped in src/data/business.json, so the list is not blind to every template placeholder. The gap is therefore two independent defects that compound: the scan scope excludes locations/services/team/testimonials/social entirely, AND those files use placeholder wording ('Direccion pendiente', 'Contenido de referencia pendiente de sustituir') that the list would not match even if the scope were widened. Fixing either alone leaves the failure reachable.",
+      "search_engine_impact": "The placeholder street address is emitted inside JSON-LD Organization structured data, which search engines consume for local results and knowledge panels. This is not only visible page copy; it is machine-readable business data asserting a false address, and the location is inherited from the template fixture (Puebla, 72000) regardless of where the client actually operates.",
+      "verification_note": "Originally recorded with the dist/ half only strongly supported because astro build appeared blocked on this host. The block proved transient: Windows Application Control had been withholding a reputation verdict on Astro's unsigned native binding, and it later loaded normally. The build, the browser toolchain and the full production gate were then all exercised, and the finding is now confirmed end to end rather than inferred.",
+      "remediation_status": "remediated",
+      "remediation_applied": [
+        "src/schemas/location.ts and src/schemas/service.ts now require approvedForPublication, joining team.ts and testimonial.ts.",
+        "The shipped reference location and service store the flag as false, so the distribution template can no longer reach production.",
+        "scripts/validate-production.ts scans every canonical data domain and rejects any record whose flag is false (CONTENT_REVIEW_REQUIRED).",
+        "A published location closed on all seven days is rejected (LOCATION_NEVER_OPEN).",
+        "SAMPLE_VALUES gained the two placeholder strings and is exported; check-public-output.ts gained matching dist sentinels."
+      ],
+      "remediation_verification": "The original attack now returns PRODUCTION SOURCE VALIDATION: FAILED with both a structural and a string finding, so either layer catches it alone. Conditioned Monte Carlo, seed 20260826: P(all gates pass | content=placeholder_retained) fell from 0.68 to 0.00 while content=verified still passes."
+    },
+    {
+      "id": "AV2-002",
+      "title": "An empty navigation configuration passes every gate and its own test suite",
+      "category": "test-adequacy",
+      "severity": "low-medium",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "root_cause": "Both scripts/validate-project.ts and tests/site/routes.test.ts assert only inside for-loops over the navigation array, with no assertion that the array is non-empty. On an empty array every loop body is skipped and the vacuous pass is indistinguishable from a real pass.",
+      "reproduction": "In a disposable copy replace src/config/navigation.ts with an empty typed array, then run node scripts/validate-project.ts and node --test tests/site/routes.test.ts.",
+      "evidence": "With navigation emptied, every source-level gate passed: validate-project, tests/site/routes.test.ts, astro build, the built-artifact contract tests and verify-dist all exit 0. Browser QA then FAILED: tests/browser/smoke.spec.ts 'primary navigation reaches every explicit destination' failed under desktop-chromium. Browser QA is therefore a genuine backstop.",
+      "monte_carlo": "Conditioned run: P(all gates pass | navigation=empty)=0.65 versus P(all gates pass | navigation=intact)=0.75, statistically indistinguishable at n=17 and n=24. By contrast P(all gates pass | navigation=dangling)=0.00, so the dangling-route case is genuinely caught.",
+      "affected": [
+        "scripts/validate-project.ts",
+        "tests/site/routes.test.ts"
+      ],
+      "remediation": "Add a non-empty guard before each loop in both files. The same audit applies to every other loop-based assertion in the suite.",
+      "regression_test": "Assert navigation.length > 0 before the existing loops, and add a test that an empty navigation array is rejected by validate-project.",
+      "severity_revision_note": "Downgraded from medium and now VERIFIED rather than inferred. The important operational nuance is that browser QA lives in a separate workflow (.github/workflows/browser-qa.yml) and is NOT part of npm run quality:production. A client repository can therefore pass the production gate with no navigation at all; the defect is caught only if CI browser QA also runs and is treated as blocking.",
+      "remediation_status": "remediated",
+      "remediation_applied": [
+        "scripts/validate-project.ts emits NAVIGATION_EMPTY before iterating, using a widened type so the guard is not compile-time dead against the as-const tuple.",
+        "tests/site/routes.test.ts asserts a non-empty collection before every loop-based assertion."
+      ],
+      "remediation_verification": "Emptying navigation now fails validate-project. Monte Carlo: P(all gates pass | navigation=empty) fell from 0.65 to 0.00."
+    },
+    {
+      "id": "AV2-003",
+      "title": "Forced re-initialization silently reissues the stable site identity",
+      "category": "state-integrity",
+      "severity": "medium",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "introduced_by": "the uncommitted Phase 12 initializer work under test",
+      "root_cause": "planInitialization selects the site UUID as input.site.siteId ?? generatedSiteId. It never consults the identity already present in src/config/site.ts. Because the input document's siteId field is optional and documented as optional, the normal --force path regenerates the identity.",
+      "reproduction": "In a disposable copy run node scripts/init-client.ts client.json, record the siteId, then run node scripts/init-client.ts client.json --force with the identical input and record it again.",
+      "evidence": "siteId changed from 4b59594a-a5e6-49c3-8f9f-6599ecd8b96c to 08a542a1-115c-4396-bfa4-f4c7e6975c4f with no warning. No gate detected the change: validate-data exit 0, memory contracts exit 0.",
+      "affected": [
+        "scripts/init-client.ts",
+        "docs/GLOSSARY.md",
+        "docs/runbooks/create-client-site.md",
+        "src/pages/.well-known/pyme-site.json.ts"
+      ],
+      "contradiction": "docs/GLOSSARY.md defines Site ID as 'A stable, non-secret UUID generated once for a client site'. The runbook instructs the operator to supply the existing identity when re-initializing, but that instruction is prose only and nothing enforces it.",
+      "remediation": "Read the existing siteId from src/config/site.ts and reuse it whenever it is present and not the sample identity, unless the input explicitly supplies a different one. Alternatively refuse --force unless the input carries an explicit siteId.",
+      "regression_test": "Initialize, then force-reinitialize with an input that omits siteId, and assert the identity is unchanged.",
+      "remediation_status": "remediated",
+      "remediation_applied": [
+        "planInitialization reads the existing identity back from src/config/site.ts, its canonical owner, instead of asking the input document to repeat a durable fact.",
+        "The template sample UUID is never eligible for preservation.",
+        "A new identity requires the explicit --new-identity flag; the chosen source is reported as input, preserved, or newly generated."
+      ],
+      "remediation_verification": "Re-running with --force and the same input preserves the identity; --new-identity issues a new one deliberately. Four unit tests cover the selection matrix."
+    },
+    {
+      "id": "AV2-004",
+      "title": "The canonical URL contract accepts embedded credentials and non-origin URLs, which reach the public manifest",
+      "category": "security",
+      "severity": "medium",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "root_cause": "SiteSchema.canonicalUrl validates only that the value parses as a URL and begins with https://. It performs no origin normalization, so userinfo, path, query, fragment and port all survive validation.",
+      "reproduction": "Run the initializer with site.canonicalUrl set to https://admin:hunter2@ferreteriasanmiguel.mx",
+      "evidence": "CLIENT INITIALIZATION: PASSED. src/config/site.ts was written with canonicalUrl: \"https://admin:hunter2@ferreteriasanmiguel.mx\". src/pages/.well-known/pyme-site.json.ts copies site.canonicalUrl verbatim into the public manifest served at /.well-known/pyme-site.json, and SEOHead emits it as the canonical link on every page. https://ferreteriasanmiguel.mx/a?b=c#d was likewise accepted as a canonical site URL.",
+      "affected": [
+        "src/schemas/site.ts",
+        "scripts/init-client.ts",
+        "src/pages/.well-known/pyme-site.json.ts"
+      ],
+      "invariant_violated": "PROJECT.md invariant 7 (no secret or private operational data may enter browser-visible code, public manifests, or committed repository data)",
+      "severity_note": "Requires an operator to supply such a URL. Userinfo-bearing URLs are a realistic copy-paste hazard from CI and tooling configuration, and this is precisely the data path invariant 7 forbids.",
+      "remediation": "Constrain canonicalUrl to a bare https origin: reject username, password, non-empty pathname, query and fragment. Decide deliberately whether a non-default port is permitted.",
+      "regression_test": "Schema tests asserting rejection of userinfo, path, query and fragment in canonicalUrl.",
+      "remediation_status": "remediated",
+      "remediation_applied": [
+        "CanonicalUrlSchema is now the single owner of the canonical-URL rule and rejects userinfo, path, query, and fragment.",
+        "src/schemas/client-init.ts reuses that schema rather than restating a weaker one, so the input contract and the site contract cannot diverge."
+      ],
+      "remediation_verification": "The credential URL is rejected with a clean INPUT_INVALID finding. A first attempt at this fix regressed the initializer into an uncaught ZodError; the 32-case fuzzer caught it and the shared-schema fix restored zero crashes and zero wrong acceptances."
+    },
+    {
+      "id": "AV2-005",
+      "title": "Recorded template version drift has no standing validation gate",
+      "category": "schema-drift",
+      "severity": "low",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "root_cause": "src/data/template.json is compared against package.json only inside scripts/init-client.ts, which runs once at adoption. No recurring gate re-checks the relationship afterwards.",
+      "reproduction": "Set src/data/template.json templateVersion to 0.1.0 while package.json remains 0.3.0 and run the gate battery.",
+      "evidence": "Monte Carlo conditioned run: P(all gates pass | template_version=drifted)=0.56 versus P(all gates pass | template_version=matching)=0.43. Drift has no effect on gate outcome; the difference is sampling noise in the opposite direction.",
+      "affected": [
+        "src/data/template.json",
+        "scripts/validate-project.ts",
+        "docs/runbooks/template-upgrade.md"
+      ],
+      "remediation": "Move the template-version consistency check out of the initializer into validate-project so it runs on every build.",
+      "regression_test": "Assert validate-project rejects a template.json version that disagrees with package.json.",
+      "remediation_status": "remediated",
+      "remediation_applied": [
+        "The template-version consistency check moved out of the initializer into scripts/validate-project.ts, so it runs on every build rather than once at adoption."
+      ],
+      "remediation_verification": "Drifted template versions now fail validate-project. Monte Carlo: P(all gates pass | template_version=drifted) fell from 0.56 to 0.00."
+    },
+    {
+      "id": "AV2-006",
+      "title": "The already-initialized guard is subject to a time-of-check to time-of-use race",
+      "category": "concurrency",
+      "severity": "low",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "root_cause": "planInitialization reads the memory mode, then the caller performs three unsynchronised writeFileSync calls. There is no lock file, no atomic rename, and no post-write read-back verification.",
+      "reproduction": "Launch three initializers concurrently against one disposable copy with three different client inputs.",
+      "evidence": "All three reported CLIENT INITIALIZATION: PASSED. Each read mode=template before any had written mode=project, so the guard that is supposed to prevent overwriting an initialized repository did not fire for any of them. The operator sees three successes with no indication that two were overwritten.",
+      "not_observed": "This trial produced an internally consistent final state, all files from the last writer. A mixed state combining one client's site config with another's business data is possible in principle but was NOT observed, and is therefore not claimed.",
+      "affected": [
+        "scripts/init-client.ts"
+      ],
+      "remediation": "Low priority given the operator workflow. If addressed, write to temporary files and rename, and re-read the memory mode immediately before writing.",
+      "regression_test": "Not proposed. The realistic operator workflow is single-run; the cost of a concurrency test exceeds its value here.",
+      "remediation_status": "accepted",
+      "remediation_verification": "Left open deliberately. The realistic operator workflow is a single run, and the cost of file locking and read-back verification exceeds the value at this stage."
+    },
+    {
+      "id": "AV2-007",
+      "title": "Runbooks state principles rather than executable procedures for incident and recovery work",
+      "category": "documentation",
+      "severity": "medium (at first client launch; not a present-tense defect)",
+      "confidence": "plausible",
+      "status": "plausible",
+      "root_cause": "The runbooks under docs/runbooks/ are deliberately terse single-paragraph documents. For authoring tasks this is adequate because the canonical owner is named. For incident, rollback, DNS cutover and template upgrade, the operator needs an ordered procedure and the runbook supplies a checklist of concerns instead.",
+      "evidence": "An independent limited-context operator agent, given only docs/runbooks/, could not derive executable steps for six scenarios. Recurring undefined terms include 'known-good source', 'prior verified Netlify deploy', 'recorded prior values' (never given a storage location), and 'provider receipt'. No runbook covers diagnosing a contact form that stopped delivering.",
+      "confidence_note": "Classified plausible, not confirmed. This is interpretation evidence from a single limited-context agent perspective, not a machine-verifiable defect. An adversarial review argued the root cause is misattributed: the repository is still in template phase with deployment unproven, and the prior 2026-08-24 campaign already recorded rollback, DNS, deployment and integration execution as 'not implemented or not connected'. On that reading the terse recovery runbooks are correct sequencing rather than a documentation gap, and they become a real defect only at first client launch. Reported at medium severity on that timeline, not as a present-tense failure.",
+      "affected": [
+        "docs/runbooks/incident-response.md",
+        "docs/runbooks/rollback.md",
+        "docs/runbooks/dns-cutover.md",
+        "docs/runbooks/template-upgrade.md",
+        "docs/runbooks/handoff.md"
+      ],
+      "remediation": "Before first client launch, add ordered steps and an explicit storage location for DNS and deploy recovery values to the recovery-path runbooks. Add form-delivery diagnosis to maintenance or incident-response.",
+      "regression_test": "Not machine-testable. Re-run a limited-context operator interpretation after revision.",
+      "remediation_status": "deferred",
+      "remediation_verification": "Left open deliberately until first client launch, when the recovery runbooks stop being theoretical. Recorded in the remediation roadmap."
+    }
+  ],
+  "invalidated_claims": [
+    {
+      "claim": "AGENTS.md, docs/INDEX.md and docs/runbooks/ are unprotected in CODEOWNERS, enabling agent instruction hijacking via pull request.",
+      "source": "security-reviewer agent",
+      "verdict": "invalidated",
+      "evidence": ".github/CODEOWNERS line 2 is a catch-all '* @odiazandr' which covers every path in the repository, including all files the agent listed as unprotected. The later entries narrow ownership for specific paths; they do not remove the wildcard.",
+      "residual_truth": "CODEOWNERS enforces nothing while main is unprotected, which docs/spec/deployment.md already records as a known external configuration gap dated 2026-08-24."
+    },
+    {
+      "claim": "A Prettier formatting failure inside the initializer would leave partially written files.",
+      "source": "source-first agent",
+      "verdict": "invalidated",
+      "evidence": "scripts/init-client.ts builds the complete updates array, including both awaited formatSource calls, before entering the write loop. A formatting failure therefore throws before any file is written."
+    },
+    {
+      "claim": "Automated validation cannot detect fabricated business claims, so the never-invent invariant is unenforced.",
+      "source": "conflicting-instruction agent",
+      "verdict": "not-a-defect",
+      "evidence": "docs/spec/website-validation.md states: 'Automated validation deliberately does not pretend it can determine whether business claims are true, a party owns a domain, or legal language is sufficient.' This is an explicitly declared and reasoned limitation, not a gap. It is the reason the human approval flags exist."
+    }
+  ],
+  "positive_results": [
+    "All 13 findings from the 2026-08-24 campaign re-tested and closed. Twelve mutations that previously produced false passes or tracebacks now produce clean structured rejections, and project mode no longer rejects the constitution's own placeholder documentation.",
+    "Zero crashes across 32 adversarial initializer inputs. Every malformed, hostile or oversized input produced a clean structured finding rather than a stack trace.",
+    "Sample-value detection is case-insensitive: 'NEGOCIO DE EJEMPLO' and mixed-case 'PENDIENTE DE VERIFICACION' were both rejected.",
+    "A navigation entry pointing at a non-existent page is reliably caught: P(all gates pass | navigation=dangling)=0.00 across the conditioned Monte Carlo run.",
+    "Empty locations and services collections are reliably caught: P(all gates pass | content=empty_collections)=0.00.",
+    "GitHub workflows pin every action to an immutable commit SHA, declare contents: read, and use pull_request rather than pull_request_target.",
+    "JSON-LD serialization cannot terminate its script element, and that property is covered by a test."
+  ],
+  "independent_verification": [
+    {
+      "finding": "AV2-003",
+      "method": "Independent agent given the claim and asked to refute it, working in its own disposable copy",
+      "verdict": "NOT_REFUTED",
+      "note": "Reproduced with different UUIDs than the original run (e1820d87... then aa496de5...), confirming the behaviour is general and not an artifact of one trial."
+    },
+    {
+      "finding": "claims A-E quality control",
+      "method": "Independent agent asked to find overstatement, misattribution, and prior acknowledgement",
+      "verdict": "Two claims corrected, one refuted outright",
+      "note": "Produced the CODEOWNERS refutation, the website-validation.md acknowledgement that retired the fabricated-claims item, and the severity corrections recorded above."
+    }
+  ],
+  "remediation_pass": {
+    "date": "2026-08-25",
+    "decision_record": "docs/decisions/0112-per-record-publication-approval.md",
+    "approach": "Structural per-record publication approval as the primary layer, string-based sample detection retained as an independent second layer. Chosen over extending the literal sample list because that hand-maintained pattern had already failed twice in this repository, and because team.ts and testimonial.ts already established the structural pattern for two of the four content domains.",
+    "regression_introduced_and_caught": "The stricter canonical-URL schema initially threw an uncaught ZodError from planInitialization instead of producing a structured finding, breaking the zero-crash property the fuzzer had established. Re-running the campaign's own fuzzer caught it before the change settled.",
+    "verification": {
+      "development_gate": "npm run quality exit 0",
+      "test_suite": "69 tests, 0 failures",
+      "browser_qa": "13 desktop-chromium tests pass",
+      "memory_layer": "all 13 prior-campaign mutations still closed",
+      "template_state": "still correctly rejected by the production gate",
+      "happy_path": "a completed client site passes all 14 quality:production steps",
+      "fuzzer": "32 cases, 0 crashes, 0 accepted-but-should-reject"
+    },
+    "still_open": [
+      "AV2-006 (accepted)",
+      "AV2-007 (deferred to first client launch)"
+    ]
+  }
+}

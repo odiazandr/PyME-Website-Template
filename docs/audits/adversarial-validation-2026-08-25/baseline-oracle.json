@@ -1,0 +1,89 @@
+{
+  "root": "<sandbox>/baseline",
+  "results": [
+    {
+      "check": "memory_contracts",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "MEMORY HEALTH: PASSED\n",
+      "stderr": ""
+    },
+    {
+      "check": "memory_full",
+      "exit": 1,
+      "status": "FAILED",
+      "stdout": "MEMORY HEALTH: FAILED\n- build: FAILED (NONZERO_EXIT)\n- test: FAILED (NONZERO_EXIT)\n- lint: FAILED (NONZERO_EXIT)\n- secret_scan: NOT_CONFIGURED\n",
+      "stderr": ""
+    },
+    {
+      "check": "validate_data",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "DATA VALIDATION: PASSED\n",
+      "stderr": ""
+    },
+    {
+      "check": "validate_project",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "PROJECT VALIDATION: PASSED\n",
+      "stderr": ""
+    },
+    {
+      "check": "validate_production",
+      "exit": 1,
+      "status": "FAILED",
+      "stdout": "",
+      "stderr": "PRODUCTION SOURCE VALIDATION: FAILED\n- [PROJECT_MODE_REQUIRED] memory.toml: production requires memory mode project\n- [PRIVACY_UNAPPROVED] src/content/legal/aviso-de-privacidad.md: replace the reference instruction with approved client text\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: businessFactsVerified must be explicitly verified before production\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: domainOwnershipVerified must be explicitly verified before production\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: privacyNoticeApproved must be explicitly verified before production\n- [SAMPLE_VALUE] src/data|src/config: replace sample value: 00000000-0000-4000-8000-000000000000\n- [SAMPLE_VALUE] src/data|src/config: replace sample value: example.com\n- [SAMPLE_VALUE] src/data|src/config: replace sample value: negocio de ejemplo\n- [SAMPLE_VALUE] src/data|src/config: replace sample value: pendiente de verificaci\u00f3n\n"
+    },
+    {
+      "check": "check_placeholders",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "PLACEHOLDER CHECK: PASSED\n",
+      "stderr": ""
+    },
+    {
+      "check": "check_assets",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "ASSET CHECK: PASSED\n",
+      "stderr": ""
+    },
+    {
+      "check": "test_memory",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "",
+      "stderr": "..........................................s........\n----------------------------------------------------------------------\nRan 51 tests in 20.653s\n\nOK (skipped=1)\n"
+    },
+    {
+      "check": "test_security",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "",
+      "stderr": "........\n----------------------------------------------------------------------\nRan 8 tests in 0.003s\n\nOK\n"
+    },
+    {
+      "check": "test_data",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "\n> pyme-website-template@0.3.0 test:data\n> node --test tests/data/*.test.ts\n\n\u25b6 business data contracts\n  \u2714 loads every canonical data fixture through validated exports (1.0832ms)\n  \u2714 rejects an enabled WhatsApp channel without a number (1.0518ms)\n  \u2714 rejects duplicate service IDs (0.3971ms)\n  \u2714 rejects missing or duplicated weekdays (0.707ms)\n  \u2714 rejects partial coordinates and invalid open-day hours (0.7323ms)\n  \u2714 rejects reversed same-day business hours (0.4487ms)\n  \u2714 requires publication approval for people and testimonials (1.4649ms)\n\u2714 business data contracts (7.4936ms)\n\u25b6 technical identity contracts\n  \u2714 rejects malformed kebab-case identifiers (0.9727ms)\n  \u2714 rejects non-HTTPS canonical URLs and malformed site IDs (0.8772ms)\n  \u2714 rejects loose template versions (0.6958ms)\n  \u2714 rejects public manifests with extra or private fields (0.9728ms)\n  \u2714 requires explicit boolean production approvals (1.1041ms)\n\u2714 technical identity contracts (5.4544ms)\n\u2139 tests 12\n\u2139 suites 2\n\u2139 pass 12\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 459.438\n",
+      "stderr": ""
+    },
+    {
+      "check": "test_site",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "\n> pyme-website-template@0.3.0 test:site\n> node --test tests/site/*.test.ts\n\n\u2714 initialization derives site identity from verified input (3.516ms)\n\u2714 initialization preserves an explicitly supplied site identity (0.5623ms)\n\u2714 initialization refuses every sample identity value (0.718ms)\n\u2714 initialization refuses a provider canonical domain (0.4163ms)\n\u2714 initialization refuses to overwrite an initialized repository (0.4987ms)\n\u2714 initialization refuses an unreadable memory mode (0.3264ms)\n\u2714 initialization refuses a drifted template version record (0.267ms)\n\u2714 initialization never self-approves human verification (0.3388ms)\n\u2714 project mode rewrite preserves surrounding configuration (0.9414ms)\n\u2714 project mode rewrite reports a missing assignment (0.3095ms)\n\u2714 generated sources reproduce the committed template formatting (217.0617ms)\n\u2714 argument parsing accepts flags and rejects misuse (0.6296ms)\n\u2714 input parsing rejects malformed, invalid, and unknown fields (2.7271ms)\n\u2714 the command reports misuse without writing (483.4871ms)\n\u2714 a dry run reports the plan and leaves the repository unchanged (650.5979ms)\n\u2714 primary navigation has unique, local, trailing-slash routes (2.7835ms)\n\u2714 every primary navigation route has an explicit Astro page (1.0886ms)\n\u2714 the required Phase 5 reference routes exist (1.4588ms)\n\u2714 JSON-LD serialization cannot terminate its script element (1.7082ms)\n\u2139 tests 19\n\u2139 suites 0\n\u2139 pass 19\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 1896.6712\n",
+      "stderr": ""
+    },
+    {
+      "check": "format_check",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "\n> pyme-website-template@0.3.0 format:check\n> prettier --check src scripts tests/data tests/site tests/artifacts tests/production tests/browser .github package.json astro.config.ts tsconfig.json playwright.config.ts prettier.config.mjs\n\nChecking formatting...\nAll matched files use Prettier code style!\n",
+      "stderr": ""
+    }
+  ]
+}
