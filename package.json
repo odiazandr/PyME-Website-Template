@@ -21,6 +21,7 @@
     "check:links": "node scripts/check-links.ts",
     "check:assets": "node scripts/check-assets.ts",
     "check:public-output": "node scripts/check-public-output.ts",
+    "check:ruleset": "python .github/rulesets/check-drift.py",
     "verify:dist": "node scripts/verify-dist.ts",
     "quality:static": "npm run format:check && npm run check && npm run validate:data && npm run test:security",
     "quality": "npm run quality:static && npm run test:artifacts",

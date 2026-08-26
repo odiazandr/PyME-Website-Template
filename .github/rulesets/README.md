@@ -7,6 +7,17 @@ repository rather than reconstructed from memory each time.
 GitHub does not read this file. Import it under **Settings → Rules → Rulesets →
 New ruleset → Import a ruleset**, or reproduce it through the form.
 
+Because the import is manual, the file and the enforced configuration can diverge
+silently, and the import itself adds platform defaults this file never declared.
+`check-drift.py` closes that gap: run `npm run check:ruleset` to compare the two.
+It reports only on fields this file declares, so platform defaults do not become
+permanent noise, and it derives the repository from the git remote so it works
+unchanged in a client repository.
+
+It is deliberately not part of `npm run quality` or `npm run quality:production`.
+It depends on an external service, and a gate that fails because a network is
+down is not a deterministic gate. Run it when repository control changes.
+
 ## Why each rule is set the way it is
 
 **Required status check contexts are job display names, not workflow names.** The
