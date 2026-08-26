@@ -21,5 +21,7 @@ All notable template changes will be recorded here.
 - Added Playwright critical-journey and Axe-assisted accessibility coverage for desktop, mobile, and narrow Chromium, configured WebKit coverage, and corrected skip-link focus transfer.
 - Implemented file-driven client initialization with identity read back from its canonical owner.
 - Added an importable default-branch ruleset carrying the verified required-check contexts.
+- Added drift detection between the committed ruleset and the configuration GitHub enforces.
+- Replaced dated repository-control and dependency snapshots with durable rules and a live verification command.
 - Hardened the business-content layer: per-record publication approval for locations and services, production scanning across every canonical data domain, rejection of a published location closed all week, a bare-origin canonical URL contract, non-empty navigation, a standing template-version check, and a content-contract mutation-resistance suite.
 - Implemented file-driven client initialization for Phase 12, which rewrites client identity and memory mode from one reviewed input document, refuses any result that production validation would reject for reasons it controls, and leaves human approvals outstanding.
