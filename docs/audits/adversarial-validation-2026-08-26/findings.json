@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "campaign": "adversarial-validation-2026-08-26",
+  "prior_campaigns": ["adversarial-validation-2026-08-24", "adversarial-validation-2026-08-25"],
+  "baseline_ref": "b8b4bca (origin/main) with ci/main-branch-ruleset at 9a211db",
+  "scope": "Delta since campaign 2 (55 files, +6650 lines) plus the newly gated path to the default branch. No commits, pushes, or merges were performed.",
+  "findings": [
+    {
+      "id": "C3-001",
+      "title": "The committed ruleset file diverges from the enforced configuration, and nothing detects it",
+      "category": "configuration-drift",
+      "severity": "low-medium",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "root_cause": "GitHub does not read .github/rulesets/main-protection.json. It is a copy that must be imported manually, and the import applied platform defaults the committed file never declared. Nothing in the repository compares the file against what GitHub actually enforces.",
+      "reproduction": "curl the public endpoint /repos/odiazandr/PyME-Website-Template/rulesets/21533770 and compare its rules against .github/rulesets/main-protection.json parameter by parameter.",
+      "evidence": "Rule types and conditions match exactly. Two pull_request parameters differ: require_extra_approval_for_unattributed_changes is true live and absent from the committed file, and required_reviewers is [] live and absent from the committed file. Both were added by GitHub at import time.",
+      "impact_note": "The two drifted parameters are inert in this configuration. GitHub's documentation states the extra-approval rule applies to unattributed Copilot pull requests and has no effect when the ruleset already requires zero approvals, which this one does. The severity is about the precedent, not these two values: a future divergence in a parameter that DOES matter would be equally invisible.",
+      "affected": [".github/rulesets/main-protection.json", ".github/rulesets/README.md"],
+      "remediation": "Add a check that fetches the live ruleset from the public API and compares it against the committed file, reporting only fields the committed file declares so platform defaults do not create permanent noise. A draft is at harness/check_ruleset_drift.py.",
+      "regression_test": "The drift checker itself, run against a deliberately edited copy of the committed file, must report the edited field."
+    },
+    {
+      "id": "C3-002",
+      "title": "The deployment specification still records the default branch as unprotected",
+      "category": "documentation-staleness",
+      "severity": "low",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "root_cause": "docs/spec/deployment.md line 17 carries a dated operational checkpoint from 2026-08-24 stating that GitHub reported main as unprotected. That statement is now false: ruleset 21533770 is active with five rules on the default branch. Dated snapshots inside a canonical specification have no refresh discipline.",
+      "reproduction": "Read docs/spec/deployment.md line 17, then read /repos/odiazandr/PyME-Website-Template/rules/branches/main.",
+      "evidence": "The specification says 'GitHub's branch API reported main as unprotected. This is an external configuration gap.' The API now returns five active rules including a required pull request and both status check contexts.",
+      "mitigating_factor": "The same sentence instructs the reader to 'Re-query GitHub before acting' and 'Do not claim protection until GitHub reports it active.' The document is explicitly self-labelled as a snapshot, which is good design and is why this is low rather than medium. The headline claim is still inverted, and a hurried reader could act on it, for example by deciding a direct push is acceptable.",
+      "related": "Line 23 carries the same pattern for the dependency pull-request checkpoint, also self-labelled and also potentially stale.",
+      "affected": ["docs/spec/deployment.md"],
+      "remediation": "Update the repository-control checkpoint to record that protection is active, with the ruleset identifier and the date. Consider whether dated operational snapshots belong in a canonical specification at all, or whether they should live in a separate observations file with an explicit expiry discipline.",
+      "regression_test": "Not machine-testable against a live external system without credentials. The drift checker in C3-001 partially covers it."
+    },
+    {
+      "id": "C3-003",
+      "title": "Sample-value detection is a substring scan across free-text fields",
+      "category": "validation-precision",
+      "severity": "informational",
+      "confidence": "plausible",
+      "status": "plausible",
+      "root_cause": "SAMPLE_VALUES is matched with String.includes against a JSON stringification of every canonical domain, which now includes free text such as testimonial quotes and service descriptions. Any legitimate text containing a registered phrase as a substring is rejected.",
+      "evidence": "The differential Monte Carlo confirmed the behaviour is exactly as specified: a testimonial quote containing 'dirección pendiente' produced SAMPLE_VALUE, and the independent oracle predicted it. This is the contract working, not failing.",
+      "assessment": "Reported as informational rather than a defect. The tradeoff is deliberate and documented in the code comment at scripts/validate-production.ts: false positives cost a reword at a production gate with a clear message, false negatives publish a false business fact. The direction is correct. Recorded so a future maintainer who hits a false positive understands it is intended and does not weaken the rule in response.",
+      "affected": ["scripts/validate-production.ts"],
+      "remediation": "None recommended. If false positives are ever observed in practice, prefer narrowing the scanned fields over shortening the phrase list.",
+      "regression_test": "Already covered by the mutation-resistance suite."
+    }
+  ],
+  "invalidated_claims": [
+    {
+      "claim": "require_extra_approval_for_unattributed_changes being enabled could deadlock pull requests on a single-maintainer repository, because the sole maintainer cannot approve their own pull request.",
+      "source": "this campaign's own initial hypothesis on discovering the drift",
+      "verdict": "invalidated",
+      "evidence": "GitHub's ruleset documentation states the rule concerns unattributed Copilot pull requests and that 'The setting has no effect if the ruleset already requires zero approvals.' This ruleset requires zero. The Co-Authored-By trailer concern was also wrong: the rule is about how a pull request was opened, not about commit trailers."
+    },
+    {
+      "claim": "Dependabot pull requests will require a human approval before merging under this ruleset.",
+      "source": "merge-path interpretation agent",
+      "verdict": "invalidated",
+      "evidence": "required_approving_review_count is 0, so no approving review is required from anyone. Dependabot pull requests will require passing checks and an up-to-date branch, not an approval."
+    },
+    {
+      "claim": "Configured project checks fail, so full memory health is broken.",
+      "source": "this campaign's Wave 0 oracle",
+      "verdict": "invalidated",
+      "evidence": "python ops/memory_health.py returns MEMORY HEALTH: PASSED with build, test, and lint all passing in the canonical repository. The failure appeared only inside the disposable sandbox, where node_modules/.bin does not resolve for nested npm scripts from a deep temporary path. Environment artifact, not a repository defect."
+    }
+  ],
+  "positive_results": [
+    "Every workflow-change scenario fails safe. Renaming a job, deleting a workflow, or adding a paths filter blocks future pull requests rather than admitting unchecked code; renaming a workflow has no effect because the ruleset keys on job display names.",
+    "No fail-open patterns in either workflow: no continue-on-error, no '|| true', no soft assertions. The two 'if:' conditions guard a report assertion and artifact retention, neither of which can mask a failed step.",
+    "The content publication contract agreed with an independently derived oracle on 80 of 80 sampled scenarios across eight dimensions, with zero crashes, including the widened scan reaching testimonial free text.",
+    "All 13 memory-validator mutations from the 2026-08-24 campaign remain closed.",
+    "The 32-case initializer fuzzer still reports zero crashes and zero wrong acceptances after the canonical-URL schema change.",
+    "No case-only filename collisions and no case-mismatched relative imports across 68 source files, so the Windows-to-Ubuntu boundary is clean.",
+    "package-lock.json agrees with package.json on dependencies, devDependencies, name, and version, so npm ci is reproducible.",
+    "The archived campaign-2 harness ran successfully from the repository with only the two documented variables rehydrated, confirming the audit archive is genuinely reusable rather than decorative."
+  ]
+}

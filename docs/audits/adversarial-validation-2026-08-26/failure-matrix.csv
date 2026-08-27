@@ -1,0 +1,28 @@
+component,failure_class,result,evidence
+default-branch ruleset,rule presence and enforcement,tested_and_passed,live API reports 5 active rules on ~DEFAULT_BRANCH
+default-branch ruleset,required check context correctness,tested_and_passed,contexts match job display names character-for-character
+default-branch ruleset,committed copy vs enforced config,tested_and_failed,C3-001 two parameters drift undetected
+default-branch ruleset,bypass actor configuration,not_tested,field withheld from unauthenticated API; no admin credential used
+default-branch ruleset,direct push rejection,not_tested,requires a real push attempt; foreclosed by the no-push constraint
+merge path,job rename,tested_and_passed,fails safe - context never reports, PR blocks
+merge path,workflow rename,tested_and_passed,no effect - ruleset keys on job names
+merge path,workflow deletion,tested_and_passed,fails safe - PR blocks
+merge path,paths filter added to trigger,tested_and_passed,fails safe with UX friction
+merge path,fail-open patterns in workflows,tested_and_passed,no continue-on-error or soft assertions
+merge path,PR gate actually blocking a merge,not_tested,requires an open PR; that action is the user's
+content contract,differential correctness vs independent oracle,tested_and_passed,80/80 agreement across 8 dimensions
+content contract,per-record approval enforcement,tested_and_passed,CONTENT_REVIEW_REQUIRED fires for every unapproved record
+content contract,published location never open,tested_and_passed,LOCATION_NEVER_OPEN fires as specified
+content contract,sample-value scan across all domains,tested_and_passed,fires on testimonial free text as specified
+content contract,substring false positives,partially_tested,C3-003 behaviour confirmed as specified; real-world rate unmeasured
+content contract,agent discoverability,tested_and_passed,cold agent set approval false and refused to invent a postal code
+client initializer,adversarial input,tested_and_passed,32 fuzz cases 0 crashes 0 wrong acceptances
+client initializer,identity stability,tested_and_passed,covered by committed unit tests
+memory validator,13 prior-campaign mutations,tested_and_passed,all still closed
+build and install,lockfile reproducibility,tested_and_passed,package-lock agrees with package.json
+build and install,case-sensitive filesystem,tested_and_passed,no collisions, no case-mismatched imports in 68 files
+build and install,clean install on CI,tested_and_passed,CI green on b8b4bca with npm ci
+documentation,operational snapshot freshness,tested_and_failed,C3-002 deployment.md records main as unprotected
+documentation,audit archive reusability,tested_and_passed,archived harness ran with only documented variables changed
+netlify deployment,response headers and form receipt,not_tested,no deployment exists
+DNS,cutover and recovery,not_tested,no domain

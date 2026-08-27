@@ -1,0 +1,226 @@
+[
+  {
+    "case": "url_with_credentials",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_INVALID] <sandbox>/fuzz\\fuzz-input.json: site.canonicalUrl: canonical URL must be a bare origin without c"
+  },
+  {
+    "case": "url_with_path_query",
+    "expectation": "observe",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_INVALID] <sandbox>/fuzz\\fuzz-input.json: site.canonicalUrl: canonical URL must be a bare origin without c"
+  },
+  {
+    "case": "url_punycode_lookalike",
+    "expectation": "observe",
+    "exit": 0,
+    "verdict": "ACCEPTED",
+    "output": "CLIENT INITIALIZATION: PASSED\n- rewrote src/config/site.ts\n- rewrote src/data/business.json\n- rewrote memory.toml\n- site ID 6be14585-946b-4b36-93be-502aeeb97efd (newly generated)\nRemaining human verification before production:\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: businessFactsV"
+  },
+  {
+    "case": "url_ip_literal",
+    "expectation": "observe",
+    "exit": 0,
+    "verdict": "ACCEPTED",
+    "output": "CLIENT INITIALIZATION: PASSED\n- rewrote src/config/site.ts\n- rewrote src/data/business.json\n- rewrote memory.toml\n- site ID ec7c0e76-7143-4590-83a3-e05a929be087 (newly generated)\nRemaining human verification before production:\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: businessFactsV"
+  },
+  {
+    "case": "url_port",
+    "expectation": "observe",
+    "exit": 0,
+    "verdict": "ACCEPTED",
+    "output": "CLIENT INITIALIZATION: PASSED\n- rewrote src/config/site.ts\n- rewrote src/data/business.json\n- rewrote memory.toml\n- site ID 60a90baa-d0ab-47d2-aeb7-35205c46f63e (newly generated)\nRemaining human verification before production:\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: businessFactsV"
+  },
+  {
+    "case": "uuid_v1_not_v4",
+    "expectation": "observe",
+    "exit": 0,
+    "verdict": "ACCEPTED",
+    "output": "CLIENT INITIALIZATION: PASSED\n- rewrote src/config/site.ts\n- rewrote src/data/business.json\n- rewrote memory.toml\n- site ID d9428888-122b-11e1-b85c-61cd3cbb3210 (supplied by the input document)\nRemaining human verification before production:\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json:"
+  },
+  {
+    "case": "uuid_nil",
+    "expectation": "observe",
+    "exit": 0,
+    "verdict": "ACCEPTED",
+    "output": "CLIENT INITIALIZATION: PASSED\n- rewrote src/config/site.ts\n- rewrote src/data/business.json\n- rewrote memory.toml\n- site ID 00000000-0000-0000-0000-000000000000 (supplied by the input document)\nRemaining human verification before production:\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json:"
+  },
+  {
+    "case": "name_with_newline",
+    "expectation": "observe",
+    "exit": 0,
+    "verdict": "ACCEPTED",
+    "output": "CLIENT INITIALIZATION: PASSED\n- rewrote src/config/site.ts\n- rewrote src/data/business.json\n- rewrote memory.toml\n- site ID 222e6721-d336-49d1-a9e8-05b65bdbc1f7 (newly generated)\nRemaining human verification before production:\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: businessFactsV"
+  },
+  {
+    "case": "name_with_quote_brace",
+    "expectation": "observe",
+    "exit": 0,
+    "verdict": "ACCEPTED",
+    "output": "CLIENT INITIALIZATION: PASSED\n- rewrote src/config/site.ts\n- rewrote src/data/business.json\n- rewrote memory.toml\n- site ID d44c6b33-8164-4751-9819-076d8e91626f (newly generated)\nRemaining human verification before production:\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: businessFactsV"
+  },
+  {
+    "case": "name_with_backtick_template",
+    "expectation": "observe",
+    "exit": 0,
+    "verdict": "ACCEPTED",
+    "output": "CLIENT INITIALIZATION: PASSED\n- rewrote src/config/site.ts\n- rewrote src/data/business.json\n- rewrote memory.toml\n- site ID 53425d71-29b3-4b88-b9b6-6848ef51cef4 (newly generated)\nRemaining human verification before production:\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: businessFactsV"
+  },
+  {
+    "case": "name_with_percent_s",
+    "expectation": "observe",
+    "exit": 0,
+    "verdict": "ACCEPTED",
+    "output": "CLIENT INITIALIZATION: PASSED\n- rewrote src/config/site.ts\n- rewrote src/data/business.json\n- rewrote memory.toml\n- site ID 06529d79-4d57-4ae2-9b26-858943ea99b4 (newly generated)\nRemaining human verification before production:\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: businessFactsV"
+  },
+  {
+    "case": "name_very_long",
+    "expectation": "observe",
+    "exit": 0,
+    "verdict": "ACCEPTED",
+    "output": "CLIENT INITIALIZATION: PASSED\n- rewrote src/config/site.ts\n- rewrote src/data/business.json\n- rewrote memory.toml\n- site ID 40e093d8-34b4-4634-8c92-56bd31449364 (newly generated)\nRemaining human verification before production:\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: businessFactsV"
+  },
+  {
+    "case": "name_rtl_override",
+    "expectation": "observe",
+    "exit": 0,
+    "verdict": "ACCEPTED",
+    "output": "CLIENT INITIALIZATION: PASSED\n- rewrote src/config/site.ts\n- rewrote src/data/business.json\n- rewrote memory.toml\n- site ID 946e0c9a-6697-49e2-b241-901b64c71cf2 (newly generated)\nRemaining human verification before production:\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: businessFactsV"
+  },
+  {
+    "case": "name_only_whitespace",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_INVALID] <sandbox>/fuzz\\fuzz-input.json: business.publicName: Too small: expected string to have >=1 char"
+  },
+  {
+    "case": "name_sample_uppercase",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [SAMPLE_VALUE] src/data|src/config: replace sample value: negocio de ejemplo"
+  },
+  {
+    "case": "desc_sample_mixed_case",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [SAMPLE_VALUE] src/data|src/config: replace sample value: pendiente de verificación"
+  },
+  {
+    "case": "email_unicode",
+    "expectation": "observe",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_INVALID] <sandbox>/fuzz\\fuzz-input.json: business.email: Invalid email address"
+  },
+  {
+    "case": "phone_e164_too_long",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_INVALID] <sandbox>/fuzz\\fuzz-input.json: business.primaryPhone.e164: must use E.164 format"
+  },
+  {
+    "case": "whatsapp_enabled_no_number",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_INVALID] <sandbox>/fuzz\\fuzz-input.json: business.whatsapp.number: is required when WhatsApp is enabled"
+  },
+  {
+    "case": "proto_pollution",
+    "expectation": "observe",
+    "exit": 0,
+    "verdict": "ACCEPTED",
+    "output": "CLIENT INITIALIZATION: PASSED\n- rewrote src/config/site.ts\n- rewrote src/data/business.json\n- rewrote memory.toml\n- site ID fa1eb49e-ba03-44e6-94b9-ce11587b93db (newly generated)\nRemaining human verification before production:\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: businessFactsV"
+  },
+  {
+    "case": "unknown_top_key",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_INVALID] <sandbox>/fuzz\\fuzz-input.json: <root>: Unrecognized key: \"extra\""
+  },
+  {
+    "case": "wrong_schema_version",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_INVALID] <sandbox>/fuzz\\fuzz-input.json: schemaVersion: Invalid input: expected 1"
+  },
+  {
+    "case": "site_missing",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_INVALID] <sandbox>/fuzz\\fuzz-input.json: site: Invalid input: expected object, received undefined"
+  },
+  {
+    "case": "null_document",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_INVALID] <sandbox>/fuzz\\fuzz-input.json: <root>: Invalid input: expected object, received null"
+  },
+  {
+    "case": "array_document",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_INVALID] <sandbox>/fuzz\\fuzz-input.json: <root>: Invalid input: expected object, received array"
+  },
+  {
+    "case": "deeply_nested",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_INVALID] <sandbox>/fuzz\\fuzz-input.json: <root>: Unrecognized key: \"deep\""
+  },
+  {
+    "case": "empty_file",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_MALFORMED] <sandbox>/fuzz\\fuzz-input.json: Unexpected end of JSON input"
+  },
+  {
+    "case": "whitespace_only",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_MALFORMED] <sandbox>/fuzz\\fuzz-input.json: Unexpected end of JSON input"
+  },
+  {
+    "case": "bom_prefixed",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_MALFORMED] <sandbox>/fuzz\\fuzz-input.json: Unexpected token '﻿', \"﻿{\"schemaV\"... is not valid JSON"
+  },
+  {
+    "case": "trailing_garbage",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_MALFORMED] <sandbox>/fuzz\\fuzz-input.json: Unexpected non-whitespace character after JSON at position 405"
+  },
+  {
+    "case": "nul_byte",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_MALFORMED] <sandbox>/fuzz\\fuzz-input.json: Bad control character in string literal in JSON at position 13"
+  },
+  {
+    "case": "json5_comment",
+    "expectation": "should_reject",
+    "exit": 1,
+    "verdict": "REJECTED_CLEAN",
+    "output": "CLIENT INITIALIZATION: FAILED\n- [INPUT_MALFORMED] <sandbox>/fuzz\\fuzz-input.json: Unexpected token '/', \"// comment\"... is not valid JSON"
+  }
+]
