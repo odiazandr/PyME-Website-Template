@@ -1,5 +1,11 @@
 import { expect, test } from "@playwright/test";
 
+import {
+  contactRoute,
+  contextualRoutes,
+  navigation,
+} from "../../src/config/navigation.ts";
+
 test("homepage exposes the primary journey and stable manifest", async ({
   page,
   request,
@@ -11,7 +17,7 @@ test("homepage exposes the primary journey and stable manifest", async ({
   );
   await expect(page.getByRole("link", { name: "Contactar" })).toHaveAttribute(
     "href",
-    "/contacto/",
+    contactRoute,
   );
   const hasOverflow = await page.evaluate(
     () =>
@@ -38,14 +44,9 @@ test("homepage exposes the primary journey and stable manifest", async ({
 test("primary navigation reaches every explicit destination", async ({
   page,
 }) => {
-  const routes = [
-    ["Inicio", "/"],
-    ["Nosotros", "/nosotros/"],
-    ["Servicios", "/servicios/"],
-    ["Contacto", "/contacto/"],
-  ] as const;
+  expect(navigation.length).toBeGreaterThan(0);
 
-  for (const [label, route] of routes) {
+  for (const { label, href: route } of navigation) {
     const response = await page.goto(route);
     expect(response?.status()).toBe(200);
     await expect(
@@ -61,7 +62,7 @@ test("valid contact data follows the provider-compatible POST contract", async (
   page,
 }) => {
   let payload = "";
-  await page.route("**/gracias/", async (route) => {
+  await page.route(`**${contextualRoutes.formSuccess}`, async (route) => {
     payload = route.request().postData() ?? "";
     await route.fulfill({
       status: 200,
@@ -69,7 +70,7 @@ test("valid contact data follows the provider-compatible POST contract", async (
       body: "Gracias",
     });
   });
-  await page.goto("/contacto/");
+  await page.goto(contactRoute);
   await page.getByLabel("Nombre").fill("Persona de prueba");
   await page.getByLabel("Correo electrónico").fill("persona@example.test");
   await page
@@ -85,10 +86,10 @@ test("valid contact data follows the provider-compatible POST contract", async (
 test("contact form keeps native validation and privacy context", async ({
   page,
 }, testInfo) => {
-  await page.goto("/contacto/");
+  await page.goto(contactRoute);
   const form = page.locator('form[name="contacto"]');
   await expect(form).toHaveAttribute("method", "POST");
-  await expect(form).toHaveAttribute("action", "/gracias/");
+  await expect(form).toHaveAttribute("action", contextualRoutes.formSuccess);
   await expect(page.getByLabel("Nombre")).toHaveAttribute("required", "");
   await expect(page.getByLabel("Correo electrónico")).toHaveAttribute(
     "type",
@@ -100,7 +101,7 @@ test("contact form keeps native validation and privacy context", async ({
 
   await page.getByRole("button", { name: "Enviar consulta" }).click();
   await expect(page.getByLabel("Nombre")).toBeFocused();
-  await expect(page).toHaveURL(/\/contacto\/$/);
+  await expect(page).toHaveURL(new RegExp(`${contactRoute}$`));
 
   await testInfo.attach("contact", {
     body: await page.screenshot({ fullPage: true }),

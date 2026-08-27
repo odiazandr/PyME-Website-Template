@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
+import { contextualRoutes, navigation } from "../src/config/navigation.ts";
 import { site } from "../src/config/site.ts";
 import { templateMetadata } from "../src/data/index.ts";
 import { PublicManifestSchema } from "../src/schemas/public-manifest.ts";
@@ -11,14 +12,15 @@ import {
   type Finding,
 } from "./lib/validation.ts";
 
+// Derived from the route registry so that renaming a slug stays a one-file edit.
+// Only the convention-resolved and generated artifacts are named literally.
+const artifactFor = (href: string) =>
+  href === "/" ? "index.html" : `${href.slice(1, -1)}/index.html`;
+
 const required = [
-  "index.html",
+  ...navigation.map(({ href }) => artifactFor(href)),
+  ...Object.values(contextualRoutes).map(artifactFor),
   "404.html",
-  "contacto/index.html",
-  "nosotros/index.html",
-  "servicios/index.html",
-  "aviso-de-privacidad/index.html",
-  "gracias/index.html",
   "robots.txt",
   "sitemap-index.xml",
   "sitemap-0.xml",

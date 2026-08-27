@@ -1,3 +1,7 @@
+---
+import { contextualRoutes } from "../../config/navigation.ts";
+---
+
 <aside class="form-notice" aria-label="Privacidad del formulario">
   <p>
     Usa este formulario únicamente para datos de contacto y una consulta
@@ -5,7 +9,7 @@
     sensibles.
   </p>
   <p>
-    Al enviar, reconoces el <a href="/aviso-de-privacidad/"
+    Al enviar, reconoces el <a href={contextualRoutes.privacy}
       >aviso de privacidad</a
     >.
   </p>

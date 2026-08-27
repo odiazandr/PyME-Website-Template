@@ -1,4 +1,5 @@
 ---
+import { contextualRoutes } from "../../config/navigation.ts";
 import { business, templateMetadata } from "../../data";
 import Container from "../ui/Container.astro";
 ---
@@ -20,7 +21,7 @@ import Container from "../ui/Container.astro";
       </div>
     </div>
     <div class="footer-meta">
-      <a href="/aviso-de-privacidad/">Aviso de privacidad</a>
+      <a href={contextualRoutes.privacy}>Aviso de privacidad</a>
       <span>Plantilla {templateMetadata.templateVersion}</span>
       <span>Referencia; no representa un negocio real.</span>
     </div>

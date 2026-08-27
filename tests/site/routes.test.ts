@@ -3,7 +3,11 @@ import { existsSync } from "node:fs";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { navigation } from "../../src/config/navigation.ts";
+import {
+  contactRoute,
+  contextualRoutes,
+  navigation,
+} from "../../src/config/navigation.ts";
 
 const projectRoot = fileURLToPath(new URL("../../", import.meta.url));
 
@@ -32,19 +36,38 @@ test("every primary navigation route has an explicit Astro page", () => {
   }
 });
 
-test("the required Phase 5 reference routes exist", () => {
-  const requiredPages = [
-    "index.astro",
-    "nosotros.astro",
-    "servicios.astro",
-    "contacto.astro",
-    "aviso-de-privacidad.astro",
-    "gracias.astro",
-    "404.astro",
-  ];
-
-  assert.ok(requiredPages.length > 0);
-  for (const page of requiredPages) {
-    assert.ok(existsSync(`${projectRoot}src/pages/${page}`), `missing ${page}`);
+// Derived from the route registry rather than a literal list: this repository is
+// a template whose adopters are expected to change slugs, so the contract is
+// "every registered route resolves", not "these particular Spanish slugs exist".
+test("every contextual route has an explicit Astro page", () => {
+  const routes = Object.values(contextualRoutes);
+  assert.ok(routes.length > 0, "contextual routes must not be empty");
+  for (const href of routes) {
+    assert.match(href, /^\/[a-z0-9-]+\/$/);
+    assert.ok(existsSync(pageFileFor(href)), `missing page for ${href}`);
   }
+});
+
+test("contextual routes are disjoint from primary navigation", () => {
+  const primary = new Set(navigation.map(({ href }) => href));
+  for (const href of Object.values(contextualRoutes)) {
+    assert.ok(
+      !primary.has(href),
+      `${href} is registered as both contextual and primary navigation`,
+    );
+  }
+});
+
+test("the named contact route is a registered navigation route", () => {
+  const primary = navigation.map(({ href }) => href) as readonly string[];
+  assert.ok(
+    primary.includes(contactRoute),
+    `${contactRoute} must remain part of primary navigation`,
+  );
+});
+
+// Astro resolves this filename by convention, so it is a structural requirement
+// rather than an adopter-owned slug.
+test("the static 404 page exists", () => {
+  assert.ok(existsSync(`${projectRoot}src/pages/404.astro`));
 });

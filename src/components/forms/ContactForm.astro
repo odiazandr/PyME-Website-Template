@@ -1,4 +1,5 @@
 ---
+import { contextualRoutes } from "../../config/navigation.ts";
 import Field from "./Field.astro";
 import FormNotice from "./FormNotice.astro";
 ---
@@ -6,7 +7,7 @@ import FormNotice from "./FormNotice.astro";
 <form
   name="contacto"
   method="POST"
-  action="/gracias/"
+  action={contextualRoutes.formSuccess}
   data-netlify="true"
   netlify-honeypot="bot-field"
   class="contact-form"

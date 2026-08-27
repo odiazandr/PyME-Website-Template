@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { contextualRoutes } from "../config/navigation.ts";
 import { site } from "../config/site";
 
 export const GET: APIRoute = () => {
@@ -7,7 +8,7 @@ export const GET: APIRoute = () => {
     [
       "User-agent: *",
       "Allow: /",
-      "Disallow: /gracias/",
+      `Disallow: ${contextualRoutes.formSuccess}`,
       `Sitemap: ${sitemap}`,
     ].join("\n"),
     { headers: { "Content-Type": "text/plain; charset=utf-8" } },

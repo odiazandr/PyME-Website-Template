@@ -1,4 +1,5 @@
 ---
+import { contactRoute, routeFor } from "../config/navigation.ts";
 import ContactCTA from "../components/sections/ContactCTA.astro";
 import Locations from "../components/sections/Locations.astro";
 import PageHero from "../components/sections/PageHero.astro";
@@ -16,8 +17,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <PageHero
     title={business.publicName}
     description={business.description}
-    primaryAction={{ href: "/contacto/", label: "Contactar" }}
-    secondaryAction={{ href: "/servicios/", label: "Ver servicios" }}
+    primaryAction={{ href: contactRoute, label: "Contactar" }}
+    secondaryAction={{ href: routeFor("services"), label: "Ver servicios" }}
   />
   <div class="register-wrap">
     <StatusRegister />
