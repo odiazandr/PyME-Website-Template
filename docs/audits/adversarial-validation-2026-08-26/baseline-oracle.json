@@ -1,0 +1,89 @@
+{
+  "root": "<sandbox>/wave0",
+  "results": [
+    {
+      "check": "memory_contracts",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "MEMORY HEALTH: PASSED\n",
+      "stderr": ""
+    },
+    {
+      "check": "memory_full",
+      "exit": 1,
+      "status": "FAILED",
+      "stdout": "MEMORY HEALTH: FAILED\n- build: PASSED\n- test: FAILED (NONZERO_EXIT)\n- lint: PASSED\n- secret_scan: NOT_CONFIGURED\n",
+      "stderr": ""
+    },
+    {
+      "check": "validate_data",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "DATA VALIDATION: PASSED\n",
+      "stderr": ""
+    },
+    {
+      "check": "validate_project",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "PROJECT VALIDATION: PASSED\n",
+      "stderr": ""
+    },
+    {
+      "check": "validate_production",
+      "exit": 1,
+      "status": "FAILED",
+      "stdout": "",
+      "stderr": "PRODUCTION SOURCE VALIDATION: FAILED\n- [PROJECT_MODE_REQUIRED] memory.toml: production requires memory mode project\n- [PRIVACY_UNAPPROVED] src/content/legal/aviso-de-privacidad.md: replace the reference instruction with approved client text\n- [CONTENT_REVIEW_REQUIRED] src/data/locations.json: ubicacion-principal must set approvedForPublication before production\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: businessFactsVerified must be explicitly verified before production\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: domainOwnershipVerified must be explicitly verified before production\n- [PRODUCTION_APPROVAL_REQUIRED] src/data/production.json: privacyNoticeApproved must be explicitly verified before production\n- [CONTENT_REVIEW_REQUIRED] src/data/services.json: servicio-principal must set approvedForPublication before production\n- [SAMPLE_VALUE] src/data|src/config: replace sample value: 00000000-0000-4000-8000-000000000000\n- [SAMPLE_VALUE] src/data|src/config: replace sample value: contenido de referencia pendiente de sustituir\n- [SAMPLE_VALUE] src/data|src/config: replace sample value: direcci\u00f3n pendiente\n- [SAMPLE_VALUE] src/data|src/config: replace sample value: example.com\n- [SAMPLE_VALUE] src/data|src/config: replace sample value: negocio de ejemplo\n- [SAMPLE_VALUE] src/data|src/config: replace sample value: pendiente de verificaci\u00f3n\n"
+    },
+    {
+      "check": "check_placeholders",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "PLACEHOLDER CHECK: PASSED\n",
+      "stderr": ""
+    },
+    {
+      "check": "check_assets",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "ASSET CHECK: PASSED\n",
+      "stderr": ""
+    },
+    {
+      "check": "test_memory",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "",
+      "stderr": "..........................................s........\n----------------------------------------------------------------------\nRan 51 tests in 17.598s\n\nOK (skipped=1)\n"
+    },
+    {
+      "check": "test_security",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "",
+      "stderr": "........\n----------------------------------------------------------------------\nRan 8 tests in 0.003s\n\nOK\n"
+    },
+    {
+      "check": "test_data",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "\n> pyme-website-template@0.3.0 test:data\n> node --test tests/data/*.test.ts\n\n\u25b6 business data contracts\n  \u2714 loads every canonical data fixture through validated exports (6.1232ms)\n  \u2714 rejects an enabled WhatsApp channel without a number (3.2584ms)\n  \u2714 rejects duplicate service IDs (1.7104ms)\n  \u2714 rejects missing or duplicated weekdays (1.2262ms)\n  \u2714 rejects partial coordinates and invalid open-day hours (1.2212ms)\n  \u2714 rejects reversed same-day business hours (1.3374ms)\n  \u2714 requires publication approval for people and testimonials (4.0741ms)\n\u2714 business data contracts (24.297ms)\n\u25b6 technical identity contracts\n  \u2714 rejects malformed kebab-case identifiers (1.2864ms)\n  \u2714 rejects non-HTTPS canonical URLs and malformed site IDs (1.9399ms)\n  \u2714 rejects loose template versions (1.3617ms)\n  \u2714 rejects public manifests with extra or private fields (1.7706ms)\n  \u2714 requires explicit boolean production approvals (0.7904ms)\n\u2714 technical identity contracts (8.237ms)\n\u2139 tests 12\n\u2139 suites 2\n\u2139 pass 12\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 703.6796\n",
+      "stderr": ""
+    },
+    {
+      "check": "test_site",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "\n> pyme-website-template@0.3.0 test:site\n> node --test tests/site/*.test.ts\n\n\u2714 initialization derives site identity from verified input (3.127ms)\n\u2714 initialization preserves an explicitly supplied site identity (0.5463ms)\n\u2714 initialization refuses every sample identity value (1.1871ms)\n\u2714 initialization refuses a provider canonical domain (0.5267ms)\n\u2714 initialization refuses to overwrite an initialized repository (0.681ms)\n\u2714 initialization refuses an unreadable memory mode (0.5815ms)\n\u2714 initialization refuses a drifted template version record (0.5427ms)\n\u2714 initialization never self-approves human verification (0.557ms)\n\u2714 project mode rewrite preserves surrounding configuration (1.524ms)\n\u2714 project mode rewrite reports a missing assignment (0.7373ms)\n\u2714 generated sources reproduce the committed template formatting (218.5616ms)\n\u2714 argument parsing accepts flags and rejects misuse (0.7923ms)\n\u2714 input parsing rejects malformed, invalid, and unknown fields (3.5879ms)\n\u2714 the command reports misuse without writing (696.9102ms)\n\u2714 a dry run reports the plan and leaves the repository unchanged (626.8686ms)\n\u2714 re-initialization preserves the existing site identity (0.3883ms)\n\u2714 an explicit input identity overrides the existing one (0.576ms)\n\u2714 a new identity is issued only when explicitly requested (0.6025ms)\n\u2714 the template sample identity is never preserved (0.447ms)\n\u2714 --new-identity is parsed and unknown flags still fail (0.7092ms)\n\u2714 outstanding content review is reported, not treated as a blocker (0.494ms)\n\u2714 primary navigation has unique, local, trailing-slash routes (2.4951ms)\n\u2714 every primary navigation route has an explicit Astro page (2.3302ms)\n\u2714 the required Phase 5 reference routes exist (2.0222ms)\n\u2714 JSON-LD serialization cannot terminate its script element (1.7313ms)\n\u2139 tests 25\n\u2139 suites 0\n\u2139 pass 25\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 2199.5744\n",
+      "stderr": ""
+    },
+    {
+      "check": "format_check",
+      "exit": 0,
+      "status": "PASSED",
+      "stdout": "\n> pyme-website-template@0.3.0 format:check\n> prettier --check src scripts tests/data tests/site tests/artifacts tests/production tests/browser .github package.json astro.config.ts tsconfig.json playwright.config.ts prettier.config.mjs\n\nChecking formatting...\nAll matched files use Prettier code style!\n",
+      "stderr": ""
+    }
+  ]
+}

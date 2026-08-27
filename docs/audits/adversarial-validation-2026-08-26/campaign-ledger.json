@@ -1,0 +1,50 @@
+{
+  "campaign_date": "2026-08-26",
+  "prior_campaigns": [
+    "2026-08-24",
+    "2026-08-25"
+  ],
+  "baseline_ref": "b8b4bca",
+  "scope": "delta since campaign 2 plus the newly gated path to the default branch",
+  "constraints_imposed_by_user": [
+    "no commits",
+    "no pushes",
+    "no merges"
+  ],
+  "isolation": {
+    "method": "tar copy into scratchpad with a junction to node_modules",
+    "sandboxes_created": 5,
+    "canonical_repository_mutated": false,
+    "network_actions": "read-only GitHub API only",
+    "production_actions": false
+  },
+  "budget": {
+    "approved_cheap_agent_invocations": 20,
+    "approved_concurrent": 4,
+    "approved_waves": 5,
+    "approved_premium_subagents": 0
+  },
+  "usage": {
+    "cheap_agent_invocations": 6,
+    "cheap_agent_class": "claude-haiku-4-5",
+    "agent_failures_external": 3,
+    "agent_failure_cause": "account session limit reached; cleared on retry",
+    "agent_retries": 1,
+    "premium_subagent_invocations": 0,
+    "waves_completed": 5,
+    "approximate_deterministic_tool_runs": 210,
+    "monte_carlo_scenarios": 80,
+    "fuzz_cases": 32,
+    "regression_mutations": 13
+  },
+  "stop_conditions_triggered": [
+    "Waves 3 and 4 produced no new confirmed or strongly supported failure classes",
+    "Remaining hypotheses require either an authenticated admin API read or a real push, both foreclosed"
+  ],
+  "findings": {
+    "confirmed": 2,
+    "plausible": 1,
+    "invalidated": 3,
+    "highest_severity": "low-medium (C3-001)"
+  }
+}
