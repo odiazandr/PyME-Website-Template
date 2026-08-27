@@ -22,8 +22,11 @@ class GitHubWorkflowPolicyTests(unittest.TestCase):
             for path in paths
         }
 
-    def test_expected_workflows_exist(self) -> None:
-        self.assertEqual(set(self.workflows), {"browser-qa.yml", "ci.yml"})
+    def test_required_workflows_are_present(self) -> None:
+        # A subset check, not equality: the default-branch ruleset depends on
+        # these two, but an adopted client repository may add its own workflows.
+        # The policy tests below apply to every workflow, including new ones.
+        self.assertLessEqual({"browser-qa.yml", "ci.yml"}, set(self.workflows))
 
     def test_workflows_use_read_only_repository_permissions(self) -> None:
         for name, source in self.workflows.items():

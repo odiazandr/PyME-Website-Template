@@ -12,8 +12,14 @@ class NetlifyConfigTests(unittest.TestCase):
         with (ROOT / "netlify.toml").open("rb") as stream:
             cls.config = tomllib.load(stream)
 
-    def test_build_uses_the_verified_static_artifact(self) -> None:
-        self.assertEqual(self.config["build"]["command"], "npm run quality")
+    def test_build_uses_one_of_the_repository_quality_gates(self) -> None:
+        # Not pinned to a single literal: an adopted client repository is
+        # expected to harden this to the strict gate, and a test that fails on
+        # the safer configuration would block that adopter's own deployment.
+        self.assertIn(
+            self.config["build"]["command"],
+            {"npm run quality", "npm run quality:production"},
+        )
         self.assertEqual(self.config["build"]["publish"], "dist")
 
     def test_stable_headers_are_explicit_and_hsts_is_deferred(self) -> None:
