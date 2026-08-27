@@ -9,7 +9,7 @@ Purpose: Provide a versioned, production-grade foundation for independent, clien
 1. This repository is a template product. Each adopted client repository produces one public, client-owned business website.
 2. Static rendering is the default. Complexity is introduced only when verified requirements justify it.
 3. Every durable fact has exactly one canonical owner. If canonical sources conflict, stop and report the conflict.
-4. Business claims must be verified. Never invent awards, certifications, testimonials, experience, prices, guarantees, credentials, availability, or statistics.
+4. Business claims must be verified. Never invent a fact about the business, including but not limited to awards, certifications, testimonials, experience, prices, guarantees, credentials, availability, statistics, and address, contact, or location details. A plausible value is not a verified one; when a fact has not been supplied, leave it absent and say so rather than inferring it.
 5. Semantic HTML and CSS precede browser JavaScript. Client-side frameworks require explicit justification.
 6. Databases, custom authentication, custom backends, private state, and transaction systems require architecture review and an ADR.
 7. No secret or private operational data may enter browser-visible code, public manifests, or committed repository data.
