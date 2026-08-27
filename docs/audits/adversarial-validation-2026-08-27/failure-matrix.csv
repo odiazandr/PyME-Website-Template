@@ -1,0 +1,35 @@
+component,failure_class,result,evidence
+client lifecycle,template to initialized client to production gate,tested_and_passed,C4-P01 all 14 quality:production steps pass on an initialized client
+client lifecycle,initializer refusal in project mode,not_tested,--force path not exercised this campaign
+client lifecycle,template upgrade / migration of an initialized client,not_tested,migrationTest remains planned; no second template version exists to migrate from
+client initializer,adversarial input,tested_and_passed,32-case fuzz regression: 0 crashes 0 wrong acceptances
+client initializer,dry-run vs real-run agreement,tested_and_passed,identical finding sets; only the generated site ID differs
+client initializer,re-execution on an already-initialized repository,partially_tested,refusal is documented and unit-tested; interrupted/partial-write state not exercised
+content contract,differential correctness vs independent oracle,tested_and_passed,80/80 agreement on 80 previously unsampled scenarios at seed 20260827
+content contract,per-record approval enforcement,tested_and_passed,CONTENT_REVIEW_REQUIRED fires for every unapproved record
+content contract,fabricated-but-plausible fact,tested_and_failed,C4-004 passes every source gate; limitation is documented by the repository
+memory validator,13 prior-campaign mutations,tested_and_passed,all still closed; pristine baseline green before and after
+memory contracts,full health run,tested_and_passed,MEMORY HEALTH PASSED on canonical repository
+test suite,defaults pinned as invariants,tested_and_failed,C4-001 route rename breaks test:site and test:artifacts while build and astro check stay green
+test suite,deploy command pinned as invariant,tested_and_failed,C4-001 hardening netlify.toml to the strict gate fails test:security
+test suite,tests that cannot fail,tested_and_passed,no tautological or self-derived assertions found
+test suite,silent skips,tested_and_passed,one documented mode-gated skip in tests/production/validation.test.ts with a stated rationale
+deployment path,which gate runs at deploy time,tested_and_failed,C4-002 netlify.toml and ci.yml both run the development gate
+deployment path,production gate reachable from automation,tested_and_failed,C4-002 no workflow script or hook invokes quality:production
+deployment path,operator discoverability of the gate command,tested_and_failed,C4-002 launch.md names the step but supplies no command
+validation scripts,structured failure on malformed data,tested_and_failed,C4-003 validate:project and validate:production emit raw tracebacks
+validation scripts,structured failure via validate:data,tested_and_passed,clean two-line finding with field path and expected type
+build and install,clean build of the distribution template,tested_and_passed,CI green on 394cf85; local build green after the OS block released
+build and install,clean build of an initialized client,tested_and_passed,astro build 7 pages in 1.24s in sandbox
+build and install,lockfile reproducibility,tested_and_passed,carried forward from campaign 3; no dependency delta since
+security,CSP covers the site's own inline assets,tested_and_passed,built output carries 5 script-src and 8 style-src sha256 hashes
+security,response headers as actually served,not_tested,requires a real deployment
+repository control,ruleset drift between committed and enforced,tested_and_passed,C3-001 remediation verified: live ruleset 21533770 matches every declared field
+repository control,direct push rejection,not_tested,requires a real push; foreclosed by the no-push constraint
+repository control,bypass actor configuration,not_tested,withheld from unauthenticated API; no admin credential used
+repository control,stale branch detection,tested_and_failed,C4-005 two branches with trees already on main report as unmerged
+dependencies,upgrade across a declared compatibility line,tested_and_passed,C4-006 PR #5 TypeScript 7 fails CI; PR #4 @types/node 26 passes
+dependencies,Node major mismatch detectable by gates,tested_and_failed,C4-006 no gate can detect @types/node ahead of the pinned engine
+netlify deployment,response headers and form receipt,not_tested,no deployment exists
+DNS,cutover and recovery,not_tested,no domain
+accessibility,manual review,not_tested,requires a person
