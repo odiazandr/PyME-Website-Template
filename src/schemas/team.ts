@@ -2,14 +2,14 @@ import { z } from "zod";
 import {
   IdentifierSchema,
   NonEmptyTextSchema,
-  NullableUrlSchema,
+  NullableHttpUrlSchema,
 } from "./common.ts";
 export const TeamMemberSchema = z.strictObject({
   id: IdentifierSchema,
   displayName: NonEmptyTextSchema,
   publicRole: NonEmptyTextSchema,
   biography: NonEmptyTextSchema.nullable(),
-  image: NullableUrlSchema,
+  image: NullableHttpUrlSchema,
   approvedForPublication: z.literal(true),
 });
 export const TeamSchema = z

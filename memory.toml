@@ -5,7 +5,7 @@ mode = "template"
 build = ["npm", "run", "build"]
 test = ["npm", "test"]
 lint = ["npm", "run", "quality:static"]
-secret_scan = []
+secret_scan = ["python", "ops/secret_scan.py"]
 
 [placeholders]
 allow = []

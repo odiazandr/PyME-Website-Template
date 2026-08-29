@@ -91,6 +91,7 @@ Pointers only; summaries belong to their canonical owners.
 | T3 | `docs/decisions/0111-file-driven-client-initialization.md` | Reviewed-input client initialization |
 | T3 | `docs/decisions/0112-per-record-publication-approval.md` | Per-record content publication approval |
 | T3 | `docs/decisions/0113-derived-route-contracts.md` | Route contracts derived from one registry |
+| T3 | `docs/decisions/0114-transactional-client-initialization.md` | Why client initialization stages and locks writes |
 
 ## Machinery and reserved paths
 

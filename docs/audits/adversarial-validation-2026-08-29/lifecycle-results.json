@@ -1,0 +1,76 @@
+{
+  "steps": [
+    {
+      "step": 1,
+      "label": "memory contracts",
+      "exit": 0
+    },
+    {
+      "step": 2,
+      "label": "format:check",
+      "exit": 0
+    },
+    {
+      "step": 3,
+      "label": "astro check",
+      "exit": 0
+    },
+    {
+      "step": 4,
+      "label": "validate:data",
+      "exit": 0
+    },
+    {
+      "step": 5,
+      "label": "test:security",
+      "exit": 0
+    },
+    {
+      "step": 6,
+      "label": "validate:project",
+      "exit": 0
+    },
+    {
+      "step": 7,
+      "label": "validate:production",
+      "exit": 0
+    },
+    {
+      "step": 8,
+      "label": "check:placeholders",
+      "exit": 0
+    },
+    {
+      "step": 9,
+      "label": "check:assets",
+      "exit": 0
+    },
+    {
+      "step": 10,
+      "label": "build",
+      "exit": 0
+    },
+    {
+      "step": 11,
+      "label": "test:artifacts:built",
+      "exit": 0
+    },
+    {
+      "step": 12,
+      "label": "verify:dist",
+      "exit": 0
+    },
+    {
+      "step": 13,
+      "label": "check:links",
+      "exit": 0
+    },
+    {
+      "step": 14,
+      "label": "check:public-output",
+      "exit": 0
+    }
+  ],
+  "passed": 14,
+  "total": 14
+}

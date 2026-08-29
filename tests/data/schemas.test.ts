@@ -9,6 +9,7 @@ import { TemplateMetadataSchema } from "../../src/schemas/template.ts";
 import { TestimonialsSchema } from "../../src/schemas/testimonial.ts";
 import { PublicManifestSchema } from "../../src/schemas/public-manifest.ts";
 import { ProductionApprovalSchema } from "../../src/schemas/production.ts";
+import { SocialAccountsSchema } from "../../src/schemas/social.ts";
 import { site } from "../../src/config/site.ts";
 import {
   business,
@@ -105,6 +106,55 @@ describe("business data contracts", () => {
     );
   });
 
+  test("accepts only credential-free HTTP(S) public URLs", () => {
+    for (const value of [
+      "javascript:alert(1)",
+      "data:text/html,hello",
+      "file:///tmp/private",
+      "https://user:password@example.com",
+    ]) {
+      assert.equal(
+        LocationsSchema.safeParse([{ ...validLocation, mapUrl: value }])
+          .success,
+        false,
+        `location map URL should reject ${value}`,
+      );
+      assert.equal(
+        SocialAccountsSchema.safeParse([{ platform: "instagram", url: value }])
+          .success,
+        false,
+        `social URL should reject ${value}`,
+      );
+      assert.equal(
+        TeamSchema.safeParse([
+          {
+            id: "ana",
+            displayName: "Ana",
+            publicRole: "Directora",
+            biography: null,
+            image: value,
+            approvedForPublication: true,
+          },
+        ]).success,
+        false,
+        `team image URL should reject ${value}`,
+      );
+      assert.equal(
+        TestimonialsSchema.safeParse([
+          {
+            id: "cliente-1",
+            quote: "Excelente servicio",
+            displayName: "Cliente",
+            sourceUrl: value,
+            approvedForPublication: true,
+          },
+        ]).success,
+        false,
+        `testimonial source URL should reject ${value}`,
+      );
+    }
+  });
+
   test("rejects reversed same-day business hours", () => {
     const hours = validHours.map((hours, index) =>
       index === 0 ? { ...hours, opens: "18:00", closes: "09:00" } : hours,
@@ -188,6 +238,15 @@ describe("technical identity contracts", () => {
         templateVersion: "0.3.0",
         canonicalUrl: "https://example.com",
         repositoryToken: "must-never-be-public",
+      }).success,
+      false,
+    );
+    assert.equal(
+      PublicManifestSchema.safeParse({
+        schemaVersion: 1,
+        siteId: "00000000-0000-4000-8000-000000000000",
+        templateVersion: "0.3.0",
+        canonicalUrl: "https://user:password@example.com",
       }).success,
       false,
     );

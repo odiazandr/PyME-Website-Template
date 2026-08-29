@@ -37,7 +37,7 @@ npm run init:client -- ../taller-nopal.json --dry-run
 npm run init:client -- ../taller-nopal.json
 ```
 
-The command rewrites `src/config/site.ts`, `src/data/business.json`, and the memory mode in `memory.toml`. It refuses to run when the repository is already in project mode unless `--force` is passed, when the recorded template version has drifted from `package.json`, and when the result would still fail production validation for any reason it controls. Nothing is written unless every check passes.
+The command rewrites `src/config/site.ts`, `src/data/business.json`, and the memory mode in `memory.toml`. It refuses to run when the repository is already in project mode unless `--force` is passed, when the recorded template version has drifted from `package.json`, and when the result would still fail production validation for any reason it controls. It acquires an exclusive `.pyme-init.lock`, stages every replacement, and restores originals if staging or commit fails. Do not run two initializers at once. If a crash leaves the lock behind, first confirm no initializer process is running, preserve the three canonical files and any `.pyme-init-*` backup files, then remove only the stale lock before retrying.
 
 Delete the input document afterward. Its facts now belong to their canonical owners, and a second copy is a duplicate authority.
 

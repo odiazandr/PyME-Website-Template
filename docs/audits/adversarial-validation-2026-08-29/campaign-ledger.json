@@ -1,0 +1,55 @@
+{
+  "campaign": "adversarial-validation-2026-08-29",
+  "budget": {
+    "maximum_cheap_agent_invocations": 40,
+    "maximum_concurrent_cheap_agents": 3,
+    "maximum_waves": 5,
+    "maximum_retries_per_experiment": 2,
+    "maximum_premium_agent_invocations": 1,
+    "maximum_wall_clock_minutes": 90,
+    "maximum_report_artifacts_bytes": 10485760,
+    "maximum_monte_carlo_samples": 128,
+    "seed": 20260828
+  },
+  "actual": {
+    "deterministic_shell_invocations": 55,
+    "deterministic_test_subprocesses_note": "Top-level shell invocations only; nested test cases and harness subprocesses are not counted as tool invocations.",
+    "cheap_agent_invocations": 12,
+    "agent_class": "gpt-5.6-luna",
+    "maximum_agents_observed_concurrently": 3,
+    "discovery_waves_completed": 5,
+    "confirmation_and_synthesis_wave_completed": true,
+    "retries": 0,
+    "premium_agent_invocations": 0,
+    "monte_carlo_scenarios": 128,
+    "initializer_fuzz_cases": 32,
+    "concurrency_trials": 10,
+    "chromium_browser_tests": 39,
+    "webkit_repeated_skip_trials": 3,
+    "webkit_repeated_form_trials": 3,
+    "production_lifecycle_steps": 14,
+    "generated_artifact_size_bytes_approx": 160000,
+    "exact_token_or_currency_usage": "not exposed by platform"
+  },
+  "waves": [
+    {"wave": 0, "name": "baseline and test-oracle construction", "status": "completed"},
+    {"wave": 1, "name": "independent interpretation attacks", "status": "completed"},
+    {"wave": 2, "name": "static, structural, and testing-system attacks", "status": "completed"},
+    {"wave": 3, "name": "behavioral, mutation, concurrency, and fault injection", "status": "completed"},
+    {"wave": 4, "name": "seeded Monte Carlo and differential content sampling", "status": "completed"},
+    {"wave": 5, "name": "confirmation, falsification, deduplication, and synthesis", "status": "completed"}
+  ],
+  "stop_conditions": [
+    "All bounded waves completed; no additional broad attacks were launched.",
+    "The wall-clock threshold was reached during synthesis. The user explicitly directed continuation; no new attack wave was added, and work was limited to deliverables, integrity verification, and cleanup.",
+    "No isolation, credential, production, or destructive-operation boundary was crossed.",
+    "Remaining hypotheses require cross-platform or authorized external provider environments."
+  ],
+  "isolation": {
+    "method": "git clone --no-hardlinks --no-local --single-branch followed by remote removal; nested disposable clones for fault classes",
+    "canonical_initial_status": "clean",
+    "external_side_effects": "none",
+    "agent_file_modifications": "none",
+    "canonical_source_modifications": "none; only this audit directory was added during synthesis"
+  }
+}

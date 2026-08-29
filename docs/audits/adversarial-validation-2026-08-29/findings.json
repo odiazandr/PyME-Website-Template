@@ -1,0 +1,332 @@
+{
+  "campaign": "adversarial-validation-2026-08-29",
+  "commit": "87581248b505a3217ad496f813609075f5ae5bba",
+  "environment": {
+    "os": "Windows",
+    "node": "24.19.0",
+    "npm": "11.17.0",
+    "python": "3.14.7",
+    "git": "2.55.0",
+    "isolation": "remote-free disposable clones; canonical repository read-only except final audit artifacts"
+  },
+  "summary": {
+    "unique_findings": 8,
+    "confirmed": 7,
+    "strongly_supported": 1,
+    "duplicate": 1,
+    "critical": 0,
+    "high": 1,
+    "medium": 3,
+    "low": 4
+  },
+  "findings": [
+    {
+      "id": "C5-001",
+      "title": "Strict production gate publishes residual reference and not-authorized copy",
+      "category": "production assurance / documentation-to-artifact drift",
+      "severity": "high",
+      "confidence": "high",
+      "status": "confirmed",
+      "preconditions": "A disposable template clone is initialized with non-sample identity and canonical domain; publication approvals and approved privacy text are supplied.",
+      "root_cause": "Reference-state copy is hard-coded and rendered unconditionally in pages/components, while check-public-output.ts owns only a narrow literal sentinel list. The project-mode production gate has no general rule preventing reference/not-authorized/pending-verification UI.",
+      "reproduction_steps": [
+        "Create a remote-free disposable clone and reuse only local locked dependencies.",
+        "Run: python docs/audits/adversarial-validation-2026-08-27/harness/lifecycle.py <disposable-clone>.",
+        "Verify all fourteen lifecycle steps return exit 0.",
+        "Search the disposable dist directory for: Estado de la referencia, Publicación: No autorizada, Referencia; no representa un negocio real, and pending-verification/reference phrases."
+      ],
+      "expected_behavior": "A strict client-production gate rejects output that says publication is unauthorized, the business is not real, or facts remain pending verification.",
+      "observed_behavior": "All fourteen steps passed. The built Taller Nopal site still contained reference/not-authorized/pending-verification copy in public HTML.",
+      "evidence": [
+        "lifecycle-results.json records fourteen exit-0 steps.",
+        "src/components/core/SiteFooter.astro:26 emits 'Referencia; no representa un negocio real.'.",
+        "src/components/sections/StatusRegister.astro:3 and :8 emit reference/publication state.",
+        "src/components/sections/ServicesGrid.astro:18 emits pending structured-information copy.",
+        "src/pages/contacto.astro:23 emits reference-data replacement copy.",
+        "src/pages/nosotros.astro:16 emits pending-verification credentials copy.",
+        "scripts/check-public-output.ts does not own equivalent generic reference-state sentinels."
+      ],
+      "affected_components": [
+        "quality:production",
+        "scripts/check-public-output.ts",
+        "SiteFooter",
+        "StatusRegister",
+        "ServicesGrid",
+        "contacto",
+        "nosotros",
+        "gracias",
+        "privacy presentation"
+      ],
+      "reproducibility": "1/1 complete lifecycle; independently confirmed by a separate read-only agent",
+      "files_modified_by_experiment": "Disposable lifecycle clone only; canonical source unchanged.",
+      "prior_finding_relationship": "Distinct extension of remediated AV2-001. AV2-001 covered canonical data-domain placeholders; this finding covers unconditional presentation copy that remains after those remediations.",
+      "proposed_remediation": "Replace unconditional reference copy with state-derived production-safe content, and make project-mode output scanning reject a centrally owned set of reference/not-authorized/pending-verification states. The gate should derive allowed publication state from canonical data rather than free-text coincidence alone.",
+      "proposed_regression_test": "Build an approved project fixture, concatenate visible dist HTML text, and assert every owned reference-state sentinel is absent. The test must fail against this commit and pass only when production rendering or validation is corrected.",
+      "suggested_next_experiment": "After remediation, rerun the full fourteen-step lifecycle and assert both gate success and absence of every centrally enumerated reference-state marker."
+    },
+    {
+      "id": "C5-002",
+      "title": "Initializer filesystem failure leaves a mixed canonical state",
+      "category": "state and data integrity",
+      "severity": "medium",
+      "confidence": "high",
+      "status": "confirmed",
+      "preconditions": "Template mode; valid client input; the final canonical target memory.toml becomes unwritable after planning but before its write.",
+      "root_cause": "scripts/init-client.ts performs sequential direct writeFileSync calls without temporary files, atomic commit, rollback, lock, or post-write verification.",
+      "reproduction_steps": [
+        "Create a disposable clone and record hashes of src/config/site.ts, src/data/business.json, and memory.toml.",
+        "Make only memory.toml read-only.",
+        "Run the client initializer with valid client input.",
+        "Restore permissions and compare the three files with their original hashes."
+      ],
+      "expected_behavior": "A failed initialization leaves all canonical owners byte-identical, or leaves an explicitly recoverable transaction marker.",
+      "observed_behavior": "The command exited 1 with EPERM on the final write. site.ts and business.json contained Taller Nopal/client data and a new site identity; memory.toml remained in template mode.",
+      "evidence": [
+        "Disposable git diff contained src/config/site.ts and src/data/business.json only.",
+        "memory.toml remained mode=template.",
+        "scripts/init-client.ts:355 is the uncovered sequential write loop.",
+        "Coverage inspection showed the successful filesystem write block was not exercised by tests."
+      ],
+      "affected_components": [
+        "scripts/init-client.ts",
+        "src/config/site.ts",
+        "src/data/business.json",
+        "memory.toml"
+      ],
+      "reproducibility": "1/1 injected final-write permission fault; independently confirmed by a separate read-only agent",
+      "files_modified_by_experiment": "Disposable partial-write clone only; permissions restored before cleanup.",
+      "proposed_remediation": "Write all candidates to same-directory temporary files, fsync where appropriate, then commit with an atomic/rollback protocol. Serialize initialization with a lock or atomic claim and report recovery steps if rollback itself fails.",
+      "proposed_regression_test": "Inject failure into the third write and assert nonzero exit plus byte-identical hashes for all three canonical targets.",
+      "suggested_next_experiment": "Fault each write and rename boundary independently, including rollback failure, in a disposable fixture."
+    },
+    {
+      "id": "C5-003",
+      "title": "Public URL fields accept and emit unsafe schemes while production validation passes",
+      "category": "input validation / security boundary",
+      "severity": "medium",
+      "confidence": "high",
+      "status": "confirmed",
+      "preconditions": "An operator or future ingestion path writes a syntactically valid non-web URL into a canonical public-link field; tested with locations[0].mapUrl='javascript:alert(1)'.",
+      "root_cause": "Generic z.url() syntax validation is treated as an HTTP(S) allowlist. check-links.ts deliberately skips references beginning with a scheme, and production/output validation has no disallowed-scheme rule.",
+      "reproduction_steps": [
+        "Prepare an otherwise passing initialized lifecycle clone.",
+        "Set src/data/locations.json mapUrl to javascript:alert(1).",
+        "Run npm run validate:data, npm run build, and npm run quality:production.",
+        "Search dist/index.html and dist/contacto/index.html for javascript:alert(1)."
+      ],
+      "expected_behavior": "Fields rendered as web navigation or asset URLs reject non-HTTP(S) schemes before build, or the built-output gate rejects them.",
+      "observed_behavior": "Data validation, build, and the full production gate passed; both built routes contained href='javascript:alert(1)'.",
+      "evidence": [
+        "src/schemas/common.ts:12 defines NullableUrlSchema as z.url().nullable().",
+        "src/schemas/location.ts:51 applies it to mapUrl.",
+        "src/components/sections/Locations.astro:31 emits mapUrl directly as href.",
+        "A pure schema probe also accepted data:, mailto:, and tel: URL forms.",
+        "The current built CSP has script-src 'self' plus hashes and no unsafe-inline; this should block execution of the tested javascript URL in conforming browsers."
+      ],
+      "affected_components": [
+        "location.mapUrl",
+        "social.url",
+        "team.image",
+        "testimonial.sourceUrl",
+        "scripts/check-links.ts",
+        "production output validation"
+      ],
+      "reproducibility": "1/1 artifact mutation; schema behavior independently confirmed",
+      "files_modified_by_experiment": "Disposable URL-mutation clone only.",
+      "security_scope_note": "Confirmed broken-link/unsafe-sink behavior; executable XSS was not demonstrated and is materially mitigated by the present CSP. CSP retention and future trust changes remain dependencies.",
+      "proposed_remediation": "Introduce semantic field-specific schemas that allow only http: and https:, with HTTPS required where appropriate. Add a final artifact scan rejecting dangerous href/src schemes regardless of source schema.",
+      "proposed_regression_test": "Schema tests reject javascript:, data:, file:, vbscript:, userinfo, and inappropriate mailto:/tel: values; a built-output fixture containing a disallowed href must fail the production gate.",
+      "suggested_next_experiment": "After schema hardening, fuzz URL normalization, Unicode hostnames, credentials, ports, redirects, and encoded schemes without activating links."
+    },
+    {
+      "id": "C5-004",
+      "title": "Tests do not protect production-gate script composition",
+      "category": "testing-system failure",
+      "severity": "medium",
+      "confidence": "high",
+      "status": "confirmed",
+      "preconditions": "The package.json quality:production script is accidentally or maliciously replaced while individual validator implementations remain unchanged.",
+      "root_cause": "Tests invoke individual validators and ordinary npm test suites, but no test asserts the owner script's required ordered composition or exercises it against a production-ready fixture.",
+      "reproduction_steps": [
+        "In a disposable clone, replace package.json quality:production with node -e \"process.exit(0)\".",
+        "Run npm test.",
+        "Run npm run quality:production."
+      ],
+      "expected_behavior": "A mutation that removes every strict production step is detected by a contract or integration test.",
+      "observed_behavior": "npm test passed in full, and the mutated production command returned 0 without running any validator or build.",
+      "evidence": [
+        "Current package.json:28 contains the correct fourteen-step chain.",
+        "The disposable no-op mutant passed npm test.",
+        "CI invokes quality:production in project mode, but would invoke the same no-op owner if this mutation landed."
+      ],
+      "affected_components": [
+        "package.json",
+        "tests/production",
+        ".github/workflows/ci.yml",
+        "production assurance"
+      ],
+      "reproducibility": "1/1 mutation; independently confirmed",
+      "files_modified_by_experiment": "Disposable mutant clone only.",
+      "prior_finding_relationship": "Narrower than AV-009 and distinct from remediated C4-002: the automated path now exists, but its package-script composition is not itself protected.",
+      "proposed_remediation": "Add a package-script contract that parses the script into the exact owned ordered steps, and run the real owner command against a minimal initialized fixture in CI.",
+      "proposed_regression_test": "The no-op mutation and deletion/reordering of any required step must make the test fail.",
+      "suggested_next_experiment": "Use bounded mutation testing to remove one gate step at a time and verify every mutant is killed."
+    },
+    {
+      "id": "C5-005",
+      "title": "Link validator accepts a directory that has no index artifact",
+      "category": "artifact validation",
+      "severity": "low",
+      "confidence": "high",
+      "status": "confirmed",
+      "preconditions": "A built asset references an internal extensionless path whose filesystem target exists only as a directory with no index.html.",
+      "root_cause": "scripts/check-links.ts accepts existsSync(base) without requiring a file or resolving a directory to index.html.",
+      "reproduction_steps": [
+        "In a disposable built dist, create directory-target/placeholder.txt but no directory-target/index.html.",
+        "Create dist/probe.css containing a reference to /directory-target.",
+        "Run node scripts/check-links.ts."
+      ],
+      "expected_behavior": "An internal route is valid only if it resolves to a deployable file, or a directory containing index.html under the documented hosting contract.",
+      "observed_behavior": "The validator printed PASSED because the directory itself existed.",
+      "evidence": [
+        "scripts/check-links.ts:57 selects base when existsSync(base) is true.",
+        "The synthetic directory-without-index fixture passed."
+      ],
+      "affected_components": [
+        "scripts/check-links.ts",
+        "dist route validation"
+      ],
+      "reproducibility": "1/1 deterministic artifact fixture",
+      "files_modified_by_experiment": "Disposable built artifact only.",
+      "proposed_remediation": "Use statSync to distinguish files from directories; for a directory require index.html (or an explicitly documented provider rule).",
+      "proposed_regression_test": "Directory without index fails; directory with index passes; regular file and extension fallback cases retain expected behavior.",
+      "suggested_next_experiment": "Add Windows/Linux separator and encoded-path cases after the minimal fix."
+    },
+    {
+      "id": "C5-006",
+      "title": "WebKit form assertion reports a missing payload although the POST body is correct",
+      "category": "browser test oracle",
+      "severity": "low",
+      "confidence": "high",
+      "status": "confirmed",
+      "preconditions": "Run the tablet-webkit Playwright form smoke test on the recorded Windows host.",
+      "root_cause": "tests/browser/smoke.spec.ts asserts route.request().postData() text, which was empty in failing WebKit interceptions even though retained request bytes and decoded parameters were complete.",
+      "reproduction_steps": [
+        "Run the tablet-webkit contact-form test three times with one worker and trace retention.",
+        "Inspect the failing request trace body bytes and parsed form parameters."
+      ],
+      "expected_behavior": "The test evaluates the submitted request body through a representation reliable for the browser engine.",
+      "observed_behavior": "The assertion failed 2/3 times. Both failed traces recorded bodySize=127, correct URL-encoded fields, and successful navigation to the thank-you page; the third run passed.",
+      "evidence": [
+        "tests/browser/smoke.spec.ts:66 reads postData().",
+        "Failed traces contained the expected form-name, bot-field, nombre, correo, and mensaje bytes.",
+        "The product-level hypothesis 'form sends no payload' was falsified."
+      ],
+      "affected_components": [
+        "tests/browser/smoke.spec.ts",
+        "tablet-webkit CI evidence"
+      ],
+      "reproducibility": "2 failures and 1 pass across 3 repeated runs",
+      "files_modified_by_experiment": "Trace/test-result artifacts in disposable/test output only.",
+      "proposed_remediation": "Assert postDataBuffer or decoded server/interception parameters instead of relying only on postData text.",
+      "proposed_regression_test": "A WebKit test submits Unicode and spaces, then compares decoded field values from the request buffer.",
+      "suggested_next_experiment": "Verify the corrected oracle on current Ubuntu WebKit and Windows WebKit."
+    },
+    {
+      "id": "C5-007",
+      "title": "Windows WebKit documentation is stale and the iPad skip-link oracle is non-portable",
+      "category": "documentation and browser evidence",
+      "severity": "low",
+      "confidence": "medium-high",
+      "status": "strongly_supported",
+      "preconditions": "Run the configured tablet-webkit project on the current Windows host.",
+      "root_cause": "Browser-support documents preserve an obsolete psl-5.dll launch limitation. The skip-link test assumes synthetic Tab focus behavior in an iPad/touch WebKit emulation without recording activeElement or separating programmatic activation from hardware-keyboard traversal.",
+      "reproduction_steps": [
+        "Launch the tablet-webkit project on Windows.",
+        "Repeat the skip-link smoke test three times with one worker.",
+        "Compare the launch evidence with docs/spec/accessibility.md and docs/spec/browser-support.md."
+      ],
+      "expected_behavior": "Documentation describes current capability and tests distinguish focus-navigation environment limitations from product target-focus behavior.",
+      "observed_behavior": "WebKit launched successfully, contradicting the documented DLL block. The skip test failed 3/3 at the first synthetic Tab focus assertion and never executed Enter or the target-focus assertion.",
+      "evidence": [
+        "docs/spec/accessibility.md:15 and docs/spec/browser-support.md:13 say WebKit cannot run on the current Windows host.",
+        "Retained traces identify browserName=webkit and platform=win32.",
+        "The skip-link anchor precedes the header and the target owns tabindex=-1; no active-element trace established a markup defect."
+      ],
+      "affected_components": [
+        "docs/spec/accessibility.md",
+        "docs/spec/browser-support.md",
+        "tests/browser/smoke.spec.ts",
+        "cross-browser evidence claims"
+      ],
+      "reproducibility": "WebKit launch 1/1; skip Tab failure 3/3; product focus defect not established",
+      "files_modified_by_experiment": "Trace/test-result artifacts only.",
+      "proposed_remediation": "Update docs to say Windows WebKit launches but the current project is not green. Split skip-link tests into programmatic focus/activation and environment-specific sequential-keyboard coverage; capture activeElement diagnostics.",
+      "proposed_regression_test": "Programmatically focus the skip link, activate it, and assert main focus; run sequential Tab separately only on environments where hardware keyboard semantics are supported.",
+      "suggested_next_experiment": "Run current HEAD on GitHub-hosted Ubuntu WebKit and real Safari/iPad hardware before assigning product severity."
+    },
+    {
+      "id": "C5-008",
+      "title": "Repository-wide secret scan is explicitly not configured",
+      "category": "security testing coverage",
+      "severity": "low",
+      "confidence": "high",
+      "status": "confirmed",
+      "preconditions": "Run the configured memory check suite or inspect memory.toml.",
+      "root_cause": "memory.toml sets checks.secret_scan to an empty array, which the validation contract intentionally reports as NOT_CONFIGURED rather than a failure.",
+      "reproduction_steps": [
+        "Run python ops/memory_health.py --json.",
+        "Inspect the secret_scan result and memory.toml [checks]."
+      ],
+      "expected_behavior": "A repository that declares a no-secrets invariant has an automated high-confidence secret-scanning control, or clearly treats its absence as an unresolved release risk.",
+      "observed_behavior": "The overall configured check run passed while secret_scan was NOT_CONFIGURED.",
+      "evidence": [
+        "memory.toml:8 is secret_scan = [].",
+        "docs/spec/validation.md defines an empty array as NOT_CONFIGURED.",
+        "gitleaks, TruffleHog, Semgrep, Trivy, and Syft were unavailable on the host.",
+        "Campaign regex scans of current tree and full Git history found no high-confidence credential signatures; this reduces immediate concern but does not close the control gap."
+      ],
+      "affected_components": [
+        "memory.toml",
+        "CI security controls",
+        "release assurance"
+      ],
+      "reproducibility": "Deterministic configuration/readout",
+      "files_modified_by_experiment": "None.",
+      "proposed_remediation": "Configure a pinned, reviewed secret scanner in CI and memory.toml, with redaction-safe output and explicit baseline/allowlist ownership.",
+      "proposed_regression_test": "A synthetic fixture containing a fake provider token is rejected; ordinary sample/public values pass; logs redact the token body.",
+      "suggested_next_experiment": "Evaluate a deterministic scanner in a disposable branch without sending repository content to external services."
+    },
+    {
+      "id": "C5-D01",
+      "title": "Concurrent initializer race duplicates accepted finding AV2-006",
+      "category": "concurrency",
+      "severity": "low",
+      "confidence": "high",
+      "status": "duplicate",
+      "duplicate_of": "AV2-006",
+      "preconditions": "Two valid initializers begin against the same template-mode working tree.",
+      "root_cause": "Time-of-check to time-of-use gap around mode validation and unsynchronized sequential writes.",
+      "reproduction_steps": [
+        "Barrier-launch two initializer processes with different valid client fixtures in one disposable clone.",
+        "Record both exit codes and the final three canonical owners.",
+        "Repeat ten times, restoring template state between trials."
+      ],
+      "expected_behavior": "Exactly one caller succeeds; the other receives ALREADY_INITIALIZED.",
+      "observed_behavior": "Both callers returned 0 in 10/10 trials. Final state was internally consistent but scheduler-dependent: client A won once and client B nine times; mixed state was not observed.",
+      "evidence": [
+        "Twenty successful process exits across ten trials.",
+        "Final winner distribution A=1, B=9, mixed=0.",
+        "AV2-006 already records the same root cause and is deliberately accepted for the documented single-operator workflow."
+      ],
+      "affected_components": [
+        "scripts/init-client.ts"
+      ],
+      "reproducibility": "10/10 both-success trials",
+      "files_modified_by_experiment": "Disposable concurrency fixture only; restored after each trial.",
+      "proposed_remediation": "Address together with C5-002 using an atomic claim/lock and transactional write protocol if concurrent automation becomes supported.",
+      "proposed_regression_test": "Barrier-synchronized subprocess test asserting one success, one ALREADY_INITIALIZED, and one internally consistent winner.",
+      "suggested_next_experiment": "None within the current accepted-risk workflow; do not inflate this duplicate as a new finding."
+    }
+  ]
+}

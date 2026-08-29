@@ -18,7 +18,7 @@ The canonical template intentionally fails `quality:production`: it remains in t
 
 The approval flags are repository attestations, not cryptographic or legal proof. They may be set only after the applicable human or operational verification has occurred; an agent may not self-authorize them. Automated validation deliberately does not pretend it can determine whether business claims are true, a party owns a domain, or legal language is sufficient.
 
-Production validation inspects `dist/`, not source alone. The output scan is a bounded sanity layer, not comprehensive secret scanning. Browser QA is a separate implemented evidence layer for critical routes, navigation, forms, 404 behavior, CTAs, keyboard interaction, responsive overflow, and automated accessibility violations. Smoke tests retain the configured CSP; Axe tests use a test-local CSP bypass only to inject the scanner. Configured WebKit execution remains unverified until a supported host runs it.
+Production validation inspects `dist/`, not source alone. The output scan is a bounded sanity layer, not comprehensive secret scanning. It rejects owned reference-state phrases and disallowed browser URL schemes as well as sample/development sentinels; production components must not render an unresolved-reference state. Browser QA is a separate implemented evidence layer for critical routes, navigation, forms, 404 behavior, CTAs, keyboard interaction, responsive overflow, and automated accessibility violations. Smoke tests retain the configured CSP; Axe tests use a test-local CSP bypass only to inject the scanner. Configured WebKit execution remains unverified until a supported host runs it.
 
 ## Command ownership
 

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { format, resolveConfig } from "prettier";
 import {
   ClientInitSchema,
@@ -14,6 +14,10 @@ import type { Location } from "../src/schemas/location.ts";
 import type { Service } from "../src/schemas/service.ts";
 import { evaluateProduction } from "./validate-production.ts";
 import { ROOT, isMain, report, type Finding } from "./lib/validation.ts";
+import {
+  commitFileTransaction,
+  type FileUpdate,
+} from "./lib/file-transaction.ts";
 
 // Horizontal whitespace only: `\s` would consume the following newline and
 // silently delete the blank line that separates the assignment from `[checks]`.
@@ -40,6 +44,7 @@ export const DEFERRED_PRODUCTION_CODES = new Set([
 // The identity the template ships. It is a placeholder, never a client identity,
 // so it is not eligible for preservation across a re-initialization.
 const SAMPLE_SITE_ID = "00000000-0000-4000-8000-000000000000";
+const INITIALIZATION_LOCK = `${ROOT}.pyme-init.lock`;
 
 export type InitContext = {
   input: ClientInit;
@@ -291,6 +296,18 @@ export const formatSource = async (
 ): Promise<string> =>
   format(contents, { ...(await resolveConfig(path)), filepath: path });
 
+export const acquireInitializationLock = (
+  path = INITIALIZATION_LOCK,
+): (() => void) | null => {
+  try {
+    writeFileSync(path, `${process.pid}\n`, { encoding: "utf8", flag: "wx" });
+    return () => unlinkSync(path);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "EEXIST") return null;
+    throw error;
+  }
+};
+
 const initializeClient = async (argv: string[]): Promise<void> => {
   const parsedArguments = parseArguments(argv);
   if (parsedArguments.findings.length > 0 || parsedArguments.inputPath === null)
@@ -332,29 +349,89 @@ const initializeClient = async (argv: string[]): Promise<void> => {
     return report("CLIENT INITIALIZATION", plan.findings);
 
   const businessPath = `${ROOT}src/data/business.json`;
-  const updates = [
-    {
-      path: sitePath,
-      contents: await formatSource(renderSiteConfig(plan.site), sitePath),
-    },
-    {
-      path: businessPath,
-      contents: await formatSource(
-        renderBusinessData(plan.business),
-        businessPath,
-      ),
-    },
-    { path: memoryPath, contents: setProjectMode(memory) as string },
-  ];
+  let releaseLock: (() => void) | null = null;
 
-  if (parsedArguments.dryRun) {
-    console.log("CLIENT INITIALIZATION: DRY RUN");
-    for (const path of REWRITTEN_PATHS) console.log(`- would rewrite ${path}`);
-  } else {
-    for (const update of updates)
-      writeFileSync(update.path, update.contents, "utf8");
-    console.log("CLIENT INITIALIZATION: PASSED");
-    for (const path of REWRITTEN_PATHS) console.log(`- rewrote ${path}`);
+  try {
+    releaseLock = acquireInitializationLock();
+    if (releaseLock === null)
+      return report("CLIENT INITIALIZATION", [
+        {
+          code: "INITIALIZATION_IN_PROGRESS",
+          path: ".pyme-init.lock",
+          message:
+            "another initialization is holding the repository lock; wait for it to finish before retrying",
+        },
+      ]);
+
+    // A second process may have planned from template mode before the first
+    // process committed. Re-read after acquiring the lock so only one ordinary
+    // invocation can cross the template-to-project boundary.
+    const lockedMemory = readFileSync(memoryPath, "utf8");
+    if (readMode(lockedMemory) === "project" && !parsedArguments.force)
+      return report("CLIENT INITIALIZATION", [
+        {
+          code: "ALREADY_INITIALIZED",
+          path: "memory.toml",
+          message:
+            "repository became project mode while initialization was waiting; pass --force to overwrite client identity",
+        },
+      ]);
+
+    const projectMemory = setProjectMode(lockedMemory);
+    if (projectMemory === null)
+      return report("CLIENT INITIALIZATION", [
+        {
+          code: "MEMORY_MODE_UNREADABLE",
+          path: "memory.toml",
+          message:
+            "no top-level mode assignment was found after acquiring the initialization lock",
+        },
+      ]);
+
+    const updates: FileUpdate[] = [
+      {
+        path: sitePath,
+        contents: await formatSource(renderSiteConfig(plan.site), sitePath),
+      },
+      {
+        path: businessPath,
+        contents: await formatSource(
+          renderBusinessData(plan.business),
+          businessPath,
+        ),
+      },
+      { path: memoryPath, contents: projectMemory },
+    ];
+
+    if (parsedArguments.dryRun) {
+      console.log("CLIENT INITIALIZATION: DRY RUN");
+      for (const path of REWRITTEN_PATHS)
+        console.log(`- would rewrite ${path}`);
+    } else {
+      commitFileTransaction(updates);
+      console.log("CLIENT INITIALIZATION: PASSED");
+      for (const path of REWRITTEN_PATHS) console.log(`- rewrote ${path}`);
+    }
+  } catch (error) {
+    return report("CLIENT INITIALIZATION", [
+      {
+        code: "INITIALIZATION_WRITE_FAILED",
+        path: "scripts/init-client.ts",
+        message:
+          error instanceof Error
+            ? `transaction failed without committing partial canonical state: ${error.message}`
+            : "transaction failed without committing partial canonical state",
+      },
+    ]);
+  } finally {
+    if (releaseLock !== null) {
+      try {
+        releaseLock();
+      } catch {
+        // The commit has already completed or failed. Leave a visible lock for
+        // a human to inspect rather than risking a second concurrent writer.
+      }
+    }
   }
 
   const identityNote = {

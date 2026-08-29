@@ -4,7 +4,6 @@ import ContactCTA from "../components/sections/ContactCTA.astro";
 import Locations from "../components/sections/Locations.astro";
 import PageHero from "../components/sections/PageHero.astro";
 import ServicesGrid from "../components/sections/ServicesGrid.astro";
-import StatusRegister from "../components/sections/StatusRegister.astro";
 import { business, locations, services } from "../data";
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
@@ -20,26 +19,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     primaryAction={{ href: contactRoute, label: "Contactar" }}
     secondaryAction={{ href: routeFor("services"), label: "Ver servicios" }}
   />
-  <div class="register-wrap">
-    <StatusRegister />
-  </div>
   <ServicesGrid services={services.filter(({ featured }) => featured)} />
   <Locations locations={locations} />
   <ContactCTA />
 </BaseLayout>
-
-<style>
-  .register-wrap {
-    position: relative;
-    display: flex;
-    justify-content: flex-end;
-    width: min(100% - 2 * var(--page-gutter), var(--container-lg));
-    margin: calc(var(--space-10) * -1) auto var(--space-10);
-  }
-  @media (max-width: 47.99rem) {
-    .register-wrap {
-      justify-content: flex-start;
-      margin-block-start: calc(var(--space-8) * -1);
-    }
-  }
-</style>

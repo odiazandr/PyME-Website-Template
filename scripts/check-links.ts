@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, statSync } from "node:fs";
 import { dirname, isAbsolute, relative, resolve } from "node:path";
 import {
   ROOT,
@@ -37,10 +37,22 @@ export const extractReferences = (content: string): string[] => {
 
 type Resolution = { target: string | null; error: string | null };
 
-export const resolveReference = (value: string, source: string): Resolution => {
-  if (/^(?:[a-z]+:|#|\/\/)/i.test(value)) {
+export const resolveReference = (
+  value: string,
+  source: string,
+  distRoot = DIST_ROOT,
+): Resolution => {
+  if (value.startsWith("#")) {
     return { target: null, error: null };
   }
+  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(value)?.[1]?.toLowerCase();
+  if (scheme) {
+    if (["http", "https", "mailto", "tel"].includes(scheme))
+      return { target: null, error: null };
+    return { target: null, error: `uses forbidden ${scheme}: URL scheme` };
+  }
+  if (value.startsWith("//"))
+    return { target: null, error: "uses protocol-relative URL" };
   let clean: string;
   try {
     clean = decodeURIComponent(value.split(/[?#]/, 1)[0]).replaceAll("\\", "/");
@@ -50,14 +62,14 @@ export const resolveReference = (value: string, source: string): Resolution => {
   if (!clean) return { target: null, error: null };
 
   const base = value.startsWith("/")
-    ? resolve(DIST_ROOT, `.${clean}`)
+    ? resolve(distRoot, `.${clean}`)
     : resolve(dirname(source), clean);
   const target = clean.endsWith("/")
     ? resolve(base, "index.html")
-    : existsSync(base)
+    : existsSync(base) && statSync(base).isFile()
       ? base
       : resolve(base, "index.html");
-  const outside = relative(DIST_ROOT, target);
+  const outside = relative(distRoot, target);
   if (outside.startsWith("..") || isAbsolute(outside)) {
     return { target: null, error: "resolves outside dist/" };
   }
