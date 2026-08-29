@@ -4,6 +4,12 @@ All notable template changes will be recorded here.
 
 ## Unreleased
 
+- Made `src/config/navigation.ts` the canonical owner of the public route registry, deriving the sitemap filter, robots directive, form action, page links, required-artifact list and every route-aware test from it, so an adopted client repository can rename a route without failing its own required check and production build.
+- Stopped asserting adopter-owned configuration as invariants in the security suite.
+- Added a client production gate to CI that runs `quality:production` whenever memory mode is `project`, and gave the launch runbook literal commands.
+- Reported structured findings rather than tracebacks from every command that imports the canonical data barrel.
+- Widened the fabrication invariant to name address, contact and location facts, and recorded the outstanding dependency compatibility decisions with their CI evidence.
+- Executed the client lifecycle end to end for the first time: initializer, human content steps, and all fourteen steps of `quality:production`, re-runnable as an archived harness.
 - Implemented read-only GitHub quality and cross-browser workflows, structured contribution forms, review ownership, and monthly dependency maintenance configuration.
 - Verified deterministic CI and the complete Chromium/WebKit browser matrix on GitHub-hosted Ubuntu.
 - Established the Project 1 constitution and repository-native memory architecture.

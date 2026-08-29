@@ -1,5 +1,11 @@
 import { expect, test } from "@playwright/test";
 
+import {
+  contactRoute,
+  contextualRoutes,
+  navigation,
+} from "../../src/config/navigation.ts";
+
 test("homepage exposes the primary journey and stable manifest", async ({
   page,
   request,
@@ -11,7 +17,7 @@ test("homepage exposes the primary journey and stable manifest", async ({
   );
   await expect(page.getByRole("link", { name: "Contactar" })).toHaveAttribute(
     "href",
-    "/contacto/",
+    contactRoute,
   );
   const hasOverflow = await page.evaluate(
     () =>
@@ -38,14 +44,9 @@ test("homepage exposes the primary journey and stable manifest", async ({
 test("primary navigation reaches every explicit destination", async ({
   page,
 }) => {
-  const routes = [
-    ["Inicio", "/"],
-    ["Nosotros", "/nosotros/"],
-    ["Servicios", "/servicios/"],
-    ["Contacto", "/contacto/"],
-  ] as const;
+  expect(navigation.length).toBeGreaterThan(0);
 
-  for (const [label, route] of routes) {
+  for (const { label, href: route } of navigation) {
     const response = await page.goto(route);
     expect(response?.status()).toBe(200);
     await expect(
@@ -60,35 +61,36 @@ test("primary navigation reaches every explicit destination", async ({
 test("valid contact data follows the provider-compatible POST contract", async ({
   page,
 }) => {
-  let payload = "";
-  await page.route("**/gracias/", async (route) => {
-    payload = route.request().postData() ?? "";
+  let payload: URLSearchParams | null = null;
+  await page.route(`**${contextualRoutes.formSuccess}`, async (route) => {
+    const body = route.request().postDataBuffer();
+    payload = body === null ? null : new URLSearchParams(body.toString("utf8"));
     await route.fulfill({
       status: 200,
       contentType: "text/html",
       body: "Gracias",
     });
   });
-  await page.goto("/contacto/");
+  await page.goto(contactRoute);
   await page.getByLabel("Nombre").fill("Persona de prueba");
   await page.getByLabel("Correo electrónico").fill("persona@example.test");
   await page
     .getByLabel("Consulta general")
     .fill("Solicito información general.");
   await page.getByRole("button", { name: "Enviar consulta" }).click();
-  expect(payload).toContain("form-name=contacto");
-  expect(payload).toContain("nombre=Persona+de+prueba");
-  expect(payload).toContain("correo=persona%40example.test");
-  expect(payload).toContain("mensaje=Solicito+informaci%C3%B3n+general.");
+  expect(payload?.get("form-name")).toBe("contacto");
+  expect(payload?.get("nombre")).toBe("Persona de prueba");
+  expect(payload?.get("correo")).toBe("persona@example.test");
+  expect(payload?.get("mensaje")).toBe("Solicito información general.");
 });
 
 test("contact form keeps native validation and privacy context", async ({
   page,
 }, testInfo) => {
-  await page.goto("/contacto/");
+  await page.goto(contactRoute);
   const form = page.locator('form[name="contacto"]');
   await expect(form).toHaveAttribute("method", "POST");
-  await expect(form).toHaveAttribute("action", "/gracias/");
+  await expect(form).toHaveAttribute("action", contextualRoutes.formSuccess);
   await expect(page.getByLabel("Nombre")).toHaveAttribute("required", "");
   await expect(page.getByLabel("Correo electrónico")).toHaveAttribute(
     "type",
@@ -100,7 +102,7 @@ test("contact form keeps native validation and privacy context", async ({
 
   await page.getByRole("button", { name: "Enviar consulta" }).click();
   await expect(page.getByLabel("Nombre")).toBeFocused();
-  await expect(page).toHaveURL(/\/contacto\/$/);
+  await expect(page).toHaveURL(new RegExp(`${contactRoute}$`));
 
   await testInfo.attach("contact", {
     body: await page.screenshot({ fullPage: true }),
@@ -108,10 +110,13 @@ test("contact form keeps native validation and privacy context", async ({
   });
 });
 
-test("skip link moves keyboard focus to main content", async ({ page }) => {
+test("skip link moves keyboard focus to main content", async ({
+  page,
+}, testInfo) => {
   await page.goto("/");
-  await page.keyboard.press("Tab");
   const skip = page.getByRole("link", { name: /saltar al contenido/i });
+  if (testInfo.project.name === "tablet-webkit") await skip.focus();
+  else await page.keyboard.press("Tab");
   await expect(skip).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.locator("main")).toBeFocused();

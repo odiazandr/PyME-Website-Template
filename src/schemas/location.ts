@@ -3,7 +3,7 @@ import {
   E164PhoneSchema,
   IdentifierSchema,
   NonEmptyTextSchema,
-  NullableUrlSchema,
+  NullableHttpUrlSchema,
 } from "./common.ts";
 const DaySchema = z.enum([
   "monday",
@@ -48,7 +48,7 @@ export const LocationSchema = z.strictObject({
     .regex(/^\d{5}$/, "must be a five-digit Mexican postal code"),
   country: z.literal("MX"),
   phone: E164PhoneSchema.nullable(),
-  mapUrl: NullableUrlSchema,
+  mapUrl: NullableHttpUrlSchema,
   geo: z
     .strictObject({
       latitude: z.number().min(-90).max(90).nullable(),

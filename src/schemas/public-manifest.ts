@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CanonicalUrlSchema } from "./site.ts";
 
 export const PublicManifestSchema = z.strictObject({
   schemaVersion: z.literal(1),
@@ -6,7 +7,7 @@ export const PublicManifestSchema = z.strictObject({
   templateVersion: z
     .string()
     .regex(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/),
-  canonicalUrl: z.url().refine((value) => value.startsWith("https://")),
+  canonicalUrl: CanonicalUrlSchema,
 });
 
 export type PublicManifest = z.infer<typeof PublicManifestSchema>;

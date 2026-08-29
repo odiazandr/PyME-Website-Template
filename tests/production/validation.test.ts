@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import {
@@ -112,6 +115,12 @@ test("public text scanner detects each forbidden sentinel independently", () => 
   assert.deepEqual(scanPublicText("@@PYME_UNRESOLVED:NAME@@"), [
     "UNRESOLVED_MARKER_LEAK",
   ]);
+  assert.deepEqual(scanPublicText("Publicación: No autorizada"), [
+    "REFERENCE_STATE_LEAK",
+  ]);
+  assert.deepEqual(scanPublicText('href="javascript:alert(1)"'), [
+    "UNSAFE_URL_SCHEME_LEAK",
+  ]);
 });
 
 test("link extraction covers forms, single quotes, srcset, and CSS URLs", () => {
@@ -138,6 +147,29 @@ test("link resolution rejects traversal and malformed encoding", () => {
     /outside/,
   );
   assert.match(resolveReference("/bad%ZZ", source).error ?? "", /malformed/);
+  assert.match(
+    resolveReference("javascript:alert(1)", source).error ?? "",
+    /forbidden javascript/,
+  );
+});
+
+test("link resolution requires an index artifact for a directory", () => {
+  const directory = mkdtempSync(join(tmpdir(), "pyme-links-"));
+  const source = join(directory, "index.html");
+  const target = join(directory, "directory-target");
+  try {
+    writeFileSync(source, "<a href='/directory-target'>Target</a>", "utf8");
+    mkdirSync(target);
+    writeFileSync(join(target, "placeholder.txt"), "not an artifact", "utf8");
+    const missing = resolveReference("/directory-target", source, directory);
+    assert.equal(missing.target, join(target, "index.html"));
+
+    writeFileSync(join(target, "index.html"), "ok", "utf8");
+    const resolved = resolveReference("/directory-target", source, directory);
+    assert.equal(resolved.target, join(target, "index.html"));
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 // --- content contract mutation resistance ---------------------------------

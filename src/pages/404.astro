@@ -1,4 +1,5 @@
 ---
+import { contactRoute } from "../config/navigation.ts";
 import PageHero from "../components/sections/PageHero.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
@@ -12,6 +13,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     title="Página no encontrada"
     description="La dirección puede estar incompleta o la página pudo cambiar."
     primaryAction={{ href: "/", label: "Ir al inicio" }}
-    secondaryAction={{ href: "/contacto/", label: "Contactar" }}
+    secondaryAction={{ href: contactRoute, label: "Contactar" }}
   />
 </BaseLayout>

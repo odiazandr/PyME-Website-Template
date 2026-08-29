@@ -1,0 +1,54 @@
+{
+  "algorithm": "SHA-256",
+  "source_disposition": "Copied from local disposable harness output, validated, then source temp files removed",
+  "files": [
+    {
+      "name": "lifecycle-results.json",
+      "sha256": "57FF8AB697B09F5E81AA97AF39C3489640559F102E98535F6269E4721772639B",
+      "records": 14,
+      "record_type": "ordered production lifecycle steps"
+    },
+    {
+      "name": "fuzz-init-results.json",
+      "sha256": "DD210C8F9FB4A88CD6F1FEDEF98E6C782909CAE71F4F196A987DDD4075E2D455",
+      "records": 32,
+      "record_type": "initializer fuzz cases"
+    },
+    {
+      "name": "montecarlo-results.json",
+      "sha256": "0FCC1B2D6FE29E0434F31C24DD17D359012EE46E7D1438E6B9DF22D67B7E591D",
+      "records": 64,
+      "record_type": "general scenario rows"
+    },
+    {
+      "name": "montecarlo-results.csv",
+      "sha256": "C0B94402C71BCBE88F1211C5DF1319F691E1C160DFF0BE2B1026240A2368942A",
+      "records": 64,
+      "record_type": "general scenario rows"
+    },
+    {
+      "name": "montecarlo-results-conditioned.json",
+      "sha256": "91A0176D7A761A7BCBC681C8F7ED83BC166DE8831C4C9B2F330FC99586A33C0F",
+      "records": 32,
+      "record_type": "conditioned scenario rows"
+    },
+    {
+      "name": "montecarlo-results-conditioned.csv",
+      "sha256": "67CF34D443112C306745389B8EFC2D15EC36FE7CB537032E1E29BE31AB6C6D85",
+      "records": 32,
+      "record_type": "conditioned scenario rows"
+    },
+    {
+      "name": "differential-content.json",
+      "sha256": "1466ED91038EB30F1C312AB2548AD8DB799333EC8D2783FBCAE1CB977C1CA820",
+      "records": 32,
+      "record_type": "differential-oracle scenario rows"
+    },
+    {
+      "name": "differential-content.csv",
+      "sha256": "8942A2BA34F40E7961071CDE9E29D910A0BF7194A6913A537A4813A677E574C8",
+      "records": 32,
+      "record_type": "differential-oracle scenario rows"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "campaign": "adversarial-validation-2026-08-27",
+  "campaign_number": 4,
+  "head_at_start": "394cf857bed180bb33672ad84a7657fb26ec6ec7",
+  "head_at_end": "394cf857bed180bb33672ad84a7657fb26ec6ec7",
+  "working_tree_at_start": "clean",
+  "working_tree_at_end": "clean",
+  "scoping_note": "HEAD was itself the campaign-3 archive commit, so the source delta since the previous campaign was empty. Effort was redirected from re-running prior attacks to exercising claims that had never been executed end to end, plus live operational state.",
+  "budget": {
+    "proposed_cheap_agent_invocations": 24,
+    "actual_cheap_agent_invocations": 4,
+    "proposed_max_concurrent": 4,
+    "actual_max_concurrent": 2,
+    "agent_class_used": "haiku (cheapest available; claude-haiku-4-5 class)",
+    "premium_agent_invocations": 0,
+    "proposed_waves": 6,
+    "actual_waves": 5,
+    "retries": 0,
+    "agent_failures": 0
+  },
+  "deterministic_effort": {
+    "approximate_tool_runs": 46,
+    "disposable_sandboxes": 8,
+    "sandbox_names": ["sb-lifecycle", "sb-netlify", "sb-crash", "sb-regress", "sb-fuzz", "sb-diff", "sb-rename", "plus two harness-created pristine copies"],
+    "scenarios_sampled": 80,
+    "scenario_seed": 20260827,
+    "fuzz_cases": 32,
+    "prior_campaign_mutations_replayed": 13,
+    "live_api_queries": 12
+  },
+  "agent_invocations": [
+    {
+      "id": 1,
+      "label": "deploy path interpretation",
+      "class": "haiku",
+      "context_given": "four files only: netlify.toml, package.json, docs/spec/deployment.md, docs/spec/website-validation.md",
+      "outcome": "independently identified that Netlify runs the development gate and that the two specifications disagree about what gates production",
+      "claims_verified": true,
+      "files_modified": "none"
+    },
+    {
+      "id": 2,
+      "label": "operator launch interpretation",
+      "class": "haiku",
+      "context_given": "four files only: create-client-site.md, launch.md, README.md, CONTRIBUTING.md",
+      "outcome": "could not produce the production-gate command; rated own confidence of not publishing sample data at 6.5/10",
+      "claims_verified": true,
+      "files_modified": "none"
+    },
+    {
+      "id": 3,
+      "label": "cold agent adds a location",
+      "class": "haiku",
+      "context_given": "full repository, routed from AGENTS.md",
+      "outcome": "derived the correct E.164 phone format from the schema (invalidating a campaign hypothesis) but invented a postal code that had not been supplied",
+      "claims_verified": true,
+      "files_modified": "ISOLATION BREACH - see incidents",
+      "incident": true
+    },
+    {
+      "id": 4,
+      "label": "test suite skepticism pass",
+      "class": "haiku",
+      "agent_type": "Explore (no Write or Edit tools)",
+      "context_given": "tests/ and package.json, read-only",
+      "outcome": "surfaced the defaults-pinned-as-invariants class; every quoted claim was verified against source and the consequence was then measured independently",
+      "claims_verified": true,
+      "files_modified": "none"
+    }
+  ],
+  "incidents": [
+    {
+      "id": "INC-1",
+      "type": "isolation breach",
+      "severity": "contained, no loss",
+      "what_happened": "Agent 3 was given a disposable sandbox path and an explicit instruction not to touch anything outside it, but its working directory was the canonical repository. It resolved relative paths against the canonical repository and appended a location record to src/data/locations.json there.",
+      "detected_by": "the agent's own report cited the canonical path; repository integrity was checked immediately",
+      "impact": "one tracked file modified in the working tree; no commit, no push, no staged change, no loss of user work - the pre-campaign snapshot was clean",
+      "remediation": "git checkout -- src/data/locations.json; tree verified byte-identical to HEAD; memory contracts, data validation and security tests re-run green",
+      "policy_change": "all subsequent agents were given read-only analysis tasks, and the final one used an agent type that has no Write or Edit tools rather than relying on instruction alone",
+      "root_cause_for_future_campaigns": "Subagents inherit the session working directory. A sandbox path in the prompt does not change it. Future file-touching delegation must either pass an agent type without write tools or verify the agent's cwd before it acts."
+    },
+    {
+      "id": "INC-2",
+      "type": "environment condition",
+      "severity": "none",
+      "what_happened": "Windows Application Control blocked node_modules/@bruits/satteri-win32-x64-msvc/satteri_napi.win32-x64-msvc.node, failing every local build for roughly the first two thirds of the campaign.",
+      "impact": "build-dependent gates were deferred, not skipped",
+      "resolution": "the block released on its own during the session, exactly as the recorded prior observation predicted. Every deferred gate was then executed. GitHub Actions on the same SHA was green throughout.",
+      "recorded_as": "environment condition, never as a repository defect"
+    }
+  ],
+  "waves": [
+    {"wave": 0, "name": "baseline and oracle", "result": "canonical repository green on every gate not requiring a build; memory contracts PASSED; validate:production correctly rejects the uninitialized template as specified"},
+    {"wave": 1, "name": "independent interpretation", "result": "two context-limited agents converged independently on the deploy-gate divergence"},
+    {"wave": 2, "name": "lifecycle", "result": "C4-P01 full 14-step production gate passes on an initialized client for the first time"},
+    {"wave": 3, "name": "structural and behavioural attacks", "result": "C4-001 confirmed by measurement; C4-002 confirmed; C4-003 minimal reproduction; C4-004 observed"},
+    {"wave": 4, "name": "regression replay and differential", "result": "13/13 prior mutations closed; 32 fuzz cases clean; 80/80 differential agreement at a new seed"},
+    {"wave": 5, "name": "synthesis and falsification", "result": "five claims invalidated, three of them this campaign's own hypotheses"}
+  ],
+  "stop_condition_triggered": "Remaining untested hypotheses require an authenticated Netlify context, a registered domain, an admin GitHub token, a real push, or a human accessibility reviewer. None are available in this session, and none can be substituted for.",
+  "prior_campaign_regression": {
+    "C1_memory_mutations": "13/13 still closed",
+    "C2_initializer_fuzz": "32 cases, 0 crashes, 0 wrong acceptances",
+    "C3_001_ruleset_drift": "remediation verified - live ruleset 21533770 matches every field the committed file declares",
+    "C3_002_stale_deployment_snapshot": "remediation verified - deployment.md now states durable rules and directs the reader to verify live",
+    "C3_content_differential": "reproduced at a new seed: 80/80 agreement, 0 crashes"
+  }
+}

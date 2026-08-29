@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "site": {
+    "canonicalUrl": "https://tallernopal.mx"
+  },
+  "business": {
+    "schemaVersion": 1,
+    "publicName": "Taller Nopal",
+    "legalName": "Taller Nopal S.A. de C.V.",
+    "description": "Carpintería local especializada en muebles a medida.",
+    "primaryPhone": {
+      "display": "+52 222 123 4567",
+      "e164": "+522221234567"
+    },
+    "email": "hola@tallernopal.mx",
+    "whatsapp": {
+      "enabled": false,
+      "number": null
+    }
+  }
+}

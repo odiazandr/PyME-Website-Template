@@ -2,13 +2,13 @@ import { z } from "zod";
 import {
   IdentifierSchema,
   NonEmptyTextSchema,
-  NullableUrlSchema,
+  NullableHttpUrlSchema,
 } from "./common.ts";
 export const TestimonialSchema = z.strictObject({
   id: IdentifierSchema,
   quote: NonEmptyTextSchema,
   displayName: NonEmptyTextSchema,
-  sourceUrl: NullableUrlSchema,
+  sourceUrl: NullableHttpUrlSchema,
   approvedForPublication: z.literal(true),
 });
 export const TestimonialsSchema = z

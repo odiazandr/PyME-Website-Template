@@ -1,0 +1,14 @@
+component,build_install,runtime_inputs,state_integrity,documentation_interpretation,ai_agent_behavior,security_misuse,testing_system,operations_recovery,notes
+memory_and_knowledge_contracts,TP,TP,TP,TF,TP,PT,TP,PT,"Negative contract mutations passed; limited-context agents can still miss routing and recovery ownership"
+node_dependency_toolchain,TP,PT,NA,TP,PT,TP,TP,PT,"Offline locked install and online/offline audit passed on Windows Node 24; other supported hosts and upgrade/downgrade paths not tested"
+client_initializer,TP,TP,TF,PT,PT,PT,TF,PT,"32-case fuzz oracle passed; partial write failed atomicity; accepted concurrent race rediscovered"
+business_data_and_schemas,TP,TF,TF,PT,PT,TF,TF,PT,"Unsafe URL scheme accepted/emitted; content differential oracle agreed 32/32"
+astro_pages_and_components,TP,TF,NA,TF,PT,TF,TF,PT,"Approved production artifact retained reference/not-authorized copy; CSP mitigates tested script URL"
+production_gate_orchestration,TP,TF,PT,TF,PT,TF,TF,TF,"Fourteen steps passed bad public copy and unsafe URL; no-op owner-script mutation escaped tests"
+artifact_and_link_validation,TP,TF,NA,PT,PT,PT,TF,PT,"Directory without index was accepted; ordinary route/artifact baseline passed"
+browser_navigation_accessibility,TP,PT,NA,TF,PT,PT,TF,PT,"Chromium 39/39; Windows WebKit launch works but current form/skip oracles are not reliable"
+netlify_form_boundary,TP,TP,PT,PT,PT,PT,TF,NT,"Trace proves local POST bytes; provider-side capture and live deployment were not tested"
+ci_ruleset_and_deployment_config,TP,PT,NA,TP,PT,PT,TF,PT,"Read-only ruleset drift check passed; project-mode CI production job exists; no external deployment"
+secret_and_supply_chain_controls,TP,NA,NA,TP,PT,TF,TF,PT,"npm audits and scoped signature scans passed; configured secret scan is NOT_CONFIGURED"
+runbooks_incident_rollback_handoff,NA,NT,NT,TF,TF,PT,NT,PT,"Independent operators found principle-level guidance but not executable provider-specific recovery evidence"
+

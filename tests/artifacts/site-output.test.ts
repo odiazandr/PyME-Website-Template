@@ -2,11 +2,17 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
+import { contextualRoutes, navigation } from "../../src/config/navigation.ts";
 import { site } from "../../src/config/site.ts";
 import { templateMetadata } from "../../src/data/index.ts";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const read = (path: string) => readFileSync(`${root}dist/${path}`, "utf8");
+
+// Routes are adopter-owned; the artifact path they produce is not. Derive one
+// from the other rather than repeating the reference site's slugs here.
+const artifactFor = (href: string) =>
+  href === "/" ? "index.html" : `${href.slice(1, -1)}/index.html`;
 const escapedCanonical = site.canonicalUrl.replace(
   /[.*+?^${}()|[\]\\]/g,
   "\\$&",
@@ -61,30 +67,46 @@ test("immutable Astro assets use content-hashed filenames", () => {
   }
 });
 
-test("non-indexable utility pages declare noindex", () => {
+test("every contextual route and the 404 page declare noindex", () => {
+  const routes = Object.values(contextualRoutes);
+  assert.ok(routes.length > 0, "contextual routes must not be empty");
   assert.match(read("404.html"), /content="noindex, nofollow"/);
-  assert.match(read("gracias/index.html"), /content="noindex, nofollow"/);
-  assert.match(
-    read("aviso-de-privacidad/index.html"),
-    /content="noindex, nofollow"/,
-  );
+  for (const href of routes) {
+    assert.match(
+      read(artifactFor(href)),
+      /content="noindex, nofollow"/,
+      `${href} must not be indexable`,
+    );
+  }
 });
 
-test("contact output contains the progressive Netlify form contract", () => {
-  const html = read("contacto/index.html");
+test("the progressive Netlify form contract holds wherever the form lives", () => {
+  // Locate the form by its Netlify marker rather than by a route literal, so an
+  // adopter may host it on any page.
+  const hosts = findHtml(`${root}dist`).filter((page) =>
+    readFileSync(page, "utf8").includes('data-netlify="true"'),
+  );
+  assert.equal(hosts.length, 1, "expected exactly one Netlify form page");
+  const html = readFileSync(hosts[0], "utf8");
+
+  const name = html.match(/<form name="([^"]+)"/)?.[1];
+  assert.ok(name, "the form must declare a name");
+  assert.match(html, /<form [^>]*method="POST"/);
+  // The hidden field is what Netlify reads; it must agree with the form name.
+  assert.match(html, new RegExp(`name="form-name" value="${name}"`));
   assert.match(
     html,
-    /<form name="contacto" method="POST" action="\/gracias\/" data-netlify="true"/,
+    new RegExp(`<form [^>]*action="${contextualRoutes.formSuccess}"`),
+    "the form must post to the registered success route",
   );
-  assert.match(html, /name="form-name" value="contacto"/);
   assert.match(html, /netlify-honeypot="bot-field"/);
-  assert.match(html, /href="\/aviso-de-privacidad\/"/);
+  assert.match(html, new RegExp(`href="${contextualRoutes.privacy}"`));
 });
 
-test("robots and sitemap expose only intended public routes", () => {
+test("robots and sitemap expose exactly the primary navigation routes", () => {
   const robots = read("robots.txt");
   const sitemap = read("sitemap-0.xml");
-  assert.match(robots, /Disallow: \/gracias\//);
+  assert.match(robots, new RegExp(`Disallow: ${contextualRoutes.formSuccess}`));
   assert.match(
     robots,
     new RegExp(`Sitemap: ${escapedCanonical}/sitemap-index\\.xml`),
@@ -92,11 +114,10 @@ test("robots and sitemap expose only intended public routes", () => {
   const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
     (match) => match[1],
   );
+  assert.ok(navigation.length > 0, "navigation must not be empty");
   assert.deepEqual(
     locations.sort(),
-    ["/", "/contacto/", "/nosotros/", "/servicios/"]
-      .map((path) => `${site.canonicalUrl}${path}`)
-      .sort(),
+    navigation.map(({ href }) => `${site.canonicalUrl}${href}`).sort(),
   );
 });
 

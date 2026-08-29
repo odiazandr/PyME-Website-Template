@@ -1,12 +1,20 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFileSync, writeFileSync, mkdtempSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import {
   formatSource,
+  acquireInitializationLock,
   parseArguments,
   parseInput,
   planInitialization,
@@ -16,6 +24,7 @@ import {
   setProjectMode,
   type InitContext,
 } from "../../scripts/init-client.ts";
+import { commitFileTransaction } from "../../scripts/lib/file-transaction.ts";
 import { business } from "../../src/data/index.ts";
 import { site } from "../../src/config/site.ts";
 
@@ -300,6 +309,98 @@ test("a dry run reports the plan and leaves the repository unchanged", () => {
     ),
     before,
   );
+});
+
+test("a staged write failure leaves every initializer owner unchanged", () => {
+  const directory = mkdtempSync(join(tmpdir(), "pyme-init-transaction-"));
+  const paths = ["site.ts", "business.json", "memory.toml"].map((name) =>
+    join(directory, name),
+  );
+  const before = ["site", "business", "memory"];
+  try {
+    paths.forEach((path, index) => writeFileSync(path, before[index], "utf8"));
+    assert.throws(
+      () =>
+        commitFileTransaction(
+          paths.map((path, index) => ({
+            path,
+            contents: `${before[index]}-updated`,
+          })),
+          {
+            exists: existsSync,
+            write: (path, contents) => {
+              if (path.includes("memory.toml.pyme-init-test.tmp"))
+                throw new Error("injected final staging failure");
+              writeFileSync(path, contents, "utf8");
+            },
+            rename: renameSync,
+            remove: (path) => rmSync(path, { force: true }),
+          },
+          "test",
+        ),
+      /injected final staging failure/,
+    );
+    assert.deepEqual(
+      paths.map((path) => readFileSync(path, "utf8")),
+      before,
+    );
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("a commit rename failure restores every initializer owner", () => {
+  const directory = mkdtempSync(join(tmpdir(), "pyme-init-transaction-"));
+  const paths = ["site.ts", "business.json", "memory.toml"].map((name) =>
+    join(directory, name),
+  );
+  const before = ["site", "business", "memory"];
+  try {
+    paths.forEach((path, index) => writeFileSync(path, before[index], "utf8"));
+    assert.throws(
+      () =>
+        commitFileTransaction(
+          paths.map((path, index) => ({
+            path,
+            contents: `${before[index]}-updated`,
+          })),
+          {
+            exists: existsSync,
+            write: writeFileSync,
+            rename: (from, to) => {
+              if (from.includes("memory.toml.pyme-init-test.tmp"))
+                throw new Error("injected final commit failure");
+              renameSync(from, to);
+            },
+            remove: (path) => rmSync(path, { force: true }),
+          },
+          "test",
+        ),
+      /injected final commit failure/,
+    );
+    assert.deepEqual(
+      paths.map((path) => readFileSync(path, "utf8")),
+      before,
+    );
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("the initialization lock admits one ordinary writer at a time", () => {
+  const directory = mkdtempSync(join(tmpdir(), "pyme-init-lock-"));
+  const path = join(directory, ".pyme-init.lock");
+  try {
+    const release = acquireInitializationLock(path);
+    assert.ok(release);
+    assert.equal(acquireInitializationLock(path), null);
+    release();
+    const secondRelease = acquireInitializationLock(path);
+    assert.ok(secondRelease);
+    secondRelease();
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 // --- site identity stability ----------------------------------------------

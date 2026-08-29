@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { HttpUrlSchema } from "./common.ts";
 export const SocialAccountSchema = z.strictObject({
   platform: z.enum([
     "facebook",
@@ -8,7 +9,7 @@ export const SocialAccountSchema = z.strictObject({
     "youtube",
     "x",
   ]),
-  url: z.url(),
+  url: HttpUrlSchema,
 });
 export const SocialAccountsSchema = z
   .array(SocialAccountSchema)

@@ -1,4 +1,5 @@
 ---
+import { contactRoute } from "../../config/navigation.ts";
 import { business } from "../../data";
 import ButtonLink from "../ui/ButtonLink.astro";
 import Container from "../ui/Container.astro";
@@ -10,15 +11,12 @@ import Section from "../ui/Section.astro";
     <div class="contact-grid">
       <h2>Hablemos</h2>
       <div class="u-flow">
-        <p>
-          Utiliza información de contacto verificada antes de publicar este
-          sitio.
-        </p>
+        <p>Elige el medio que prefieras para ponerte en contacto.</p>
         <div class="u-cluster">
           <ButtonLink href={`tel:${business.primaryPhone.e164}`}
             >Llamar</ButtonLink
           >
-          <ButtonLink href="/contacto/" variant="secondary"
+          <ButtonLink href={contactRoute} variant="secondary"
             >Ver contacto</ButtonLink
           >
         </div>

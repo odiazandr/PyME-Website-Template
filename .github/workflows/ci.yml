@@ -33,3 +33,31 @@ jobs:
         run: npm run quality
       - name: Run remaining deterministic contract tests
         run: npm run test:memory && npm run test:data && npm run test:site && npm run test:production
+
+  production:
+    name: Client production gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Set up Node.js 24
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      # The strict gate applies to an adopted client repository, not to the
+      # distribution template, which intentionally fails it. Branching here
+      # rather than in the deploy command keeps template previews building
+      # while giving client repositories automated enforcement.
+      - name: Run the production gate when the repository is in project mode
+        run: |
+          mode=$(python -c "import tomllib;print(tomllib.load(open('memory.toml','rb'))['mode'])")
+          echo "memory mode: $mode"
+          if [ "$mode" = "project" ]; then
+            npm run quality:production
+          else
+            echo "Distribution template: the client production gate does not apply."
+          fi

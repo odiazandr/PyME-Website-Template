@@ -1,5 +1,6 @@
 import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
+import { contextualRoutes } from "./src/config/navigation.ts";
 import { site } from "./src/config/site.ts";
 
 export default defineConfig({
@@ -27,7 +28,9 @@ export default defineConfig({
     sitemap({
       filter: (page) => {
         const pathname = new URL(page).pathname;
-        return !["/gracias/", "/aviso-de-privacidad/"].includes(pathname);
+        return !Object.values(contextualRoutes).includes(
+          pathname as (typeof contextualRoutes)[keyof typeof contextualRoutes],
+        );
       },
     }),
   ],

@@ -1,0 +1,188 @@
+{
+  "campaign": "adversarial-validation-2026-08-27",
+  "campaign_number": 4,
+  "repository": "PyME Website Foundation",
+  "head": "394cf857bed180bb33672ad84a7657fb26ec6ec7",
+  "source_delta_since_campaign_3": "none - HEAD is itself the campaign-3 archive commit",
+  "headline_positive_result": {
+    "id": "C4-P01",
+    "title": "The full client lifecycle passes end to end for the first time",
+    "detail": "project-state.json records lifecycleTest as 'planned'. This campaign executed it: template -> npm run init:client -> human content steps -> all 14 steps of npm run quality:production. Every step passed.",
+    "evidence": "sandbox sb-lifecycle, client 'Taller Nopal' at https://tallernopal.mx. memory contracts PASSED; format:check clean; astro check 57 files 0 errors 0 warnings 0 hints; validate:data PASSED; test:security 8/8; validate:project PASSED; validate:production PASSED; check:placeholders PASSED; check:assets PASSED; astro build 7 pages in 1.24s; test:artifacts:built 7/7; verify:dist PASSED; check:links PASSED; check:public-output PASSED.",
+    "significance": "The template's central product claim - that quality:production rejects the uninitialized template but passes for a properly initialized client - is now verified rather than asserted."
+  },
+  "findings": [
+    {
+      "id": "C4-001",
+      "title": "Template defaults are pinned as invariants by literal assertions, so a documented client customization breaks both CI and the production build",
+      "category": "testing-system / template adoption",
+      "severity": "high",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "preconditions": "A client repository adopted from this template performs a customization the specifications explicitly sanction, such as changing a route slug.",
+      "root_cause": "Several tests assert literal values that are per-client configuration rather than structural rules. The repository already contains the correct structural test - docs/spec/routing.md notes that a deterministic contract test verifies every configured navigation destination has an explicit page - but redundant hardcoded literal lists sit alongside it and are the ones that break.",
+      "measured_evidence": [
+        "EXPERIMENT, sandbox sb-rename: renamed src/pages/nosotros.astro to acerca-de.astro and updated src/config/navigation.ts, which docs/spec/routing.md calls 'the single owner of primary navigation'. docs/spec/routing.md sanctions this: 'URLs use stable, readable, locale-appropriate slugs.'",
+        "RESULT: astro check 0 errors. astro build succeeded, 7 pages. The site is correct.",
+        "RESULT: node --test tests/site/routes.test.ts -> FAIL, AssertionError: 'missing nosotros.astro'",
+        "RESULT: node --test tests/artifacts/site-output.test.ts -> FAIL, deepStrictEqual mismatch on the sitemap route list",
+        "EXPERIMENT, sandbox sb-netlify: changed netlify.toml build command to 'npm run quality:production' -> python -m unittest discover -s tests/security -> FAILED (failures=1), AssertionError: 'npm run quality:production' != 'npm run quality'"
+      ],
+      "symptom_sites": [
+        "tests/site/routes.test.ts:35-50 - hardcoded list of seven Spanish page filenames (MEASURED failing)",
+        "tests/artifacts/site-output.test.ts:84-101 - assert.deepEqual on a hardcoded four-route sitemap list (MEASURED failing)",
+        "tests/security/test_netlify_config.py:16 - assertEqual pinning the literal build command (MEASURED failing)",
+        "tests/artifacts/site-output.test.ts:64-71 - hardcoded noindex page paths (verified by reading, not separately measured)",
+        "tests/artifacts/site-output.test.ts:73-82 - hardcoded form name, action, and privacy href (verified by reading)",
+        "tests/security/test_github_workflows.py:25 - assertEqual on the exact set of workflow filenames (verified by reading)"
+      ],
+      "failure_scenario": "A client renames a route slug to suit their language or brand and updates the navigation config exactly as routing.md instructs. Their site builds correctly and type-checks clean. But test:artifacts is part of npm run quality, and npm run quality is BOTH the required CI check 'Quality and contracts' AND the netlify.toml build command. So the active default-branch ruleset blocks their merge, and their Netlify production build fails outright. A correct, documented customization prevents the site from deploying at all.",
+      "mitigating_context": "The workaround - editing the inherited tests - is easy for anyone who diagnoses it. But docs/runbooks/adopt-template.md's six steps never mention adapting tests, and neither does add-page.md or create-client-site.md, so a client following the documented procedure gets a red build with no guidance pointing at the cause.",
+      "affected": [
+        "tests/site/routes.test.ts",
+        "tests/artifacts/site-output.test.ts",
+        "tests/security/test_netlify_config.py",
+        "tests/security/test_github_workflows.py",
+        "docs/runbooks/adopt-template.md"
+      ],
+      "remediation": "Derive the route and page expectations from src/config/navigation.ts and the actual src/pages/ contents rather than from literal lists, so the tests assert the structural rule ('every navigation destination resolves', 'every public route appears in the sitemap', 'every non-indexable route declares noindex') instead of the template's specific slugs. Where a literal genuinely must be pinned for the distribution template, gate it on memory.toml mode == 'template'. Add a step to adopt-template.md telling adopters which tests encode reference-site specifics.",
+      "proposed_regression_test": "In a sandbox, rename one route and update navigation.ts; assert that the full quality gate still passes. That test fails today and would pass after the fix.",
+      "notes": "This is one root cause with several symptom sites, recorded as one finding rather than six."
+    },
+    {
+      "id": "C4-002",
+      "title": "The strict production gate runs on no automated path; the production deploy uses the development gate",
+      "category": "configuration / deployment contract",
+      "severity": "medium",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "preconditions": "A client repository deployed through the documented GitHub-to-Netlify flow.",
+      "root_cause": "netlify.toml's build command and quality:production were specified independently. No workflow, script, or hook invokes quality:production anywhere in the repository.",
+      "evidence": [
+        "netlify.toml line 2: command = \"npm run quality\"",
+        ".github/workflows/ci.yml runs 'npm run quality' plus test:memory, test:data, test:site, test:production - never quality:production",
+        "Repository-wide grep: quality:production appears only in package.json, prose documentation, and audit archives. No automation invokes it.",
+        "docs/spec/website-validation.md: 'Passing the development gate must never be interpreted as production approval.'",
+        "docs/spec/deployment.md describes the intended flow as ending in a 'production-quality build'",
+        "docs/runbooks/launch.md names 'build and output validation' among seventeen items but supplies no command for any of them"
+      ],
+      "failure_scenario": "Every production deploy is gated only by the development gate, which campaign 2 demonstrated permits a placeholder street address to reach schema.org PostalAddress structured data. The only barrier is a person remembering to run a command that the launch runbook never names.",
+      "independent_corroboration": [
+        "A context-limited agent given only netlify.toml, package.json, deployment.md and website-validation.md answered 'No' to whether the repository automatically verifies the absence of leftover sample facts at go-live, and identified the same contradiction between the two specifications.",
+        "A separate context-limited agent given only the operator-path runbooks could not produce the command 'npm run quality:production' at all, and rated its own confidence of not publishing leftover sample data at 6.5/10."
+      ],
+      "mitigating_context": "The control is not absent, only unautomated: create-client-site.md ends by directing the reader to 'previews and the production gate owned by docs/spec/website-validation.md'. The stronger form of this hypothesis - that no documentation routes an operator to the gate - was tested and falsified.",
+      "affected": ["netlify.toml", ".github/workflows/ci.yml", "docs/runbooks/launch.md"],
+      "remediation": "Add a CI job that runs quality:production when memory.toml mode is 'project', so adopted client repositories get automated enforcement while the distribution template still builds previews. Name the literal command in launch.md rather than pointing at a specification.",
+      "proposed_regression_test": "With memory.toml mode set to 'project', assert that at least one automated path invokes quality:production."
+    },
+    {
+      "id": "C4-003",
+      "title": "Validators exposed for diagnosis crash with a raw traceback instead of a structured finding",
+      "category": "runtime / error handling",
+      "severity": "low",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "preconditions": "Any file under src/data/ violates its Zod schema and the operator runs one of the individual diagnostic commands directly.",
+      "root_cause": "src/data/index.ts calls Schema.parse() at module top level (lines 18-25), so every static importer inherits an uncaught ZodError at import time. scripts/validate-data.ts is the only script that wraps the import in try/catch and formats ZodError.",
+      "minimal_reproduction": "In sandbox sb-crash, set src/data/services.json[0].featured to the string \"yes\" (the schema requires boolean), then run each command.",
+      "evidence": [
+        "node scripts/validate-data.ts -> exit 1, 2 lines, 0 stack frames: 'DATA VALIDATION: FAILED' / '- 0.featured: Invalid input: expected boolean, received string'",
+        "node scripts/validate-project.ts -> exit 1, 21 lines of raw Node traceback, 3 stack frames, pointing at src/data/index.ts:21",
+        "node scripts/validate-production.ts -> exit 1, 21 lines of raw Node traceback, 3 stack frames",
+        "grep -c ZodError: validate-data.ts=2, validate-project.ts=0, validate-production.ts=0",
+        "scripts statically importing src/data/index.ts: init-client.ts, validate-production.ts, validate-project.ts, verify-dist.ts"
+      ],
+      "contract_violated": "docs/spec/website-validation.md: 'The individual commands are exposed for diagnosis'. docs/spec/validation.md states the design principle that invalid types 'produce structured validation failures rather than tracebacks'.",
+      "ordering_note": "Not reachable through quality:production itself, because quality:static runs validate:data first and stops with the clean message. Reachable only through the documented individual-command path, which is why this is low rather than medium.",
+      "affected": ["src/data/index.ts", "scripts/validate-project.ts", "scripts/validate-production.ts", "scripts/init-client.ts", "scripts/verify-dist.ts"],
+      "remediation": "Move validate-data.ts's dynamic-import-inside-try/catch plus ZodError formatting into scripts/lib/validation.ts and share it across the four importers.",
+      "proposed_regression_test": "Corrupt one field type in one src/data file, run each diagnostic command, and assert stderr contains no 'at ModuleJob' frame while stdout carries a structured 'path: message' line."
+    },
+    {
+      "id": "C4-004",
+      "title": "A cold agent invented a postal code; campaign 3 recorded the opposite behaviour as assurance",
+      "category": "AI-agent failure mode / specification gap",
+      "severity": "low",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "preconditions": "An agent is given a location task whose supplied facts omit the postal code, with a sibling location record available to pattern-match against.",
+      "root_cause": "PROJECT.md invariant 4 enumerates a closed list of things that must never be invented - awards, certifications, testimonials, experience, prices, guarantees, credentials, availability, statistics - which omits address and location facts. An agent honouring every enumerated category can still infer a postal code without violating the letter of the invariant.",
+      "evidence": [
+        "OBSERVED: a cheapest-class agent routed through AGENTS.md -> PROJECT.md -> docs/INDEX.md -> docs/runbooks/add-location.md wrote postalCode '72800' for San Andres Cholula, a value never supplied to it",
+        "The agent disclosed the inference and set approvedForPublication=false",
+        "Campaign 3 REPORT.md records as a headline behavioural result that a cold agent 'refused to invent a postal code it had not been given'",
+        "MEASURED, sandbox sb-lifecycle: a fabricated-but-plausible postal code with approvedForPublication=true passes validate:data, validate:project, validate:production and check:placeholders, all exit 0"
+      ],
+      "failure_scenario": "An agent pre-fills a location record with a plausible invented postal code and flags it for review. add-location.md asks a person to confirm the address and hours. Recognition review of a pre-filled plausible value is materially weaker than supplying it from scratch, and the value reaches schema.org PostalAddress if the flag is flipped.",
+      "mitigating_context": "The designed control held: the agent set approvedForPublication=false and disclosed the inference, and add-location.md does list postal code among the values to verify. docs/spec/website-validation.md explicitly states that automated validation 'deliberately does not pretend it can determine whether business claims are true', so the gate's inability to catch this is a documented and accepted limitation rather than a defect.",
+      "primary_value": "A caution against treating a single behavioural probe as a durable guarantee. The refusal campaign 3 observed did not reproduce under a different framing.",
+      "affected": ["PROJECT.md", "docs/runbooks/add-location.md"],
+      "remediation": "Make invariant 4's enumeration open-ended, or add address, contact and location facts explicitly. In add-location.md, mark postal code as a value that must be supplied rather than inferred.",
+      "proposed_regression_test": "Not deterministically testable. Re-run the behavioural probe with varied framings in future campaigns rather than relying on a single observation."
+    },
+    {
+      "id": "C4-005",
+      "title": "Two local branches whose content is already on main report as unmerged",
+      "category": "operational hygiene",
+      "severity": "informational",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "root_cause": "The branches were merged upstream by rebase or squash, producing different commit SHAs with identical trees. Git's ancestry-based merge detection cannot see this.",
+      "evidence": [
+        "ci/main-branch-ruleset: not an ancestor of main, but its tree is identical to main commit c94bf2722d4aa20d180337a46500b9cdfd1357ba; 3 commits not on main",
+        "docs/archive-campaign-3: not an ancestor of main, but its tree is identical to main commit 394cf857bed180bb33672ad84a7657fb26ec6ec7; 1 commit not on main",
+        "Both branches still exist on the remote"
+      ],
+      "failure_scenario": "A routine 'git branch --merged' cleanup skips both. A future agent surveying branch state sees unmerged work and either tries to finish it or re-lands duplicate content.",
+      "affected": ["ci/main-branch-ruleset", "docs/archive-campaign-3"],
+      "remediation": "Delete both branches locally and on the remote after confirming the tree identity above. Not performed: branch deletion is outside discovery scope."
+    },
+    {
+      "id": "C4-006",
+      "title": "Three of five open dependency pull requests have failing CI; the one policy flags as risky is green",
+      "category": "operational state / upgrade scenario",
+      "severity": "informational",
+      "confidence": "confirmed",
+      "status": "confirmed",
+      "evidence": [
+        "PR #5 typescript 6.0.3 -> 7.0.2 (head 49276f1babec): both required checks FAILURE",
+        "PR #4 @types/node 24.13.3 -> 26.2.0 (head 3469a2732d1c): both required checks SUCCESS",
+        "PR #3 actions/upload-artifact 6.0.0 -> 7.0.1: both SUCCESS",
+        "PR #2 actions/checkout 6.1.0 -> 7.0.1: both FAILURE",
+        "PR #1 actions/setup-node 6.5.0 -> 7.0.0: both FAILURE",
+        "main HEAD 394cf85: both required checks SUCCESS"
+      ],
+      "interpretation": "PR #5 supplies hard evidence for the TypeScript compatibility line that deployment.md states as a durable rule - it genuinely breaks the repository. PR #4 is the opposite case: the declared caution is a policy judgment rather than an observed break, and no gate can detect it. @types/node 26 describes Node 26 APIs while package.json pins engines node '>=24 <25', so code using a Node-26-only API would typecheck clean and fail at runtime on the pinned Node major.",
+      "affected": [".github/dependabot.yml", "package.json", "docs/runbooks/maintenance.md"],
+      "remediation": "Record the compatibility decisions in docs/runbooks/maintenance.md as deployment.md requires. For #4, note explicitly that green CI is not evidence of Node-major compatibility."
+    }
+  ],
+  "invalidated": [
+    {
+      "claim": "Location phone shape is an interpretation hazard, because business.primaryPhone is an object while location.phone is a bare E.164 string",
+      "origin": "this campaign's own hypothesis, formed after making the mistake myself while following the runbook",
+      "why_invalidated": "A cheapest-class agent routed through the repository's own documents derived the correct E.164 string format, citing src/schemas/common.ts's regex and docs/spec/content-model.md's 'phone values use E.164'. The routing works; the error was mine, not the repository's."
+    },
+    {
+      "claim": "The Astro-managed CSP could block the site's own inline styles, since astro.config.ts declares neither style-src nor script-src",
+      "origin": "this campaign's own hypothesis",
+      "why_invalidated": "Inspection of real built output shows Astro appends both directives automatically with per-asset hashes: script-src carries 5 sha256 hashes and style-src carries 8, covering every inline block in the emitted pages."
+    },
+    {
+      "claim": "CHANGELOG.md omits the client-initialization, content-contract and ruleset work",
+      "origin": "this campaign's own hypothesis",
+      "why_invalidated": "All of it is recorded. The only cosmetic issue is that file-driven client initialization appears as two separate entries."
+    },
+    {
+      "claim": "The repository build is broken",
+      "origin": "local build failure during Wave 0",
+      "why_invalidated": "Windows Application Control blocked node_modules/@bruits/satteri-win32-x64-msvc/satteri_napi.win32-x64-msvc.node. GitHub Actions on the identical SHA reports both required checks successful, and the block released on its own later in the session, after which every local build succeeded. Environment condition, not a repository defect."
+    },
+    {
+      "claim": "No documentation routes an operator to the production gate",
+      "origin": "the strong form of C4-002, before falsification",
+      "why_invalidated": "docs/runbooks/create-client-site.md ends by directing the reader to 'previews and the production gate owned by docs/spec/website-validation.md'. The finding was narrowed to the gate being unautomated and uncommanded rather than unreferenced."
+    }
+  ]
+}

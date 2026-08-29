@@ -26,6 +26,16 @@ const suspicious = [
     code: "PLACEHOLDER_CONTENT_LEAK",
     pattern: /contenido de referencia pendiente de sustituir/i,
   },
+  {
+    code: "REFERENCE_STATE_LEAK",
+    pattern:
+      /(?:referencia; no representa un negocio real|estado de la referencia|publicaci[oó]n:\s*no autorizada|datos de referencia; sustituir y verificar|informaci[oó]n estructurada pendiente de sustituir|pendientes de verificaci[oó]n con el negocio|contenido de referencia no constituye asesor[ií]a legal)/i,
+  },
+  {
+    code: "UNSAFE_URL_SCHEME_LEAK",
+    pattern:
+      /\b(?:href|src|action)\s*=\s*["']\s*(?:javascript|data|vbscript|file):/i,
+  },
 ];
 
 export const checkPublicOutput = (): Finding[] => {
