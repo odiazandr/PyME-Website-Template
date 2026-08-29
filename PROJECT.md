@@ -6,7 +6,7 @@ Purpose: Provide a versioned, production-grade foundation for independent, clien
 
 ## Invariants
 
-1. This repository is a template product. Each adopted client repository produces one public, client-owned business website.
+1. This repository is a template product. Each adopted client repository produces one public, client-owned business website. Do not convert this canonical template repository into a client site, paste real client facts into it, or link it to a client Netlify project.
 2. Static rendering is the default. Complexity is introduced only when verified requirements justify it.
 3. Every durable fact has exactly one canonical owner. If canonical sources conflict, stop and report the conflict.
 4. Business claims must be verified. Never invent a fact about the business, including but not limited to awards, certifications, testimonials, experience, prices, guarantees, credentials, availability, statistics, and address, contact, or location details. A plausible value is not a verified one; when a fact has not been supplied, leave it absent and say so rather than inferring it.

@@ -8,6 +8,8 @@ answers: ["How is a new client repository initialized?"]
 
 Create a private repository from the template, then initialize it. Provisioning external accounts is outside this repository.
 
+Run these steps only inside the independent client repository. If the current Git remote is `https://github.com/odiazandr/PyME-Website-Template.git` and `memory.toml` is still in template mode, stop: create or switch to the client repository first.
+
 ## 1. Write the input document
 
 Collect the verified business facts into one JSON file kept outside the repository. Its contract is `src/schemas/client-init.ts`: unknown fields, non-HTTPS canonical URLs, and malformed phone or email values are rejected.
@@ -51,3 +53,15 @@ The initializer reports what it deliberately left outstanding, and none of it ma
 - Set each flag in `src/data/production.json` only after the verification it records has actually happened.
 
 Then use previews and the production gate owned by `docs/spec/website-validation.md`.
+
+## 4. Rehearse with a hypothetical business
+
+A hypothetical-business rehearsal still needs a real disposable client repository and a deployment target that are safe to publish. Do not use this canonical template repository or an unrelated existing Netlify project as the example.
+
+Before starting the rehearsal, prepare:
+
+- a synthetic business packet with no real person's private data;
+- a new private GitHub client repository created from this template;
+- a dedicated disposable/example Netlify site linked only to that client repository;
+- explicit human approval to mark the synthetic facts, privacy notice, and domain ownership as verified for the rehearsal;
+- a planned rollback check for the same disposable/example site.
