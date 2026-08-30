@@ -4,6 +4,7 @@ authority: canonical
 status: active
 answers: ["How is a new client repository initialized?"]
 ---
+
 # Create a client site
 
 Create a private repository from the template, then initialize it. Provisioning external accounts is outside this repository.
@@ -17,6 +18,7 @@ Collect the verified business facts into one JSON file kept outside the reposito
 ```json
 {
   "schemaVersion": 1,
+  "deploymentContext": "production",
   "site": { "canonicalUrl": "https://tallernopal.mx" },
   "business": {
     "schemaVersion": 1,
@@ -29,6 +31,8 @@ Collect the verified business facts into one JSON file kept outside the reposito
   }
 }
 ```
+
+`deploymentContext` defaults to `production`. Set it to `rehearsal` only for an explicitly authorized hypothetical-business exercise; the site visibly identifies itself as a demonstration and the production gate will refuse it.
 
 `site.siteId` and `site.titleTemplate` are optional. A missing site ID is generated on first adoption and preserved automatically on later runs, because `src/config/site.ts` owns it; pass `--new-identity` only when a deliberately different site is intended. A missing title template becomes the public name.
 
@@ -65,3 +69,5 @@ Before starting the rehearsal, prepare:
 - a dedicated disposable/example Netlify site linked only to that client repository;
 - explicit human approval to mark the synthetic facts, privacy notice, and domain ownership as verified for the rehearsal;
 - a planned rollback check for the same disposable/example site.
+
+Record `"deploymentContext": "rehearsal"` in the input document. It is an explicit public-status declaration, not a substitute for the separate human approvals.

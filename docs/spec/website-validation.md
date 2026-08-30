@@ -24,4 +24,6 @@ Production validation inspects `dist/`, not source alone. The output scan is a b
 
 The individual commands are exposed for diagnosis: `validate:project`, `validate:production`, `check:placeholders`, `check:assets`, `verify:dist`, `check:links`, and `check:public-output`. `quality:production` owns their required order and stops at the first failed gate.
 
+`verify:deployment` is a separate authenticated provider-evidence check owned by `docs/spec/deployment.md`. It intentionally does not appear in either deterministic quality gate.
+
 A command whose entry module imports the canonical data barrel installs `scripts/lib/data-guard.ts` through `node --import`. The barrel parses every domain at module scope, so a schema violation would otherwise surface as an uncaught error before the command's own code runs. The guard reports the offending field path and expected type in the same shape `validate:data` uses, because a command exposed for diagnosis must diagnose rather than emit a stack trace.

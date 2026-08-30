@@ -1,18 +1,19 @@
 ---
 import { contextualRoutes } from "../../config/navigation.ts";
+import { contactForm } from "../../config/forms.ts";
 import Field from "./Field.astro";
 import FormNotice from "./FormNotice.astro";
 ---
 
 <form
-  name="contacto"
+  name={contactForm.name}
   method="POST"
   action={contextualRoutes.formSuccess}
   data-netlify="true"
   netlify-honeypot="bot-field"
   class="contact-form"
 >
-  <input type="hidden" name="form-name" value="contacto" />
+  <input type="hidden" name="form-name" value={contactForm.name} />
   <p class="u-visually-hidden" aria-hidden="true">
     <label for="bot-field">No llenes este campo</label><input
       id="bot-field"
@@ -23,7 +24,7 @@ import FormNotice from "./FormNotice.astro";
   </p>
   <Field
     id="nombre"
-    name="nombre"
+    name={contactForm.fields.name}
     label="Nombre"
     autocomplete="name"
     maxLength={100}
@@ -31,7 +32,7 @@ import FormNotice from "./FormNotice.astro";
   />
   <Field
     id="correo"
-    name="correo"
+    name={contactForm.fields.email}
     label="Correo electrónico"
     type="email"
     autocomplete="email"
@@ -40,7 +41,7 @@ import FormNotice from "./FormNotice.astro";
   />
   <Field
     id="mensaje"
-    name="mensaje"
+    name={contactForm.fields.message}
     label="Consulta general"
     multiline
     maxLength={2000}

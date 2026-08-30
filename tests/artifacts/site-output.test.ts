@@ -55,6 +55,18 @@ test("every HTML artifact receives a restrictive hash-based CSP", () => {
   }
 });
 
+test("non-production contexts visibly identify the site as a demonstration", () => {
+  const pages = findHtml(`${root}dist`);
+  assert.ok(pages.length > 0);
+  for (const page of pages) {
+    assert.match(
+      readFileSync(page, "utf8"),
+      /Sitio de demostración con información ficticia/,
+      page,
+    );
+  }
+});
+
 test("immutable Astro assets use content-hashed filenames", () => {
   const assets = readdirSync(`${root}dist/_astro`, { withFileTypes: true });
   assert.ok(assets.length > 0);

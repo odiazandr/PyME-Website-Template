@@ -22,7 +22,7 @@ Implemented repository-level ownership:
 | Team publication records | `src/data/team.json` |
 | Approved testimonials | `src/data/testimonials.json` |
 | Social accounts | `src/data/social.json` |
-| Recorded business-fact, domain, and privacy launch approvals | `src/data/production.json` |
+| Recorded business-fact, domain, privacy launch approvals, and deployment context | `src/data/production.json` |
 | Template version | `src/data/template.json` |
 | Data validation contracts | `src/schemas/*.ts` |
 | Portable implemented visual contract | `DESIGN.md` |
@@ -34,7 +34,7 @@ Implemented repository-level ownership:
 | Page metadata and canonical generation | `src/components/core/SEOHead.astro` |
 | Structured-data shape and safe serialization | `src/components/core/StructuredData.astro`, `src/utils/structured-data.ts` |
 | Privacy notice text | `src/content/legal/aviso-de-privacidad.md` |
-| Contact-form field and provider contract | `src/components/forms/ContactForm.astro` |
+| Contact-form provider contract and intake boundary | `src/config/forms.ts` |
 | Generated content security policy | `astro.config.ts` |
 | Hosting build, stable response headers, and hashed-asset caching | `netlify.toml` |
 | Public interoperability manifest contract | `src/schemas/public-manifest.ts` |

@@ -79,9 +79,9 @@ test("valid contact data follows the provider-compatible POST contract", async (
     .fill("Solicito información general.");
   await page.getByRole("button", { name: "Enviar consulta" }).click();
   expect(payload?.get("form-name")).toBe("contacto");
-  expect(payload?.get("nombre")).toBe("Persona de prueba");
-  expect(payload?.get("correo")).toBe("persona@example.test");
-  expect(payload?.get("mensaje")).toBe("Solicito información general.");
+  expect(payload?.get("name")).toBe("Persona de prueba");
+  expect(payload?.get("email")).toBe("persona@example.test");
+  expect(payload?.get("message")).toBe("Solicito información general.");
 });
 
 test("contact form keeps native validation and privacy context", async ({

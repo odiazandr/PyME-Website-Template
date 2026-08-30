@@ -71,6 +71,7 @@ test("production evaluation accepts a completed client state", () => {
       canonicalUrl: "https://tallernopal.mx",
       privacyText: "Aviso aprobado por la persona responsable.",
       approvals: {
+        deploymentContext: "production",
         businessFactsVerified: true,
         domainOwnershipVerified: true,
         privacyNoticeApproved: true,
@@ -89,6 +90,7 @@ test("production evaluation requires explicit operational approvals", () => {
     canonicalUrl: "https://tallernopal.mx",
     privacyText: "Texto legal completo proporcionado por el cliente.",
     approvals: {
+      deploymentContext: "production",
       businessFactsVerified: false,
       domainOwnershipVerified: false,
       privacyNoticeApproved: false,
@@ -197,6 +199,7 @@ const launchReady = () => ({
   canonicalUrl: "https://tallernopal.mx",
   privacyText: "Aviso aprobado por la persona responsable.",
   approvals: {
+    deploymentContext: "production",
     businessFactsVerified: true,
     domainOwnershipVerified: true,
     privacyNoticeApproved: true,
@@ -222,6 +225,11 @@ test("the launch-ready baseline produces no findings", () => {
 });
 
 for (const [label, mutate, expected] of [
+  [
+    "a rehearsal deployment context",
+    (s) => (s.approvals.deploymentContext = "rehearsal"),
+    "DEPLOYMENT_CONTEXT_NOT_PRODUCTION",
+  ],
   [
     "an unreviewed location",
     (s) => (s.locations[0].approvedForPublication = false),

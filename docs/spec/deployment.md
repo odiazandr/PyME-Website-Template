@@ -4,6 +4,7 @@ authority: canonical
 status: active
 answers: ["How will websites be deployed?", "What owns production configuration?"]
 ---
+
 # Deployment
 
 The intended default flow is a private GitHub client repository to Netlify: pull request, required checks, Deploy Preview, review, merge to `main` after repository rules protect it, production-quality build, `dist/`, CDN, and client-owned custom domain.
@@ -26,6 +27,13 @@ The baseline remote evidence is commit `22f98bc015f062a53630f358bf687fb9710250cf
 
 Real deployment begins only after an authorized operator supplies an authenticated Netlify context and deliberately links the intended disposable/reference site. Absence of a Netlify CLI, authenticated session, or `.netlify/state.json` link is a stop condition for external deployment—not permission to create an arbitrary site, reuse unknown credentials, or change DNS. Site creation, deployment, form verification, header inspection, and rollback evidence must refer to the same explicitly identified Netlify site.
 
+## Provider verification
+
+`npm run verify:deployment` is a read-only, external verification command. It requires `NETLIFY_AUTH_TOKEN` and either `NETLIFY_SITE_ID` or the explicit `.netlify/state.json` link. It compares the linked site's custom domain, published production revision, build command and publish directory, HTML form detection setting, registered forms, stored submissions, submission notification hooks, and live response headers against repository-owned configuration. It never creates sites, changes settings, sends a form, or deletes provider data.
+
+It reports `PASSED`, `FAILED`, or `UNVERIFIED`: missing authentication, an unavailable API, an unknown provider field, or no stored verified submission are `UNVERIFIED`; a contradicted provider setting is `FAILED`. `--commit <revision>` declares the reviewed revision; otherwise the command reads `origin/main`. The command is intentionally not part of `quality` or `quality:production`, because provider availability and credentials are not deterministic repository inputs.
+
+An email notification hook proves routing is configured, not that a real inbox received a message. Confirm inbox delivery and retention/deletion practice as manual launch evidence.
 For client work, connect Netlify to the client GitHub repository so pushes and pull requests produce provider builds and previews. Manual CLI deploys are secondary evidence for isolated rehearsal or recovery, not the normal production path.
 
 Automated dependency proposals are governed by two durable rules rather than a dated status snapshot. A proposal that crosses a declared compatibility line, such as a Node type definition ahead of the pinned Node major or a TypeScript release ahead of the documented Astro-compatible line, must not be merged without an explicit compatibility decision recorded in `docs/runbooks/maintenance.md`. A major GitHub Action update requires rebase, immutable-SHA verification, and the same review as any other major dependency.
