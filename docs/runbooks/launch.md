@@ -4,6 +4,7 @@ authority: canonical
 status: active
 answers: ["What must happen before production launch?"]
 ---
+
 # Launch
 
 Verify content truth, contact facts, client-approved privacy text, design and mobile QA, accessibility, SEO, forms, production canonical, placeholder removal, build and output validation, custom domain, DNS preservation, HTTPS, email, production smoke tests, client approval, and a known rollback path. A site is not launched merely because it looks correct locally.
@@ -16,10 +17,11 @@ Run these from the client repository. The first is the gate that decides whether
 npm run quality:production
 npm run test:browser:cross
 npm run check:ruleset
+npm run verify:deployment
 ```
 
-`quality:production` also runs in CI as the `Client production gate` job whenever `memory.toml` records project mode, so a client repository does not depend on someone remembering to run it. Make that check required in the repository ruleset before launch; the template ships the contexts it needs in `.github/rulesets/main-protection.json`, and an adopted repository adds this one.
+`quality:production` also runs in CI as the `Client production gate` job whenever `memory.toml` records project mode, so a client repository does not depend on someone remembering to run it. Make that check required in the repository ruleset before launch; the template ships the contexts it needs in `.github/rulesets/main-protection.json`, and an adopted repository adds this one. `verify:deployment` is external and read-only; it requires an explicitly linked authenticated Netlify site and returns `UNVERIFIED` rather than passing when that context or provider evidence is absent.
 
 The approval flags in `src/data/production.json` and every `approvedForPublication` record are attestations that a person performed the verification. No agent may set them.
 
-Steps no command covers: manual accessibility review, DNS cutover as owned by `docs/runbooks/dns-cutover.md`, form receipt confirmed in the provider, response headers observed on the live domain, and client sign-off.
+Steps no command covers: manual accessibility review, DNS cutover as owned by `docs/runbooks/dns-cutover.md`, form receipt confirmed in a real recipient inbox, retention/deletion handling, and client sign-off.

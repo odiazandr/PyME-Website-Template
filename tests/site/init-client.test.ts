@@ -50,6 +50,7 @@ const context = (overrides: Partial<InitContext> = {}): InitContext => ({
   generatedSiteId: "aedc8c8b-948a-447b-9c73-f18521ea0915",
   privacyText: "Aviso aprobado por la persona responsable del negocio.",
   approvals: {
+    deploymentContext: "production",
     businessFactsVerified: true,
     domainOwnershipVerified: true,
     privacyNoticeApproved: true,
@@ -181,6 +182,7 @@ test("initialization never self-approves human verification", () => {
     context({
       privacyText: "## Revisión legal pendiente",
       approvals: {
+        deploymentContext: "production",
         businessFactsVerified: false,
         domainOwnershipVerified: false,
         privacyNoticeApproved: false,

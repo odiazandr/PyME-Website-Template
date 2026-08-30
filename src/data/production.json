@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "deploymentContext": "template",
   "businessFactsVerified": false,
   "domainOwnershipVerified": false,
   "privacyNoticeApproved": false

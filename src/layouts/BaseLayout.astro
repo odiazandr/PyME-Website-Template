@@ -1,5 +1,6 @@
 ---
 import SkipLink from "../components/core/SkipLink.astro";
+import RehearsalNotice from "../components/core/RehearsalNotice.astro";
 import SiteFooter from "../components/core/SiteFooter.astro";
 import SiteHeader from "../components/core/SiteHeader.astro";
 import SEOHead from "../components/core/SEOHead.astro";
@@ -38,6 +39,7 @@ const {
   <body>
     <!-- THESIS: A precisely set foundation refuses the generic starter grid; hierarchy and measure make the system visible. OWN-WORLD: Bright proof stock, ink text, mineral action color, square controls, crisp rules, and generous reading space. STORY: Visitors find verified business information and a clear next action without runtime complexity. FIRST VIEWPORT: A compact masthead opens to an asymmetric content field that folds into one mobile reading flow. FORM: Typesetter's Galley, grounded direction 4, seed 71e87adc. FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance. -->
     <SkipLink />
+    <RehearsalNotice />
     <SiteHeader currentPath={Astro.url.pathname} />
     <main id="contenido" tabindex="-1"><slot /></main>
     <SiteFooter />

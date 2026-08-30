@@ -5,7 +5,10 @@ import {
   ClientInitSchema,
   type ClientInit,
 } from "../src/schemas/client-init.ts";
-import { ProductionApprovalSchema } from "../src/schemas/production.ts";
+import {
+  ProductionApprovalSchema,
+  type ProductionApproval,
+} from "../src/schemas/production.ts";
 import { locations, services } from "../src/data/index.ts";
 import { SiteSchema, type Site } from "../src/schemas/site.ts";
 import { TemplateMetadataSchema } from "../src/schemas/template.ts";
@@ -29,6 +32,7 @@ const USAGE =
 const REWRITTEN_PATHS = [
   "src/config/site.ts",
   "src/data/business.json",
+  "src/data/production.json",
   "memory.toml",
 ];
 
@@ -39,6 +43,7 @@ export const DEFERRED_PRODUCTION_CODES = new Set([
   "PRIVACY_UNAPPROVED",
   "CONTENT_REVIEW_REQUIRED",
   "LOCATION_NEVER_OPEN",
+  "DEPLOYMENT_CONTEXT_NOT_PRODUCTION",
 ]);
 
 // The identity the template ships. It is a placeholder, never a client identity,
@@ -52,6 +57,7 @@ export type InitContext = {
   generatedSiteId: string;
   privacyText: string;
   approvals: {
+    deploymentContext: "template" | "rehearsal" | "production";
     businessFactsVerified: boolean;
     domainOwnershipVerified: boolean;
     privacyNoticeApproved: boolean;
@@ -190,6 +196,11 @@ export const renderSiteConfig = (site: Site): string =>
 // rules and produce data files that do not match the repository's format.
 export const renderBusinessData = (business: Business): string =>
   `${JSON.stringify(business)}\n`;
+
+export const renderProductionData = (
+  approvals: ProductionApproval,
+  deploymentContext: ProductionApproval["deploymentContext"],
+): string => `${JSON.stringify({ ...approvals, deploymentContext })}\n`;
 
 export type Arguments = {
   inputPath: string | null;
@@ -330,9 +341,12 @@ const initializeClient = async (argv: string[]): Promise<void> => {
       `${ROOT}src/content/legal/aviso-de-privacidad.md`,
       "utf8",
     ),
-    approvals: ProductionApprovalSchema.parse(
-      JSON.parse(readFileSync(`${ROOT}src/data/production.json`, "utf8")),
-    ),
+    approvals: {
+      ...ProductionApprovalSchema.parse(
+        JSON.parse(readFileSync(`${ROOT}src/data/production.json`, "utf8")),
+      ),
+      deploymentContext: input.deploymentContext,
+    },
     recordedTemplateVersion: TemplateMetadataSchema.parse(
       JSON.parse(readFileSync(`${ROOT}src/data/template.json`, "utf8")),
     ).templateVersion,
@@ -398,6 +412,20 @@ const initializeClient = async (argv: string[]): Promise<void> => {
         contents: await formatSource(
           renderBusinessData(plan.business),
           businessPath,
+        ),
+      },
+      {
+        path: `${ROOT}src/data/production.json`,
+        contents: await formatSource(
+          renderProductionData(
+            ProductionApprovalSchema.parse(
+              JSON.parse(
+                readFileSync(`${ROOT}src/data/production.json`, "utf8"),
+              ),
+            ),
+            input.deploymentContext,
+          ),
+          `${ROOT}src/data/production.json`,
         ),
       },
       { path: memoryPath, contents: projectMemory },

@@ -36,6 +36,7 @@ type ProductionState = {
   canonicalUrl: string;
   privacyText: string;
   approvals: {
+    deploymentContext: "template" | "rehearsal" | "production";
     businessFactsVerified: boolean;
     domainOwnershipVerified: boolean;
     privacyNoticeApproved: boolean;
@@ -51,6 +52,14 @@ export const evaluateProduction = (state: ProductionState): Finding[] => {
       code: "PROJECT_MODE_REQUIRED",
       path: "memory.toml",
       message: "production requires memory mode project",
+    });
+  }
+
+  if (state.approvals.deploymentContext !== "production") {
+    findings.push({
+      code: "DEPLOYMENT_CONTEXT_NOT_PRODUCTION",
+      path: "src/data/production.json",
+      message: `deployment context is ${state.approvals.deploymentContext}; production requires production`,
     });
   }
 

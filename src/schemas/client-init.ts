@@ -1,9 +1,11 @@
 import { z } from "zod";
 import { BusinessSchema } from "./business.ts";
+import { DeploymentContextSchema } from "./production.ts";
 import { CanonicalUrlSchema } from "./site.ts";
 
 export const ClientInitSchema = z.strictObject({
   schemaVersion: z.literal(1),
+  deploymentContext: DeploymentContextSchema.default("production"),
   site: z.strictObject({
     siteId: z.uuid().optional(),
     canonicalUrl: CanonicalUrlSchema,

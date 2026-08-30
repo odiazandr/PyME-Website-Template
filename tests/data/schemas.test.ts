@@ -256,7 +256,21 @@ describe("technical identity contracts", () => {
     assert.equal(
       ProductionApprovalSchema.safeParse({
         schemaVersion: 1,
+        deploymentContext: "production",
         businessFactsVerified: "yes",
+        domainOwnershipVerified: false,
+        privacyNoticeApproved: false,
+      }).success,
+      false,
+    );
+  });
+
+  test("requires a declared deployment context", () => {
+    assert.equal(
+      ProductionApprovalSchema.safeParse({
+        schemaVersion: 1,
+        deploymentContext: "unknown",
+        businessFactsVerified: false,
         domainOwnershipVerified: false,
         privacyNoticeApproved: false,
       }).success,

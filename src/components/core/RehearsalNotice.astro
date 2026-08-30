@@ -1,0 +1,24 @@
+---
+import { productionApproval } from "../../data/index.ts";
+---
+
+{
+  productionApproval.deploymentContext !== "production" && (
+    <aside class="rehearsal-notice" aria-label="Estado del sitio">
+      Sitio de demostración con información ficticia. No representa un negocio
+      en operación.
+    </aside>
+  )
+}
+
+<style>
+  .rehearsal-notice {
+    padding: var(--space-3) var(--space-4);
+    border-block-end: 1px solid var(--color-border-strong);
+    color: var(--color-text);
+    background: var(--color-accent-soft);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    text-align: center;
+  }
+</style>
