@@ -62,6 +62,21 @@ const context = (overrides: Partial<InitContext> = {}): InitContext => ({
   newIdentity: false,
   locations: [],
   services: [],
+  operationsReadiness: {
+    schemaVersion: 1,
+    formRecipientApproved: true,
+    inboxMonitored: true,
+    formDeliveryVerified: true,
+    responseOwnerAssigned: true,
+    retentionPolicyDocumented: true,
+    deletionOwnerAssigned: true,
+    emergencyEscalationReviewed: true,
+    privacyContactConfirmed: true,
+    publicationApproverAssigned: true,
+    domainManagementOwnerAssigned: true,
+    rollbackOwnerAssigned: true,
+  },
+  formsEnabled: false,
   ...overrides,
 });
 
@@ -196,6 +211,38 @@ test("initialization never self-approves human verification", () => {
     "PRODUCTION_APPROVAL_REQUIRED",
     "PRODUCTION_APPROVAL_REQUIRED",
   ]);
+});
+
+test("initialization reports operations readiness as a human follow-up", () => {
+  const plan = planInitialization(
+    context({
+      formsEnabled: true,
+      operationsReadiness: {
+        schemaVersion: 1,
+        formRecipientApproved: false,
+        inboxMonitored: false,
+        formDeliveryVerified: false,
+        responseOwnerAssigned: false,
+        retentionPolicyDocumented: false,
+        deletionOwnerAssigned: false,
+        emergencyEscalationReviewed: false,
+        privacyContactConfirmed: false,
+        publicationApproverAssigned: false,
+        domainManagementOwnerAssigned: false,
+        rollbackOwnerAssigned: false,
+      },
+    }),
+  );
+  assert.deepEqual(plan.findings, []);
+  assert.equal(
+    plan.deferred.filter((finding) =>
+      [
+        "OPERATIONS_READINESS_REQUIRED",
+        "FORM_OPERATIONS_READINESS_REQUIRED",
+      ].includes(finding.code),
+    ).length,
+    11,
+  );
 });
 
 test("project mode rewrite preserves surrounding configuration", () => {

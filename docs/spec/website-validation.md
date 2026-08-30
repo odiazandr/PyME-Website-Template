@@ -4,13 +4,16 @@ authority: canonical
 status: active
 answers: ["Which checks gate development and production?", "What must built-output validation inspect?"]
 ---
+
 # Website validation
 
 ## Implemented gates
 
 `npm run quality` is the template-development gate. It checks formatting, Astro diagnostics, data schemas, security configuration, builds the reference site, and verifies its artifact contract.
 
-`npm run quality:production` is the strict client-production gate. It requires valid memory contracts, all static checks, non-empty navigation whose routes resolve, a recorded template version matching `package.json`, `project` memory mode, per-record publication approval for every location and service, explicit recorded approval of business facts, domain ownership, and privacy text, non-sample client identity, a non-provider HTTPS canonical domain, approved privacy content, no unresolved markers, reviewed public-asset sizes, a successful clean build, passing artifact contracts, required artifacts, a schema-valid public manifest, matching canonical values, valid robots output, resolvable internal links constrained to `dist/`, and no forbidden sample/development sentinels in `dist/`.
+`npm run quality:production` is the strict site-deployability gate. It requires valid memory contracts, all static checks, non-empty navigation whose routes resolve, a recorded template version matching `package.json`, `project` memory mode, per-record publication approval for every location and service, explicit recorded approval of business facts, domain ownership, and privacy text, non-sample client identity, a non-provider HTTPS canonical domain, approved privacy content, no unresolved markers, reviewed public-asset sizes, a successful clean build, passing artifact contracts, required artifacts, a schema-valid public manifest, matching canonical values, valid robots output, resolvable internal links constrained to `dist/`, and no forbidden sample/development sentinels in `dist/`.
+
+`npm run validate:operations` is a separate operational-readiness gate owned by `docs/spec/operations-readiness.md`. It validates only human attestations of the business process behind the site; a passed site-deployability gate does not imply this gate passes. `npm run quality:launch` runs both gates.
 
 Production validation scans every canonical data domain, not business identity alone. A domain absent from that scan is a domain whose unreplaced reference content can reach a client's public website and its structured data.
 
@@ -22,7 +25,7 @@ Production validation inspects `dist/`, not source alone. The output scan is a b
 
 ## Command ownership
 
-The individual commands are exposed for diagnosis: `validate:project`, `validate:production`, `check:placeholders`, `check:assets`, `verify:dist`, `check:links`, and `check:public-output`. `quality:production` owns their required order and stops at the first failed gate.
+The individual commands are exposed for diagnosis: `validate:project`, `validate:production`, `validate:operations`, `check:placeholders`, `check:assets`, `verify:dist`, `check:links`, and `check:public-output`. `quality:production` owns the site-deployability order and stops at the first failed gate; `quality:launch` then requires operations readiness.
 
 `verify:deployment` is a separate authenticated provider-evidence check owned by `docs/spec/deployment.md`. It intentionally does not appear in either deterministic quality gate.
 

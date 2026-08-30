@@ -28,6 +28,12 @@ const findHtml = (directory: string): string[] =>
         : [];
   });
 
+const findFiles = (directory: string): string[] =>
+  readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const path = `${directory}/${entry.name}`;
+    return entry.isDirectory() ? findFiles(path) : [path];
+  });
+
 test("index output contains canonical SEO and schema.org metadata", () => {
   const html = read("index.html");
   assert.match(
@@ -144,4 +150,21 @@ test("public manifest contains only the stable interoperability contract", () =>
   assert.equal(manifest.schemaVersion, 1);
   assert.equal(manifest.templateVersion, templateMetadata.templateVersion);
   assert.equal(manifest.canonicalUrl, site.canonicalUrl);
+});
+
+test("operations-readiness attestations never enter public build output", () => {
+  const publicOutput = findFiles(`${root}dist`)
+    .map((path) => readFileSync(path, "utf8"))
+    .join("\n");
+
+  for (const privateAttestation of [
+    "formDeliveryVerified",
+    "retentionPolicyDocumented",
+    "rollbackOwnerAssigned",
+  ])
+    assert.doesNotMatch(
+      publicOutput,
+      new RegExp(privateAttestation),
+      `${privateAttestation} must remain repository-only`,
+    );
 });

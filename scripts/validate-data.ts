@@ -1,7 +1,9 @@
 import { ZodError } from "zod";
+import { loadOperationsReadiness } from "./lib/operations-readiness.ts";
 try {
   await import("../src/data/index.ts");
   await import("../src/config/site.ts");
+  loadOperationsReadiness();
   console.log("DATA VALIDATION: PASSED");
 } catch (error) {
   console.error("DATA VALIDATION: FAILED");
