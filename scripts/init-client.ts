@@ -9,6 +9,8 @@ import {
   ProductionApprovalSchema,
   type ProductionApproval,
 } from "../src/schemas/production.ts";
+import type { OperationsReadiness } from "../src/schemas/operations-readiness.ts";
+import { activeForms } from "../src/config/forms.ts";
 import { locations, services } from "../src/data/index.ts";
 import { SiteSchema, type Site } from "../src/schemas/site.ts";
 import { TemplateMetadataSchema } from "../src/schemas/template.ts";
@@ -16,6 +18,8 @@ import type { Business } from "../src/schemas/business.ts";
 import type { Location } from "../src/schemas/location.ts";
 import type { Service } from "../src/schemas/service.ts";
 import { evaluateProduction } from "./validate-production.ts";
+import { evaluateOperationsReadiness } from "./validate-operations.ts";
+import { loadOperationsReadiness } from "./lib/operations-readiness.ts";
 import { ROOT, isMain, report, type Finding } from "./lib/validation.ts";
 import {
   commitFileTransaction,
@@ -36,14 +40,16 @@ const REWRITTEN_PATHS = [
   "memory.toml",
 ];
 
-// Production findings the initializer deliberately leaves outstanding. They
-// record human or operational verification that an agent may not self-authorize.
-export const DEFERRED_PRODUCTION_CODES = new Set([
+// Launch findings the initializer deliberately leaves outstanding. They record
+// human or operational verification that an agent may not self-authorize.
+export const DEFERRED_LAUNCH_CODES = new Set([
   "PRODUCTION_APPROVAL_REQUIRED",
   "PRIVACY_UNAPPROVED",
   "CONTENT_REVIEW_REQUIRED",
   "LOCATION_NEVER_OPEN",
   "DEPLOYMENT_CONTEXT_NOT_PRODUCTION",
+  "OPERATIONS_READINESS_REQUIRED",
+  "FORM_OPERATIONS_READINESS_REQUIRED",
 ]);
 
 // The identity the template ships. It is a placeholder, never a client identity,
@@ -69,6 +75,8 @@ export type InitContext = {
   newIdentity: boolean;
   locations: Location[];
   services: Service[];
+  operationsReadiness: OperationsReadiness;
+  formsEnabled: boolean;
 };
 
 export type InitPlan = {
@@ -145,24 +153,30 @@ export const planInitialization = (context: InitContext): InitPlan => {
       context.input.site.titleTemplate ?? `%s | ${business.publicName}`,
   });
 
-  const projected = evaluateProduction({
-    mode: "project",
-    facts: { business, site },
-    canonicalUrl: site.canonicalUrl,
-    privacyText: context.privacyText,
-    approvals: context.approvals,
-    locations: context.locations,
-    services: context.services,
-  });
+  const projected = [
+    ...evaluateProduction({
+      mode: "project",
+      facts: { business, site },
+      canonicalUrl: site.canonicalUrl,
+      privacyText: context.privacyText,
+      approvals: context.approvals,
+      locations: context.locations,
+      services: context.services,
+    }),
+    ...evaluateOperationsReadiness({
+      formsEnabled: context.formsEnabled,
+      readiness: context.operationsReadiness,
+    }),
+  ];
 
   for (const finding of projected) {
-    if (!DEFERRED_PRODUCTION_CODES.has(finding.code)) findings.push(finding);
+    if (!DEFERRED_LAUNCH_CODES.has(finding.code)) findings.push(finding);
   }
 
   return {
     findings,
     deferred: projected.filter((finding) =>
-      DEFERRED_PRODUCTION_CODES.has(finding.code),
+      DEFERRED_LAUNCH_CODES.has(finding.code),
     ),
     site,
     business,
@@ -329,6 +343,22 @@ const initializeClient = async (argv: string[]): Promise<void> => {
   );
   if (input === null) return report("CLIENT INITIALIZATION", inputFindings);
 
+  let operationsReadiness: OperationsReadiness;
+  try {
+    operationsReadiness = loadOperationsReadiness();
+  } catch (error) {
+    return report("CLIENT INITIALIZATION", [
+      {
+        code: "OPERATIONS_READINESS_INVALID",
+        path: "operations-readiness.json",
+        message:
+          error instanceof Error
+            ? error.message
+            : "operations readiness data could not be read",
+      },
+    ]);
+  }
+
   const memoryPath = `${ROOT}memory.toml`;
   const memory = readFileSync(memoryPath, "utf8");
   const sitePath = `${ROOT}src/config/site.ts`;
@@ -357,6 +387,8 @@ const initializeClient = async (argv: string[]): Promise<void> => {
     newIdentity: parsedArguments.newIdentity,
     locations,
     services,
+    operationsReadiness,
+    formsEnabled: activeForms.length > 0,
   });
 
   if (plan.findings.length > 0)

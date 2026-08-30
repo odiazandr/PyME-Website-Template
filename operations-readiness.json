@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "formRecipientApproved": false,
+  "inboxMonitored": false,
+  "formDeliveryVerified": false,
+  "responseOwnerAssigned": false,
+  "retentionPolicyDocumented": false,
+  "deletionOwnerAssigned": false,
+  "emergencyEscalationReviewed": false,
+  "privacyContactConfirmed": false,
+  "publicationApproverAssigned": false,
+  "domainManagementOwnerAssigned": false,
+  "rollbackOwnerAssigned": false
+}

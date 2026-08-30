@@ -4,6 +4,7 @@ authority: canonical
 status: active
 answers: ["Where will each website fact live?"]
 ---
+
 # Source of truth
 
 Implemented repository-level ownership:
@@ -23,6 +24,7 @@ Implemented repository-level ownership:
 | Approved testimonials | `src/data/testimonials.json` |
 | Social accounts | `src/data/social.json` |
 | Recorded business-fact, domain, privacy launch approvals, and deployment context | `src/data/production.json` |
+| Non-sensitive client operations-readiness attestations | `operations-readiness.json` |
 | Template version | `src/data/template.json` |
 | Data validation contracts | `src/schemas/*.ts` |
 | Portable implemented visual contract | `DESIGN.md` |
