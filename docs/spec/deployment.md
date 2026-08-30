@@ -34,7 +34,6 @@ Real deployment begins only after an authorized operator supplies an authenticat
 It reports `PASSED`, `FAILED`, or `UNVERIFIED`: missing authentication, an unavailable API, an unknown provider field, or no stored verified submission are `UNVERIFIED`; a contradicted provider setting is `FAILED`. `--commit <revision>` declares the reviewed revision; otherwise the command reads `origin/main`. The command is intentionally not part of `quality` or `quality:production`, because provider availability and credentials are not deterministic repository inputs.
 
 An email notification hook proves routing is configured, not that a real inbox received a message. Confirm inbox delivery and retention/deletion practice as manual launch evidence.
-
 For client work, connect Netlify to the client GitHub repository so pushes and pull requests produce provider builds and previews. Manual CLI deploys are secondary evidence for isolated rehearsal or recovery, not the normal production path.
 
 Automated dependency proposals are governed by two durable rules rather than a dated status snapshot. A proposal that crosses a declared compatibility line, such as a Node type definition ahead of the pinned Node major or a TypeScript release ahead of the documented Astro-compatible line, must not be merged without an explicit compatibility decision recorded in `docs/runbooks/maintenance.md`. A major GitHub Action update requires rebase, immutable-SHA verification, and the same review as any other major dependency.
