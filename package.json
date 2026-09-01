@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.3",
-    "astro": "7.2.4",
+    "astro": "7.2.9",
     "zod": "4.4.3"
   },
   "devDependencies": {
